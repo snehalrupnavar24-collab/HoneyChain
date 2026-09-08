@@ -1,22 +1,10 @@
-from fastapi import FastAPI
+import sys
+import os
 
-app = FastAPI(
-    title="HoneyChain Backend",
-    description="Backend API for HoneyChain",
-    version="1.0.0"
-)
+# Support running uvicorn from workspace root or from backend folder
+sys.path.insert(0, os.path.dirname(__file__))
 
-
-@app.get("/")
-def home():
-    return {
-        "status": "success",
-        "message": "HoneyChain Backend is running!"
-    }
-
-
-@app.get("/health")
-def health():
-    return {
-        "status": "healthy"
-    }
+try:
+    from app.main import app
+except ImportError:
+    from backend.app.main import app

@@ -25,7 +25,15 @@ __pycache__/
 # Build files
 build/
 dist/
+frontend/dist/
 *.egg-info/
+
+# Node.js
+node_modules/
+frontend/node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
 
 # OS files
 .DS_Store
