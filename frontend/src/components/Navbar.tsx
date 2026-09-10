@@ -14,9 +14,11 @@ import {
   X,
   Home,
   Layers,
-  Smartphone
+  Smartphone,
+  User
 } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
+import { useAuth } from '../context/AuthContext';
 
 interface NavbarProps {
   activeTab: string;
@@ -26,6 +28,7 @@ interface NavbarProps {
   onCertificateClick: () => void;
   onMobileClick?: () => void;
   onGenerateQrClick?: () => void;
+  onLoginClick?: () => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
@@ -36,8 +39,10 @@ export const Navbar: React.FC<NavbarProps> = ({
   onCertificateClick,
   onMobileClick,
   onGenerateQrClick,
+  onLoginClick,
 }) => {
   const { lang, setLang, t } = useLanguage();
+  const { user, isLoggedIn } = useAuth();
   const [mobileDrawerOpen, setMobileDrawerOpen] = React.useState(false);
 
   const navLinks = [
@@ -166,6 +171,25 @@ export const Navbar: React.FC<NavbarProps> = ({
                 मराठी
               </button>
             </div>
+
+            {/* Customer Login / Profile Button */}
+            {onLoginClick && (
+              <button
+                type="button"
+                onClick={onLoginClick}
+                className={`px-3 py-1.5 rounded-xl font-bold text-xs transition-all shadow-2xs flex items-center gap-1.5 cursor-pointer border ${
+                  isLoggedIn
+                    ? 'bg-emerald-50 text-emerald-950 border-emerald-300 hover:bg-emerald-100'
+                    : 'bg-white hover:bg-amber-50 text-stone-900 border-stone-300 hover:border-amber-400'
+                }`}
+                title={isLoggedIn ? `Customer Profile: ${user?.name}` : "Customer Sign In"}
+              >
+                <User className="w-3.5 h-3.5 text-amber-700" />
+                <span className="hidden sm:inline truncate max-w-[90px]">
+                  {isLoggedIn ? user?.name.split(' ')[0] : (lang === 'mr' ? 'ग्राहक' : (lang === 'hi' ? 'ग्राहक' : 'Sign In'))}
+                </span>
+              </button>
+            )}
 
             {/* Customer Honey Jar QR Generator */}
             {onGenerateQrClick && (

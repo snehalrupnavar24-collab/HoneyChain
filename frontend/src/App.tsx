@@ -11,6 +11,8 @@ import { HoneyVaaniVoiceWidget } from './components/HoneyVaaniVoiceWidget';
 import { MobileAccessModal } from './components/MobileAccessModal';
 import { CustomerJarQRGenerator } from './components/CustomerJarQRGenerator';
 import { LanguageProvider, useLanguage } from './context/LanguageContext';
+import { AuthProvider } from './context/AuthContext';
+import { CustomerLoginModal } from './components/CustomerLoginModal';
 import { checkBackendHealth } from './services/api';
 import { Heart, ArrowLeft, ShieldCheck } from 'lucide-react';
 
@@ -20,6 +22,7 @@ const MainLayout: React.FC = () => {
   const [isBackendConnected, setIsBackendConnected] = useState<boolean>(true);
   const [isMobileModalOpen, setIsMobileModalOpen] = useState<boolean>(false);
   const [isCustomerQrOpen, setIsCustomerQrOpen] = useState<boolean>(false);
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState<boolean>(false);
 
   useEffect(() => {
     // If URL contains ?batch=... (e.g. scanned from a phone camera), auto-switch to Consumer Verification!
@@ -64,6 +67,7 @@ const MainLayout: React.FC = () => {
         onCertificateClick={handleGlobalCert}
         onMobileClick={() => setIsMobileModalOpen(true)}
         onGenerateQrClick={() => setIsCustomerQrOpen(true)}
+        onLoginClick={() => setIsLoginModalOpen(true)}
       />
 
       {/* 2. Main Content Area */}
@@ -241,6 +245,13 @@ const MainLayout: React.FC = () => {
         onNavigateTab={(tab) => setActiveTab(tab)}
         activeTab={activeTab}
       />
+
+      {/* Customer Login & Account Profile Modal */}
+      <CustomerLoginModal
+        isOpen={isLoginModalOpen}
+        onClose={() => setIsLoginModalOpen(false)}
+        onScanRedirect={handleGlobalScan}
+      />
     </div>
   );
 };
@@ -248,7 +259,9 @@ const MainLayout: React.FC = () => {
 export const App: React.FC = () => {
   return (
     <LanguageProvider>
-      <MainLayout />
+      <AuthProvider>
+        <MainLayout />
+      </AuthProvider>
     </LanguageProvider>
   );
 };

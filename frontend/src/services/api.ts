@@ -31,6 +31,24 @@ export const checkBackendHealth = async (): Promise<boolean> => {
   }
 };
 
+export interface LoginResponse {
+  access_token: string;
+  token_type: string;
+  user_id: number;
+  role: string;
+  name: string;
+}
+
+export const loginUser = async (email: string, password: string): Promise<LoginResponse> => {
+  const res = await client.post('/auth/login', { email, password });
+  return res.data;
+};
+
+export const registerUser = async (name: string, email: string, password: string, role: string = 'consumer'): Promise<any> => {
+  const res = await client.post('/auth/register', { name, email, password, role });
+  return res.data;
+};
+
 // =========================================================================
 // PUBLIC CONSUMER VERIFICATION
 // =========================================================================

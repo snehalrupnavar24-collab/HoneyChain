@@ -31,7 +31,10 @@ import { ConsumerVerifyResponse } from '../types';
 import { HoneyJar3DViewer } from './HoneyJar3DViewer';
 import { HouseholdPuritySimulator } from './HouseholdPuritySimulator';
 import { RealCameraScannerModal } from './RealCameraScannerModal';
+import { CustomerProcessGuide } from './CustomerProcessGuide';
+import { CustomerLoginModal } from './CustomerLoginModal';
 import { useLanguage } from '../context/LanguageContext';
+import { useAuth } from '../context/AuthContext';
 
 interface WebsiteHomeProps {
   onOpenPortal: (portalId: string) => void;
@@ -45,6 +48,7 @@ export const WebsiteHome: React.FC<WebsiteHomeProps> = ({
   onOpenCustomerQrModal 
 }) => {
   const { lang, t } = useLanguage();
+  const { addScannedBatch } = useAuth();
   const [packageCode, setPackageCode] = useState('PKG-MAHA-042-2697');
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState<ConsumerVerifyResponse | null>(null);
@@ -52,6 +56,7 @@ export const WebsiteHome: React.FC<WebsiteHomeProps> = ({
   // Modals
   const [isScannerOpen, setIsScannerOpen] = useState(false);
   const [isCertificateOpen, setIsCertificateOpen] = useState(false);
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [showPuritySim, setShowPuritySim] = useState(false);
 
   const playSoftBeep = () => {
@@ -77,6 +82,7 @@ export const WebsiteHome: React.FC<WebsiteHomeProps> = ({
     try {
       const res = await verifyPackageByCode(code.trim());
       setData(res);
+      addScannedBatch(code.trim());
       playSoftBeep();
       confetti({
         particleCount: 40,
@@ -101,6 +107,17 @@ export const WebsiteHome: React.FC<WebsiteHomeProps> = ({
 
   return (
     <div className="space-y-10 max-w-5xl mx-auto">
+      {/* CUSTOMER GUIDED PROCESS (STEP 1: LOGIN ➔ STEP 2: SCAN ➔ STEP 3: VERIFY & FARMER ➔ STEP 4: 3D & CERT) */}
+      <CustomerProcessGuide
+        onOpenLogin={() => setIsLoginModalOpen(true)}
+        onOpenScanner={() => setIsScannerOpen(true)}
+        onOpenCertificate={() => setIsCertificateOpen(true)}
+        onScrollTo3D={() => {
+          const el = document.getElementById('honey-jar-3d-section');
+          if (el) el.scrollIntoView({ behavior: 'smooth' });
+        }}
+      />
+
       {/* 1. CLEAN, FOCUSED HERO & SCANNER */}
       <section className="relative rounded-3xl overflow-hidden border border-amber-200/90 shadow-sm bg-gradient-to-b from-[#FEFCF8] to-[#FDF9F0] p-6 sm:p-10 text-center space-y-4">
         <div className="inline-flex items-center gap-2 bg-white px-3.5 py-1 rounded-full text-xs font-semibold border border-amber-300 text-stone-900 shadow-2xs">
@@ -181,7 +198,7 @@ export const WebsiteHome: React.FC<WebsiteHomeProps> = ({
 
       {/* 2. VERIFIED HONEY CARD (ESSENTIAL INFO FOR THE CUSTOMER) */}
       {data && (
-        <section className="space-y-6 animate-in fade-in duration-300">
+        <section id="verified-batch-section" className="space-y-6 animate-in fade-in duration-300">
           {/* Main Verification Card */}
           <div className="bg-white rounded-3xl p-6 sm:p-8 border border-amber-200 shadow-sm space-y-6">
             {/* Top Status Header */}
@@ -399,7 +416,7 @@ export const WebsiteHome: React.FC<WebsiteHomeProps> = ({
       )}
 
       {/* 3. INTERACTIVE 3D HONEY JAR MODEL (VISUAL & INTUITIVE) */}
-      <section>
+      <section id="honey-jar-3d-section">
         <HoneyJar3DViewer />
       </section>
 
@@ -559,6 +576,13 @@ export const WebsiteHome: React.FC<WebsiteHomeProps> = ({
           </div>
         </div>
       )}
+
+      {/* Customer Login Modal */}
+      <CustomerLoginModal
+        isOpen={isLoginModalOpen}
+        onClose={() => setIsLoginModalOpen(false)}
+        onScanRedirect={() => setIsScannerOpen(true)}
+      />
     </div>
   );
 };
