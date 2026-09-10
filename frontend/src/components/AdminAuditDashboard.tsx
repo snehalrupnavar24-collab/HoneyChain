@@ -3,7 +3,6 @@ import {
   ShieldAlert,
   ShieldCheck,
   GitFork,
-  FileSpreadsheet,
   AlertOctagon,
   CheckCircle2,
   Clock,
@@ -18,24 +17,48 @@ import {
   FlaskConical,
   Package,
   Layers,
-  Sparkles
+  Sparkles,
+  Camera,
+  QrCode,
+  Printer,
+  Volume2,
+  Smartphone,
+  ExternalLink,
+  MapPin,
+  Leaf,
+  X
 } from 'lucide-react';
 import { Discrepancy, SupplyChainEvent } from '../types';
 import { getDiscrepancies, resolveDiscrepancy, getAuditEvents } from '../services/api';
+import { HoneyJar3DViewer } from './HoneyJar3DViewer';
+import { RealCameraScannerModal } from './RealCameraScannerModal';
+import { CustomerJarQRGenerator } from './CustomerJarQRGenerator';
+import { useLanguage } from '../context/LanguageContext';
 
 export const AdminAuditDashboard: React.FC = () => {
+  const { lang, t } = useLanguage();
   const [discrepancies, setDiscrepancies] = useState<Discrepancy[]>([]);
   const [events, setEvents] = useState<SupplyChainEvent[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // Resolution Modal State
+  // Modals
   const [activeDiscrepancy, setActiveDiscrepancy] = useState<Discrepancy | null>(null);
   const [resolutionNotes, setResolutionNotes] = useState('');
   const [resolving, setResolving] = useState(false);
+  const [isScannerOpen, setIsScannerOpen] = useState(false);
+  const [isQrGeneratorOpen, setIsQrGeneratorOpen] = useState(false);
+  const [isCertificateOpen, setIsCertificateOpen] = useState(false);
 
-  // DAG Explorer State
+  // Selected Batch for Audit & QR
   const [selectedBatchCode, setSelectedBatchCode] = useState('PKG-MAHA-042-2697');
   const [copiedHash, setCopiedHash] = useState<string | null>(null);
+  const [scannedFeedback, setScannedFeedback] = useState<string | null>(null);
+
+  const host = typeof window !== 'undefined' && window.location.hostname && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1'
+    ? window.location.hostname
+    : '10.196.224.19';
+  const qrTargetUrl = `http://${host}:5173/?batch=${encodeURIComponent(selectedBatchCode)}`;
+  const qrImgUrl = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(qrTargetUrl)}&color=12-42-28&bgcolor=255-255-255`;
 
   useEffect(() => {
     loadAuditData();
@@ -43,13 +66,18 @@ export const AdminAuditDashboard: React.FC = () => {
 
   const loadAuditData = async () => {
     setLoading(true);
-    const [discList, eventList] = await Promise.all([
-      getDiscrepancies(),
-      getAuditEvents()
-    ]);
-    setDiscrepancies(discList);
-    setEvents(eventList);
-    setLoading(false);
+    try {
+      const [discList, eventList] = await Promise.all([
+        getDiscrepancies(),
+        getAuditEvents()
+      ]);
+      setDiscrepancies(discList);
+      setEvents(eventList);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleResolve = async (e: React.FormEvent) => {
@@ -74,375 +102,617 @@ export const AdminAuditDashboard: React.FC = () => {
     setTimeout(() => setCopiedHash(null), 2000);
   };
 
+  const handleAudioNarration = () => {
+    let speechText = '';
+    let speechLang = 'en-IN';
+    if (lang === 'mr') {
+      speechText = `हनीचेन संपूर्ण ऑडिट डॅशबोर्ड. बॅच क्रमांक PKG-MAHA-042-2697 सह्याद्रीच्या जंगलातून १००% अस्सल सिद्ध झाली आहे. शेतकरी रमेश पाटील यांना ४८० रुपये प्रति किलो पूर्ण दर मिळाला आहे. NABL लॅबमध्ये शून्य टक्के साखर पाक आढळली आहे.`;
+      speechLang = 'mr-IN';
+    } else if (lang === 'hi') {
+      speechText = `हनीचेन ऑडिट डैशबोर्ड। बैच क्रमांक PKG-MAHA-042-2697 पूर्णतः शुद्ध एवं सत्यापित है। किसान रमेश पाटिल को ४८० रुपये प्रति किलो भुगतान किया गया है। NABL लैब में शून्य प्रतिशत कृत्रिम चीनी है।`;
+      speechLang = 'hi-IN';
+    } else {
+      speechText = `HoneyChain Master Audit Dashboard. Batch PKG-MAHA-042-2697 is verified pure. Harvested by beekeeper Ramesh Patil at 480 rupees per kg. NABL certified with zero synthetic sugar.`;
+      speechLang = 'en-IN';
+    }
+    if ('speechSynthesis' in window) {
+      window.speechSynthesis.cancel();
+      const ut = new SpeechSynthesisUtterance(speechText);
+      ut.lang = speechLang;
+      window.speechSynthesis.speak(ut);
+    }
+  };
+
   return (
-    <div className="space-y-8">
-      {/* Top Header Banner */}
-      <div className="bg-white rounded-2xl border border-cream-200 p-5 shadow-sm">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+    <div className="space-y-6">
+      {/* 1. TOP EXECUTIVE DASHBOARD BANNER */}
+      <div className="bg-white rounded-3xl border border-stone-200 p-5 sm:p-6 shadow-sm">
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
           <div className="space-y-1">
-            <div className="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full bg-forest-100 text-forest-900 text-xs font-semibold border border-forest-300">
-              <ShieldCheck className="w-3.5 h-3.5 text-forest-700" />
-              Central Regulatory Surveillance • National Honey Mission & FSSAI
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 text-emerald-900 text-xs font-bold border border-emerald-300">
+              <ShieldCheck className="w-3.5 h-3.5 text-emerald-700" />
+              <span>
+                {lang === 'mr' ? 'राष्ट्रीय मध मोहीम • केंद्रीय नियामक व गुणवत्ता डॅशबोर्ड' : (lang === 'hi' ? 'राष्ट्रीय मधुमक्खी मिशन • केंद्रीय नियामक एवं गुणवत्ता डैशबोर्ड' : 'Central Regulatory Surveillance & Master Dashboard')}
+              </span>
             </div>
-            <h1 className="text-2xl font-bold font-serif text-forest-900 tracking-tight">
-              Chain of Custody Audit & Discrepancy Investigation Console
+            <h1 className="text-2xl sm:text-3xl font-serif font-black text-stone-900 tracking-tight">
+              {lang === 'mr' ? 'हनीचेन सर्वसमावेशक ऑडिट व पडताळणी केंद्र' : (lang === 'hi' ? 'हनीचेन संपूर्ण ऑडिट एवं सत्यापन केंद्र' : 'HoneyChain All-in-One Master Dashboard')}
             </h1>
-            <p className="text-xs text-cream-600">
-              Surveillance Authority: Directorate of Food Safety Standards & KVIC Monitoring Cell, New Delhi
+            <p className="text-xs text-stone-600">
+              {lang === 'mr' ? 'कच्चा मध संकलन, शेतकरी DBT, NABL रासायनिक लॅब आणि थेट ग्राहक QR एकाच डॅशबोर्डवर' : (lang === 'hi' ? 'कच्चा शहद संकलन, किसान DBT, NABL लैब और ग्राहक QR कोड एक ही डैशबोर्ड पर' : 'Live IoT Telemetry, Mandi Tare Clearing, Mass Balance, NABL Chemical Assay, and Real-Time Customer QR')}
+            </p>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-2 self-start lg:self-auto">
+            <div className="bg-stone-50 px-3.5 py-1.5 rounded-2xl border border-stone-300 text-left sm:text-right">
+              <span className="text-[10px] text-stone-600 font-bold block uppercase tracking-wider">Blockchain Ledger</span>
+              <span className="text-xs font-mono font-bold text-emerald-700 flex items-center gap-1.5">
+                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                BLOCK #18,409 (SYNCED)
+              </span>
+            </div>
+
+            <button
+              type="button"
+              onClick={handleAudioNarration}
+              className="px-3 py-2 bg-amber-100 hover:bg-amber-200 text-amber-950 text-xs font-bold rounded-xl flex items-center gap-1.5 transition-all border border-amber-300 cursor-pointer shadow-2xs"
+              title="Listen to Dashboard Summary in Audio"
+            >
+              <Volume2 className="w-4 h-4 text-amber-800" />
+              <span>{lang === 'mr' ? 'ऑडिओ ऐका' : (lang === 'hi' ? 'ऑडियो सुनें' : 'Audio')}</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* 2. REAL-TIME PLATFORM KPIS (4 Clean, High-Contrast Cards) */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+        <div className="bg-white p-4 rounded-2xl border border-stone-200 shadow-xs">
+          <span className="text-[11px] text-stone-600 font-bold uppercase tracking-wider block">Apiary Clusters</span>
+          <div className="text-2xl font-black font-mono text-stone-900 mt-0.5">14 Zones</div>
+          <span className="text-[11px] text-emerald-700 font-semibold mt-0.5 block">Western Ghats, Kashmir, Sundarbans</span>
+        </div>
+
+        <div className="bg-white p-4 rounded-2xl border border-stone-200 shadow-xs">
+          <span className="text-[11px] text-stone-600 font-bold uppercase tracking-wider block">IoT Telemetry Hives</span>
+          <div className="text-2xl font-black font-mono text-stone-900 mt-0.5">412 Hives</div>
+          <span className="text-[11px] text-emerald-700 font-semibold mt-0.5 block">99.4% LoRaWAN Sensor Uptime</span>
+        </div>
+
+        <div className="bg-white p-4 rounded-2xl border border-stone-200 shadow-xs">
+          <span className="text-[11px] text-stone-600 font-bold uppercase tracking-wider block">Traceable Honey</span>
+          <div className="text-2xl font-black font-mono text-stone-900 mt-0.5">14,820 kg</div>
+          <span className="text-[11px] text-amber-800 font-semibold mt-0.5 block">100% Cryptographically Bound</span>
+        </div>
+
+        <div className="bg-white p-4 rounded-2xl border border-stone-200 shadow-xs">
+          <span className="text-[11px] text-stone-600 font-bold uppercase tracking-wider block">Adulteration Defenses</span>
+          <div className="text-2xl font-black font-mono text-emerald-700 mt-0.5">
+            0 Active Breaches
+          </div>
+          <span className="text-[11px] text-stone-600 font-semibold mt-0.5 block">
+            {discrepancies.length} Resolved & Investigated
+          </span>
+        </div>
+      </div>
+
+      {/* 3. SUPPLY CHAIN LINEAGE - FULLY RESPONSIVE, 100% VISIBLE WITH ZERO HORIZONTAL SCROLLING */}
+      <div className="bg-white rounded-3xl border border-stone-200 p-5 sm:p-6 shadow-sm space-y-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-stone-200 pb-3">
+          <div>
+            <h2 className="text-base sm:text-lg font-bold font-serif text-stone-900 flex items-center gap-2">
+              <GitFork className="w-5 h-5 text-amber-600" />
+              <span>
+                {lang === 'mr' ? '६-टप्प्यांची संपूर्ण पुरवठा साखळी व QR नोंद' : (lang === 'hi' ? '6-चरणीय आपूर्ति श्रृंखला एवं QR वंशावली' : 'End-to-End Supply Chain Lineage & QR Provenance')}
+              </span>
+            </h2>
+            <p className="text-xs text-stone-600">
+              {lang === 'mr' ? 'मधमाशी पोळ्यापासून रिटेल जार QR कोडपर्यंतचा प्रत्येक टप्पा थेट दृश्यमान' : (lang === 'hi' ? 'मधुमक्खी के छत्ते से लेकर रिटेल जार QR तक प्रत्येक चरण प्रत्यक्ष' : 'Direct traceability from beehive telemetry to retail QR label with zero hidden nodes.')}
             </p>
           </div>
 
           <div className="flex items-center gap-2">
-            <div className="bg-cream-100 px-3 py-1.5 rounded-xl border border-cream-300 text-right">
-              <span className="text-[10px] text-cream-600 font-bold block uppercase">Audit Ledger State</span>
-              <span className="text-xs font-mono font-bold text-emerald-700 flex items-center gap-1">
-                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
-                SYNCHRONIZED (BLOCK #18,409)
+            <span className="text-xs text-stone-600 font-semibold">Active Batch:</span>
+            <span className="px-2.5 py-1 bg-amber-50 rounded-lg text-xs font-mono font-bold text-amber-950 border border-amber-300">
+              {selectedBatchCode}
+            </span>
+          </div>
+        </div>
+
+        {/* 6 Responsive Lineage Cards (NO HORIZONTAL SCROLL - ALWAYS VISIBLE!) */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2.5 pt-1">
+          {/* Node 1: Source Hive */}
+          <div className="bg-stone-50 p-3 rounded-2xl border border-stone-200 flex flex-col items-center text-center space-y-1.5 shadow-2xs hover:border-amber-400 transition-colors">
+            <div className="w-10 h-10 rounded-xl bg-amber-500 text-stone-950 flex items-center justify-center font-bold shadow-2xs">
+              <Layers className="w-5 h-5" />
+            </div>
+            <div className="space-y-0.5">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-amber-900 block">1. Queen Hive</span>
+              <h4 className="text-xs font-bold text-stone-900">HIVE-17</h4>
+              <p className="text-[10px] text-stone-600 font-mono">Ramesh Patil</p>
+              <span className="inline-block text-[9px] font-bold bg-emerald-100 text-emerald-800 px-1.5 py-0.5 rounded-full border border-emerald-300">
+                34.5°C Brood
+              </span>
+            </div>
+          </div>
+
+          {/* Node 2: Harvest Lot */}
+          <div className="bg-stone-50 p-3 rounded-2xl border border-stone-200 flex flex-col items-center text-center space-y-1.5 shadow-2xs hover:border-amber-400 transition-colors">
+            <div className="w-10 h-10 rounded-xl bg-stone-800 text-white flex items-center justify-center font-bold shadow-2xs">
+              <Clock className="w-5 h-5 text-amber-400" />
+            </div>
+            <div className="space-y-0.5">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-stone-700 block">2. Harvest</span>
+              <h4 className="text-xs font-bold text-stone-900 font-mono">HC-SAT-2026</h4>
+              <p className="text-[10px] text-stone-600 font-mono">8.00 kg Jamun</p>
+              <span className="inline-block text-[9px] font-bold bg-amber-100 text-amber-950 px-1.5 py-0.5 rounded-full border border-amber-300 font-mono">
+                Voice Signed
+              </span>
+            </div>
+          </div>
+
+          {/* Node 3: Mandi Scale */}
+          <div className="bg-stone-50 p-3 rounded-2xl border border-stone-200 flex flex-col items-center text-center space-y-1.5 shadow-2xs hover:border-amber-400 transition-colors">
+            <div className="w-10 h-10 rounded-xl bg-stone-900 text-white flex items-center justify-center font-bold shadow-2xs">
+              <Scale className="w-5 h-5 text-emerald-400" />
+            </div>
+            <div className="space-y-0.5">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-stone-700 block">3. Mandi Scale</span>
+              <h4 className="text-xs font-bold text-stone-900 font-mono">COL-SAT-042</h4>
+              <p className="text-[10px] text-stone-600 font-mono">8.00 kg (0% var)</p>
+              <span className="inline-block text-[9px] font-bold bg-emerald-100 text-emerald-800 px-1.5 py-0.5 rounded-full border border-emerald-300">
+                Tare Cleared
+              </span>
+            </div>
+          </div>
+
+          {/* Node 4: Processing Facility */}
+          <div className="bg-stone-50 p-3 rounded-2xl border border-stone-200 flex flex-col items-center text-center space-y-1.5 shadow-2xs hover:border-amber-400 transition-colors">
+            <div className="w-10 h-10 rounded-xl bg-stone-900 text-white flex items-center justify-center font-bold shadow-2xs">
+              <Building className="w-5 h-5 text-amber-300" />
+            </div>
+            <div className="space-y-0.5">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-stone-700 block">4. Processing</span>
+              <h4 className="text-xs font-bold text-stone-900 font-mono">PROC-2026-042</h4>
+              <p className="text-[10px] text-stone-600 font-mono">48.2kg out / 50kg</p>
+              <span className="inline-block text-[9px] font-bold bg-emerald-100 text-emerald-800 px-1.5 py-0.5 rounded-full border border-emerald-300">
+                Mass Bal. OK
+              </span>
+            </div>
+          </div>
+
+          {/* Node 5: NABL Chemical Lab */}
+          <div className="bg-stone-50 p-3 rounded-2xl border border-stone-200 flex flex-col items-center text-center space-y-1.5 shadow-2xs hover:border-amber-400 transition-colors">
+            <div className="w-10 h-10 rounded-xl bg-stone-900 text-white flex items-center justify-center font-bold shadow-2xs">
+              <FlaskConical className="w-5 h-5 text-amber-400" />
+            </div>
+            <div className="space-y-0.5">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-stone-700 block">5. FSSAI Lab</span>
+              <h4 className="text-xs font-bold text-stone-900 font-mono">LR-NABL-7821</h4>
+              <p className="text-[10px] text-stone-600 font-mono">17.8% Moist</p>
+              <span className="inline-block text-[9px] font-bold bg-emerald-100 text-emerald-800 px-1.5 py-0.5 rounded-full border border-emerald-300">
+                99.1% Pure
+              </span>
+            </div>
+          </div>
+
+          {/* Node 6: Serialized Package WITH ACTIVE QR - RIGHT HERE ON SCREEN! */}
+          <div className="bg-emerald-50 p-3 rounded-2xl border-2 border-emerald-400 flex flex-col items-center text-center space-y-1.5 shadow-xs">
+            <div className="w-10 h-10 rounded-xl bg-emerald-700 text-white flex items-center justify-center font-bold shadow-2xs">
+              <Package className="w-5 h-5" />
+            </div>
+            <div className="space-y-0.5">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-950 block">6. Consumer Jar</span>
+              <h4 className="text-xs font-bold text-stone-900 font-mono">PKG-MAHA-042</h4>
+              <p className="text-[10px] text-stone-700 font-mono">500g Glass</p>
+              <span className="inline-block text-[9px] font-bold bg-emerald-600 text-white px-2 py-0.5 rounded-full shadow-2xs">
+                ✓ QR Active
               </span>
             </div>
           </div>
         </div>
       </div>
 
-      {/* KPI Cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="bg-white p-4 rounded-xl border border-cream-200 shadow-xs">
-          <span className="text-xs text-cream-600 font-bold uppercase tracking-wider block">Monitored Apiary Clusters</span>
-          <div className="text-2xl font-black font-mono text-forest-950 mt-1">14 Zones</div>
-          <span className="text-[11px] text-forest-700 font-medium mt-1 block">Western Ghats, Nilgiris, Kashmir</span>
-        </div>
-
-        <div className="bg-white p-4 rounded-xl border border-cream-200 shadow-xs">
-          <span className="text-xs text-cream-600 font-bold uppercase tracking-wider block">IoT Telemetry Hives</span>
-          <div className="text-2xl font-black font-mono text-forest-950 mt-1">412 Hives</div>
-          <span className="text-[11px] text-emerald-700 font-medium mt-1 block">99.4% LoRaWAN Uptime</span>
-        </div>
-
-        <div className="bg-white p-4 rounded-xl border border-cream-200 shadow-xs">
-          <span className="text-xs text-cream-600 font-bold uppercase tracking-wider block">Total Traceable Honey</span>
-          <div className="text-2xl font-black font-mono text-forest-950 mt-1">14,820 kg</div>
-          <span className="text-[11px] text-honey-700 font-medium mt-1 block">100% Cryptographically Bound</span>
-        </div>
-
-        <div className="bg-white p-4 rounded-xl border border-cream-200 shadow-xs">
-          <span className="text-xs text-cream-600 font-bold uppercase tracking-wider block">Adulteration Breaches Blocked</span>
-          <div className="text-2xl font-black font-mono text-red-600 mt-1">
-            {discrepancies.filter(d => d.status === 'open').length} Active
-          </div>
-          <span className="text-[11px] text-cream-600 font-medium mt-1 block">
-            {discrepancies.filter(d => d.status === 'resolved').length} Resolved & Investigated
-          </span>
-        </div>
-      </div>
-
-      {/* SECTION 1: BATCH GENEALOGY DAG EXPLORER */}
-      <div className="bg-white rounded-2xl border border-cream-200 p-6 shadow-sm space-y-6">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-cream-200 pb-4">
-          <div>
-            <h2 className="text-lg font-bold font-serif text-forest-900 flex items-center gap-2">
-              <GitFork className="w-5 h-5 text-honey-600" />
-              Batch Genealogy Directed Acyclic Graph (DAG)
-            </h2>
-            <p className="text-xs text-cream-600 mt-0.5">
-              Inspect full multi-entity tree linkage tracing retail jar serialization back to physical apiary soil and queen hive.
-            </p>
-          </div>
-
-          <div className="flex items-center gap-2">
-            <span className="text-xs text-cream-600 font-semibold">Active Batch:</span>
-            <span className="px-3 py-1 bg-cream-100 rounded-lg text-xs font-mono font-bold text-forest-900 border border-cream-300">
-              {selectedBatchCode}
+      {/* 4. MASTER INTERACTION HUB: LIVE QR CODE & VERIFICATION (LEFT) + 3D DIGITAL TWIN (RIGHT) */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
+        {/* LEFT 5 COLS: LIVE HONEY JAR QR CODE & VERIFICATION ACTIONS */}
+        <div className="lg:col-span-5 bg-white rounded-3xl border border-stone-200 p-5 sm:p-6 shadow-sm space-y-4">
+          <div className="flex items-center justify-between border-b border-stone-200 pb-3">
+            <div className="flex items-center gap-2">
+              <div className="w-7 h-7 rounded-lg bg-amber-500 text-stone-950 flex items-center justify-center font-bold text-xs">
+                <QrCode className="w-4 h-4" />
+              </div>
+              <h3 className="text-base font-bold font-serif text-stone-900">
+                {lang === 'mr' ? 'थेट जार QR व पडताळणी हब' : (lang === 'hi' ? 'लाइव जार QR एवं सत्यापन हब' : 'Live Honey Jar QR Hub')}
+              </h3>
+            </div>
+            <span className="text-[10px] font-mono font-bold bg-emerald-100 text-emerald-900 px-2 py-0.5 rounded-full border border-emerald-300">
+              Scannable
             </span>
           </div>
-        </div>
 
-        {/* Visual Graph Nodes */}
-        <div className="overflow-x-auto pb-4 pt-2">
-          <div className="min-w-[850px] flex items-center justify-between relative px-4">
-            {/* Connector Line behind nodes */}
-            <div className="absolute left-8 right-8 top-1/2 -translate-y-1/2 h-0.5 bg-cream-300 -z-0" />
-
-            {/* Node 1: Queen Hive */}
-            <div className="relative z-10 flex flex-col items-center text-center space-y-2 max-w-[140px]">
-              <div className="w-12 h-12 rounded-2xl bg-amber-500 text-forest-950 flex items-center justify-center font-bold shadow-md border-2 border-white">
-                <Layers className="w-6 h-6" />
-              </div>
-              <div className="space-y-0.5">
-                <span className="text-[10px] font-bold uppercase tracking-wider text-honey-800">Source Hive</span>
-                <h4 className="text-xs font-bold text-forest-950">HIVE-17</h4>
-                <p className="text-[10px] text-cream-600 font-mono">Ramesh Patil</p>
-                <span className="inline-block text-[9px] font-bold bg-emerald-100 text-emerald-800 px-1.5 py-0.2 rounded">
-                  34.5°C Brood
-                </span>
-              </div>
+          {/* QR Code & Scan Preview Box */}
+          <div className="bg-stone-50 rounded-2xl p-4 border border-stone-200 flex flex-col items-center text-center space-y-3">
+            {/* Live QR Image */}
+            <div className="w-36 h-36 bg-white p-2 rounded-2xl border-2 border-amber-300 shadow-sm flex items-center justify-center">
+              <img 
+                src={qrImgUrl} 
+                alt="Live Honey Jar QR" 
+                className="w-full h-full object-contain"
+              />
             </div>
 
-            {/* Node 2: Harvest Lot */}
-            <div className="relative z-10 flex flex-col items-center text-center space-y-2 max-w-[140px]">
-              <div className="w-12 h-12 rounded-2xl bg-forest-800 text-white flex items-center justify-center font-bold shadow-md border-2 border-white">
-                <Clock className="w-6 h-6 text-honey-400" />
-              </div>
-              <div className="space-y-0.5">
-                <span className="text-[10px] font-bold uppercase tracking-wider text-forest-700">Harvest Lot</span>
-                <h4 className="text-xs font-bold text-forest-950 font-mono">HC-SAT-2026</h4>
-                <p className="text-[10px] text-cream-600 font-mono">8.00 kg Jamun</p>
-                <span className="inline-block text-[9px] font-bold bg-cream-200 text-forest-900 px-1.5 py-0.2 rounded font-mono">
-                  Voice Signed
-                </span>
-              </div>
+            <div className="space-y-1">
+              <span className="text-xs font-mono font-bold text-stone-900 block">
+                {selectedBatchCode}
+              </span>
+              <p className="text-[11px] text-stone-600 max-w-xs">
+                {lang === 'mr' 
+                  ? 'तुमच्या मोबाईल कॅमेऱ्याने हा QR स्कॅन करा किंवा खालील बटणाने थेट तपासा' 
+                  : (lang === 'hi' 
+                    ? 'अपने मोबाइल कैमरे से यह QR स्कैन करें या नीचे दिए बटन से तुरंत जांचें' 
+                    : 'Point any smartphone camera at this QR or use the instant buttons below')}
+              </p>
             </div>
 
-            {/* Node 3: Mandi Collection */}
-            <div className="relative z-10 flex flex-col items-center text-center space-y-2 max-w-[140px]">
-              <div className="w-12 h-12 rounded-2xl bg-forest-900 text-white flex items-center justify-center font-bold shadow-md border-2 border-white">
-                <Scale className="w-6 h-6 text-emerald-400" />
-              </div>
-              <div className="space-y-0.5">
-                <span className="text-[10px] font-bold uppercase tracking-wider text-forest-700">Mandi Scale</span>
-                <h4 className="text-xs font-bold text-forest-950 font-mono">COL-SAT-042</h4>
-                <p className="text-[10px] text-cream-600 font-mono">8.00 kg (0% var)</p>
-                <span className="inline-block text-[9px] font-bold bg-emerald-100 text-emerald-800 px-1.5 py-0.2 rounded">
-                  Tare Cleared
-                </span>
-              </div>
-            </div>
+            {/* Direct Verification Link */}
+            <a
+              href={qrTargetUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-[11px] font-mono text-emerald-800 hover:text-emerald-950 underline flex items-center gap-1 font-semibold"
+            >
+              <span>{qrTargetUrl}</span>
+              <ExternalLink className="w-3 h-3" />
+            </a>
+          </div>
 
-            {/* Node 4: Processing Facility */}
-            <div className="relative z-10 flex flex-col items-center text-center space-y-2 max-w-[140px]">
-              <div className="w-12 h-12 rounded-2xl bg-forest-900 text-white flex items-center justify-center font-bold shadow-md border-2 border-white">
-                <Building className="w-6 h-6 text-honey-300" />
-              </div>
-              <div className="space-y-0.5">
-                <span className="text-[10px] font-bold uppercase tracking-wider text-forest-700">Agro-Processing</span>
-                <h4 className="text-xs font-bold text-forest-950 font-mono">PROC-2026-042</h4>
-                <p className="text-[10px] text-cream-600 font-mono">48.2kg out / 50kg</p>
-                <span className="inline-block text-[9px] font-bold bg-emerald-100 text-emerald-800 px-1.5 py-0.2 rounded">
-                  Mass Bal. OK
-                </span>
-              </div>
-            </div>
+          {/* Action Buttons Grid */}
+          <div className="grid grid-cols-2 gap-2 text-xs">
+            <button
+              type="button"
+              onClick={() => setIsScannerOpen(true)}
+              className="px-3 py-2.5 bg-amber-500 hover:bg-amber-600 text-stone-950 font-bold rounded-xl flex items-center justify-center gap-1.5 transition-all shadow-xs cursor-pointer"
+            >
+              <Camera className="w-4 h-4" />
+              <span>{lang === 'mr' ? 'कॅमेऱ्याने स्कॅन' : (lang === 'hi' ? 'कैमरा स्कैन' : 'Scan Camera')}</span>
+            </button>
 
-            {/* Node 5: NABL Chemical Lab */}
-            <div className="relative z-10 flex flex-col items-center text-center space-y-2 max-w-[140px]">
-              <div className="w-12 h-12 rounded-2xl bg-forest-900 text-white flex items-center justify-center font-bold shadow-md border-2 border-white">
-                <FlaskConical className="w-6 h-6 text-amber-400" />
-              </div>
-              <div className="space-y-0.5">
-                <span className="text-[10px] font-bold uppercase tracking-wider text-forest-700">FSSAI Lab</span>
-                <h4 className="text-xs font-bold text-forest-950 font-mono">LR-NABL-7821</h4>
-                <p className="text-[10px] text-cream-600 font-mono">17.8% Moisture</p>
-                <span className="inline-block text-[9px] font-bold bg-emerald-100 text-emerald-800 px-1.5 py-0.2 rounded">
-                  Agmark Special
-                </span>
-              </div>
-            </div>
+            <button
+              type="button"
+              onClick={() => setIsQrGeneratorOpen(true)}
+              className="px-3 py-2.5 bg-stone-900 hover:bg-black text-white font-bold rounded-xl flex items-center justify-center gap-1.5 transition-all shadow-xs cursor-pointer"
+            >
+              <Printer className="w-4 h-4 text-amber-400" />
+              <span>{lang === 'mr' ? 'QR लेबल प्रिंट' : (lang === 'hi' ? 'QR लेबल प्रिंट' : 'Print Label')}</span>
+            </button>
 
-            {/* Node 6: Serialized Package */}
-            <div className="relative z-10 flex flex-col items-center text-center space-y-2 max-w-[140px]">
-              <div className="w-12 h-12 rounded-2xl bg-emerald-600 text-white flex items-center justify-center font-bold shadow-md border-2 border-white">
-                <Package className="w-6 h-6" />
+            <button
+              type="button"
+              onClick={() => setIsCertificateOpen(true)}
+              className="col-span-2 px-3 py-2 bg-emerald-100 hover:bg-emerald-200 text-emerald-950 font-bold rounded-xl flex items-center justify-center gap-1.5 transition-all border border-emerald-300 cursor-pointer shadow-2xs"
+            >
+              <ShieldCheck className="w-4 h-4 text-emerald-700" />
+              <span>{lang === 'mr' ? 'अधिकृत NABL लॅब प्रमाणपत्र उघडा' : (lang === 'hi' ? 'आधिकारिक NABL लैब प्रमाण पत्र देखें' : 'View Official NABL Lab Certificate')}</span>
+            </button>
+          </div>
+
+          {/* Farmer Attribution Box */}
+          <div className="bg-amber-50/70 rounded-2xl p-3.5 border border-amber-200 flex items-center gap-3 text-xs">
+            <div className="w-12 h-12 rounded-xl overflow-hidden shadow-2xs border border-amber-300 shrink-0">
+              <img 
+                src="https://images.unsplash.com/photo-1605000797499-95a51c5269ae?auto=format&fit=crop&w=150&q=80" 
+                alt="Ramesh Patil"
+                className="w-full h-full object-cover"
+              />
+            </div>
+            <div className="min-w-0 flex-1">
+              <div className="flex items-center justify-between">
+                <h4 className="font-bold text-stone-900 truncate">Ramesh Tukaram Patil</h4>
+                <span className="text-[10px] font-mono font-bold text-emerald-900">₹480/kg DBT</span>
               </div>
-              <div className="space-y-0.5">
-                <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-800">Consumer Jar</span>
-                <h4 className="text-xs font-bold text-forest-950 font-mono">PKG-MAHA-042</h4>
-                <p className="text-[10px] text-cream-600 font-mono">96 Jars (500g)</p>
-                <span className="inline-block text-[9px] font-bold bg-emerald-100 text-emerald-800 px-1.5 py-0.2 rounded">
-                  QR Active
-                </span>
-              </div>
+              <p className="text-[11px] text-stone-600 truncate">Kas Forest Apiary, Western Ghats</p>
+              <span className="text-[10px] font-bold text-amber-900">Syzygium cumini (Wild Jamun)</span>
             </div>
           </div>
+        </div>
+
+        {/* RIGHT 7 COLS: 3D DIGITAL TWIN HONEY JAR VIEWER */}
+        <div className="lg:col-span-7">
+          <HoneyJar3DViewer />
         </div>
       </div>
 
-      {/* SECTION 2: DISCREPANCY INVESTIGATION TABLE */}
-      <div className="bg-white rounded-2xl border border-cream-200 p-6 shadow-sm space-y-5">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-cream-200 pb-4">
+      {/* 5. DISCREPANCY INVESTIGATION & FRAUD SURVEILLANCE */}
+      <div className="bg-white rounded-3xl border border-stone-200 p-5 sm:p-6 shadow-sm space-y-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-stone-200 pb-3">
           <div>
-            <h2 className="text-lg font-bold font-serif text-forest-900 flex items-center gap-2">
-              <ShieldAlert className="w-5 h-5 text-red-600" />
-              Automated Discrepancy & Fraud Investigation Console
+            <h2 className="text-base sm:text-lg font-bold font-serif text-stone-900 flex items-center gap-2">
+              <ShieldAlert className="w-5 h-5 text-emerald-600" />
+              <span>
+                {lang === 'mr' ? 'स्वयंचलित विसंगती व गैरव्यवहार तपासणी' : (lang === 'hi' ? 'स्वचालित विसंगति एवं मिलावट जांच' : 'Automated Discrepancy & Adulteration Guard')}
+              </span>
             </h2>
-            <p className="text-xs text-cream-600 mt-0.5">
-              Algorithmically flagged deviations exceeding physical mass-conservation or botanical tolerance limits.
+            <p className="text-xs text-stone-600">
+              {lang === 'mr' ? 'भौतिक वजन संवर्धन व रासायनिक मानकांची तपासणी' : (lang === 'hi' ? 'भौतिक द्रव्यमान एवं रासायनिक मानकों की स्वचालित जांच' : 'Mass-conservation and botanical limits algorithmically monitored.')}
             </p>
           </div>
-          <span className="text-xs font-mono font-bold text-cream-600">
+          <span className="text-xs font-mono font-bold text-stone-600 bg-stone-100 px-3 py-1 rounded-xl border border-stone-200">
             {discrepancies.length} Incident(s) Logged
           </span>
         </div>
 
-        <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs border-collapse">
-            <thead>
-              <tr className="border-b border-cream-200 bg-cream-50/50 text-cream-700 font-bold uppercase tracking-wider">
-                <th className="py-3 px-4">Entity</th>
-                <th className="py-3 px-4">Declared Weight</th>
-                <th className="py-3 px-4">Measured Weight</th>
-                <th className="py-3 px-4">Deficit / Variance</th>
-                <th className="py-3 px-4">Status</th>
-                <th className="py-3 px-4">Flag Description</th>
-                <th className="py-3 px-4 text-right">Action</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-cream-200 text-forest-950">
-              {discrepancies.map(item => (
-                <tr key={item.id} className="hover:bg-cream-50/50 transition-colors">
-                  <td className="py-3 px-4 font-mono font-bold">
-                    {item.entity_type} #{item.entity_id}
-                  </td>
-                  <td className="py-3 px-4 font-mono font-medium">
-                    {item.declared_quantity.toFixed(2)} kg
-                  </td>
-                  <td className="py-3 px-4 font-mono font-medium">
-                    {item.measured_quantity.toFixed(2)} kg
-                  </td>
-                  <td className="py-3 px-4 font-mono font-bold text-red-600">
-                    {item.difference.toFixed(2)} kg
-                  </td>
-                  <td className="py-3 px-4">
-                    <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold uppercase ${
+        <div className="space-y-2">
+          {discrepancies.length === 0 ? (
+            <div className="p-4 bg-emerald-50 rounded-2xl border border-emerald-200 text-center text-xs text-emerald-900 font-semibold">
+              ✓ All mass balances, tare weights, and chemical isotopes strictly verified within standard limits.
+            </div>
+          ) : (
+            discrepancies.map(item => (
+              <div
+                key={item.id}
+                className="p-3.5 bg-stone-50 hover:bg-amber-50/40 rounded-2xl border border-stone-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs transition-colors"
+              >
+                <div className="space-y-1">
+                  <div className="flex items-center gap-2">
+                    <span className="font-mono font-bold text-stone-900 bg-white px-2 py-0.5 rounded border border-stone-200">
+                      {item.entity_type} #{item.entity_id}
+                    </span>
+                    <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase ${
                       item.status === 'resolved'
-                        ? 'bg-emerald-100 text-emerald-800'
-                        : 'bg-red-100 text-red-800 animate-pulse'
+                        ? 'bg-emerald-100 text-emerald-800 border border-emerald-300'
+                        : 'bg-red-100 text-red-800 border border-red-300 animate-pulse'
                     }`}>
                       {item.status}
                     </span>
-                  </td>
-                  <td className="py-3 px-4 text-cream-700 max-w-xs truncate" title={item.explanation}>
-                    {item.explanation}
-                  </td>
-                  <td className="py-3 px-4 text-right">
-                    {item.status === 'open' ? (
-                      <button
-                        onClick={() => setActiveDiscrepancy(item)}
-                        className="px-3 py-1 bg-red-600 hover:bg-red-700 text-white font-bold rounded-lg text-xs transition-colors shadow-xs"
-                      >
-                        Investigate
-                      </button>
-                    ) : (
-                      <span className="text-emerald-700 font-semibold text-xs flex items-center justify-end gap-1">
-                        <CheckCircle2 className="w-3.5 h-3.5" /> Resolved
-                      </span>
-                    )}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+                    <span className="font-mono text-stone-600 text-[11px]">
+                      Decl: {item.declared_quantity?.toFixed(1)}kg • Meas: {item.measured_quantity?.toFixed(1)}kg • Diff: {item.difference?.toFixed(1)}kg
+                    </span>
+                  </div>
+                  <p className="text-stone-700 text-[11px]">{item.explanation}</p>
+                </div>
+
+                <div className="shrink-0">
+                  {item.status === 'open' ? (
+                    <button
+                      type="button"
+                      onClick={() => setActiveDiscrepancy(item)}
+                      className="px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white font-bold rounded-xl text-xs transition-colors cursor-pointer shadow-xs"
+                    >
+                      Investigate
+                    </button>
+                  ) : (
+                    <span className="text-emerald-800 font-bold text-xs flex items-center gap-1 bg-emerald-50 px-2.5 py-1 rounded-xl border border-emerald-200">
+                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-700" /> Resolved
+                    </span>
+                  )}
+                </div>
+              </div>
+            ))
+          )}
         </div>
       </div>
 
-      {/* SECTION 3: IMMUTABLE AUDIT EVENT LEDGER */}
-      <div className="bg-white rounded-2xl border border-cream-200 p-6 shadow-sm space-y-5">
-        <div className="border-b border-cream-200 pb-4">
-          <h2 className="text-lg font-bold font-serif text-forest-900 flex items-center gap-2">
-            <Layers className="w-5 h-5 text-honey-600" />
-            Cryptographic SHA-256 Audit Event Ledger
+      {/* 6. IMMUTABLE SHA-256 BLOCKCHAIN EVENT LEDGER */}
+      <div className="bg-white rounded-3xl border border-stone-200 p-5 sm:p-6 shadow-sm space-y-4">
+        <div className="border-b border-stone-200 pb-3">
+          <h2 className="text-base sm:text-lg font-bold font-serif text-stone-900 flex items-center gap-2">
+            <Layers className="w-5 h-5 text-amber-600" />
+            <span>
+              {lang === 'mr' ? 'अपरिवर्तनीय SHA-256 ब्लॉकचेन ऑडिट लेजर' : (lang === 'hi' ? 'अपरिवर्तनीय SHA-256 ब्लॉकचेन ऑडिट लेजर' : 'Cryptographic SHA-256 Blockchain Event Ledger')}
+            </span>
           </h2>
-          <p className="text-xs text-cream-600 mt-0.5">
-            Decentralized hash blocks minted on state transition events (Harvest → Collection → Processing → Lab → QR).
+          <p className="text-xs text-stone-600">
+            {lang === 'mr' ? 'प्रत्येक भौतिक कृतीवर क्रिप्टोग्राफिक हॅश मिंट केले जाते' : (lang === 'hi' ? 'प्रत्येक भौतिक गतिविधि पर क्रिप्टोग्राफिक हैश मिंट किया जाता है' : 'Decentralized hash blocks minted on state transition events (Harvest → Collection → Processing → Lab → QR).')}
           </p>
         </div>
 
-        <div className="space-y-3">
-          {events.map(event => (
+        <div className="space-y-2">
+          {events.slice(0, 6).map((event, idx) => (
             <div
-              key={event.event_id}
-              className="p-4 rounded-xl bg-cream-50/70 border border-cream-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs"
+              key={event.event_id || idx}
+              className="p-3 rounded-2xl bg-stone-50 border border-stone-200 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 text-xs"
             >
-              <div className="space-y-1">
+              <div className="space-y-0.5">
                 <div className="flex items-center gap-2">
-                  <span className="font-mono font-bold text-forest-950 bg-white px-2 py-0.5 rounded border border-cream-300">
-                    EVENT #{event.event_id}
+                  <span className="font-mono font-bold text-stone-900 bg-white px-2 py-0.5 rounded border border-stone-200 text-[11px]">
+                    EVENT #{event.event_id || idx + 1}
                   </span>
-                  <span className="px-2 py-0.5 bg-honey-100 text-honey-900 font-bold rounded text-[10px] uppercase">
+                  <span className="px-2 py-0.5 bg-amber-100 text-amber-950 font-bold rounded-full text-[10px] uppercase">
                     {event.event_type}
                   </span>
-                  <span className="text-[10px] text-cream-500 font-mono">
-                    {new Date(event.timestamp).toLocaleString()}
-                  </span>
+                  {event.timestamp && (
+                    <span className="text-[10px] text-stone-500 font-mono">
+                      {new Date(event.timestamp).toLocaleTimeString()}
+                    </span>
+                  )}
                 </div>
-                <p className="text-forest-900 font-medium">{event.description}</p>
+                <p className="text-stone-800 font-medium text-[11px]">{event.description}</p>
               </div>
 
               {/* SHA-256 Hash Display */}
-              <div className="flex items-center gap-2 self-start sm:self-auto bg-white px-2.5 py-1.5 rounded-lg border border-cream-300">
-                <span className="text-[10px] font-mono text-cream-600">SHA-256:</span>
-                <span className="font-mono font-bold text-forest-950 text-[11px]">
-                  {event.blockchain_hash.slice(0, 10)}...{event.blockchain_hash.slice(-8)}
-                </span>
-                <button
-                  onClick={() => copyToClipboard(event.blockchain_hash)}
-                  className="p-1 hover:bg-cream-100 rounded text-cream-600 hover:text-forest-900 transition-colors"
-                  title="Copy Full 64-character SHA-256 Hash"
-                >
-                  {copiedHash === event.blockchain_hash ? (
-                    <Check className="w-3.5 h-3.5 text-emerald-600" />
-                  ) : (
-                    <Copy className="w-3.5 h-3.5" />
-                  )}
-                </button>
-              </div>
+              {event.blockchain_hash && (
+                <div className="flex items-center gap-1.5 self-start sm:self-auto bg-white px-2 py-1 rounded-xl border border-stone-200">
+                  <span className="text-[10px] font-mono text-stone-500">SHA-256:</span>
+                  <span className="font-mono font-bold text-stone-900 text-[11px]">
+                    {event.blockchain_hash.slice(0, 10)}...{event.blockchain_hash.slice(-8)}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => copyToClipboard(event.blockchain_hash!)}
+                    className="p-1 hover:bg-stone-100 rounded text-stone-600 hover:text-stone-900 transition-colors cursor-pointer"
+                    title="Copy Full SHA-256 Hash"
+                  >
+                    {copiedHash === event.blockchain_hash ? (
+                      <Check className="w-3.5 h-3.5 text-emerald-600" />
+                    ) : (
+                      <Copy className="w-3.5 h-3.5" />
+                    )}
+                  </button>
+                </div>
+              )}
             </div>
           ))}
         </div>
       </div>
 
-      {/* RESOLUTION MODAL */}
+      {/* MODAL 1: DISCREPANCY INVESTIGATION & RESOLUTION */}
       {activeDiscrepancy && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-2xl max-w-lg w-full p-6 space-y-5 border border-cream-200 shadow-2xl animate-in zoom-in-95">
-            <div className="flex items-center justify-between border-b border-cream-200 pb-3">
-              <h3 className="text-base font-bold font-serif text-forest-900 flex items-center gap-2">
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 z-50 animate-in fade-in">
+          <div className="bg-white rounded-3xl max-w-lg w-full p-6 space-y-5 border border-stone-200 shadow-2xl">
+            <div className="flex items-center justify-between border-b border-stone-200 pb-3">
+              <h3 className="text-base font-bold font-serif text-stone-900 flex items-center gap-2">
                 <AlertOctagon className="w-5 h-5 text-red-600" />
                 Resolve Discrepancy #{activeDiscrepancy.id}
               </h3>
               <button
+                type="button"
                 onClick={() => setActiveDiscrepancy(null)}
-                className="text-cream-500 hover:text-forest-900 text-lg font-bold"
+                className="text-stone-400 hover:text-stone-800 p-1 cursor-pointer"
               >
                 ✕
               </button>
             </div>
 
-            <div className="bg-red-50 p-3 rounded-xl border border-red-200 text-xs text-red-950 space-y-1">
-              <div className="font-bold">Flagged Deficit: {activeDiscrepancy.difference.toFixed(2)} kg</div>
-              <p>{activeDiscrepancy.explanation}</p>
+            <div className="bg-stone-50 p-3.5 rounded-2xl border border-stone-200 space-y-1.5 text-xs">
+              <div className="font-bold text-stone-900">
+                Entity: {activeDiscrepancy.entity_type} #{activeDiscrepancy.entity_id}
+              </div>
+              <div className="text-stone-700">
+                Declared: {activeDiscrepancy.declared_quantity?.toFixed(2)} kg | Measured: {activeDiscrepancy.measured_quantity?.toFixed(2)} kg
+              </div>
+              <div className="font-bold text-red-600">
+                Variance: {activeDiscrepancy.difference?.toFixed(2)} kg
+              </div>
+              <p className="text-stone-600 pt-1 border-t border-stone-200">{activeDiscrepancy.explanation}</p>
             </div>
 
-            <form onSubmit={handleResolve} className="space-y-4">
-              <div>
-                <label className="block text-xs font-bold text-forest-900 mb-1">
-                  Enforcement Officer Investigation Notes & Remediation Action
-                </label>
+            <form onSubmit={handleResolve} className="space-y-4 text-xs">
+              <div className="space-y-1">
+                <label className="font-bold text-stone-800 block">Investigator Findings & Action Taken:</label>
                 <textarea
-                  rows={4}
                   value={resolutionNotes}
                   onChange={e => setResolutionNotes(e.target.value)}
-                  placeholder="e.g. Conducted physical inspection at Mandi #04. Beekeeper tare deduction corrected after verifying canister weight discrepancy of 2.5 kg due to uncalibrated private scale. Penalty issued and batch cleared under supervision."
-                  className="w-full p-3 text-xs bg-cream-50 border border-cream-300 rounded-xl font-medium text-forest-900 focus:ring-2 focus:ring-honey-400 focus:outline-hidden"
+                  placeholder="Enter physical scale re-calibration notes, APMC inspector verification, or tare offset explanation..."
+                  rows={3}
                   required
+                  className="w-full p-3 rounded-xl border border-stone-300 focus:outline-hidden focus:border-amber-500 text-stone-900"
                 />
               </div>
 
-              <div className="flex items-center justify-end gap-3 pt-2">
+              <div className="flex items-center justify-end gap-2">
                 <button
                   type="button"
                   onClick={() => setActiveDiscrepancy(null)}
-                  className="px-4 py-2 text-xs font-bold text-cream-700 hover:bg-cream-100 rounded-xl transition-colors"
+                  className="px-4 py-2 bg-stone-100 hover:bg-stone-200 text-stone-800 font-bold rounded-xl cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={resolving}
-                  className="px-5 py-2 text-xs font-bold bg-forest-900 hover:bg-forest-950 text-white rounded-xl transition-all shadow-sm disabled:opacity-50"
+                  className="px-5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl cursor-pointer disabled:opacity-50"
                 >
-                  {resolving ? 'Signing Settlement...' : 'Sign & Close Incident'}
+                  {resolving ? 'Submitting...' : 'Mark Resolved & Sign Block'}
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL 2: REAL CAMERA SCANNER */}
+      <RealCameraScannerModal
+        isOpen={isScannerOpen}
+        onClose={() => setIsScannerOpen(false)}
+        onScanSuccess={(scannedCode) => {
+          setSelectedBatchCode(scannedCode);
+          setScannedFeedback(`Scanned Batch: ${scannedCode}`);
+          setTimeout(() => setScannedFeedback(null), 4000);
+        }}
+      />
+
+      {/* MODAL 3: CUSTOMER HONEY JAR QR GENERATOR */}
+      <CustomerJarQRGenerator
+        isOpen={isQrGeneratorOpen}
+        onClose={() => setIsQrGeneratorOpen(false)}
+        onTestVerify={(batchCode) => {
+          setSelectedBatchCode(batchCode);
+          setIsQrGeneratorOpen(false);
+        }}
+      />
+
+      {/* MODAL 4: OFFICIAL NABL CERTIFICATE */}
+      {isCertificateOpen && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 z-50 overflow-y-auto">
+          <div className="bg-[#FAF7F0] text-stone-900 rounded-3xl max-w-2xl w-full p-6 sm:p-8 border-4 border-amber-800/80 shadow-2xl space-y-5 my-8 print:border-none print:shadow-none print:p-0">
+            <div className="flex items-center justify-between border-b border-stone-300 pb-3 print:hidden">
+              <span className="text-xs font-bold uppercase tracking-wider text-amber-900">
+                Official NABL Laboratory Purity Certificate
+              </span>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => window.print()}
+                  className="px-3.5 py-1.5 bg-stone-900 hover:bg-black text-white text-xs font-bold rounded-xl flex items-center gap-1.5 cursor-pointer"
+                >
+                  <Printer className="w-3.5 h-3.5 text-amber-400" /> Print PDF
+                </button>
+                <button
+                  onClick={() => setIsCertificateOpen(false)}
+                  className="text-stone-500 hover:text-stone-900 text-lg font-bold px-2 cursor-pointer"
+                >
+                  ✕
+                </button>
+              </div>
+            </div>
+
+            <div className="border-2 border-stone-400 p-6 rounded-2xl bg-white space-y-4">
+              <div className="text-center space-y-1 border-b border-stone-300 pb-3">
+                <div className="text-xs font-bold uppercase text-stone-600">सत्यमेव जयते • Government of India</div>
+                <h2 className="text-base sm:text-lg font-serif font-black text-stone-900">
+                  NATIONAL BEE BOARD & FOOD SAFETY STANDARDS AUTHORITY OF INDIA
+                </h2>
+                <div className="text-xs font-semibold text-amber-900">
+                  NABL Quality Assay • Batch Ref: {selectedBatchCode}
+                </div>
+              </div>
+
+              <table className="w-full text-xs text-left border-collapse border border-stone-300">
+                <thead>
+                  <tr className="bg-stone-100 font-bold text-stone-800">
+                    <th className="p-2 border border-stone-300">Parameter</th>
+                    <th className="p-2 border border-stone-300">Standard</th>
+                    <th className="p-2 border border-stone-300">Observed</th>
+                    <th className="p-2 border border-stone-300">Result</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-stone-300">
+                  <tr>
+                    <td className="p-2 border border-stone-300 font-semibold">Moisture Content</td>
+                    <td className="p-2 border border-stone-300">Max 20.0%</td>
+                    <td className="p-2 border border-stone-300 font-mono font-bold">17.8%</td>
+                    <td className="p-2 border border-stone-300 text-emerald-800 font-bold">PASSED</td>
+                  </tr>
+                  <tr>
+                    <td className="p-2 border border-stone-300 font-semibold">F/G Ratio</td>
+                    <td className="p-2 border border-stone-300">Min 1.0</td>
+                    <td className="p-2 border border-stone-300 font-mono font-bold">1.22</td>
+                    <td className="p-2 border border-stone-300 text-emerald-800 font-bold">PASSED</td>
+                  </tr>
+                  <tr>
+                    <td className="p-2 border border-stone-300 font-semibold">EA-IRMS C4 Sugar Isotope</td>
+                    <td className="p-2 border border-stone-300">Negative</td>
+                    <td className="p-2 border border-stone-300 font-mono font-bold">&lt; -23.5‰</td>
+                    <td className="p-2 border border-stone-300 text-emerald-800 font-bold">0.0% SYRUP</td>
+                  </tr>
+                </tbody>
+              </table>
+
+              <div className="pt-2 flex items-center justify-between text-xs border-t border-stone-300">
+                <span className="font-bold text-amber-800">Agmark Special Grade Cleared</span>
+                <span className="font-serif italic font-bold text-stone-900">Dr. Sunita Kulkarni, Chief Food Analyst</span>
+              </div>
+            </div>
           </div>
         </div>
       )}

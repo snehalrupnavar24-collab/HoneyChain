@@ -77,7 +77,7 @@ const MainLayout: React.FC = () => {
       />
 
       {/* 2. Main Content Area */}
-      <div className="flex-1 w-full max-w-5xl mx-auto px-4 sm:px-6 py-6 relative z-10">
+      <div className={`flex-1 w-full mx-auto px-4 sm:px-6 py-6 relative z-10 ${activeTab === 'admin' ? 'max-w-6xl' : 'max-w-5xl'}`}>
         {activeTab === 'website' ? (
           /* Public Facing High-Impact Website */
           <main className="animate-in fade-in duration-300">

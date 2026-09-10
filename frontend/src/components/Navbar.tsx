@@ -58,7 +58,7 @@ export const Navbar: React.FC<NavbarProps> = ({
     <header className="sticky top-0 z-50 bg-[#FDFBF7]/95 backdrop-blur-md border-b border-stone-200 shadow-2xs">
       {/* Top Institutional Ribbon */}
       <div className="bg-[#122A1C] text-amber-100 text-xs px-4 py-1.5 flex items-center justify-between border-b border-emerald-900/60">
-        <div className="max-w-5xl w-full mx-auto flex items-center justify-between font-medium">
+        <div className={`w-full mx-auto flex items-center justify-between font-medium ${activeTab === 'admin' ? 'max-w-6xl' : 'max-w-5xl'}`}>
           <div className="flex items-center space-x-3">
             <span className="flex items-center space-x-1.5">
               <span className="inline-block w-2 h-2 rounded-full bg-amber-400"></span>
@@ -72,12 +72,12 @@ export const Navbar: React.FC<NavbarProps> = ({
           <div className="flex items-center space-x-2">
             {isBackendConnected ? (
               <span className="inline-flex items-center space-x-1.5 text-emerald-300 font-mono text-[11px] bg-emerald-950/80 px-2.5 py-0.5 rounded-full border border-emerald-700/50">
-                <CheckCircle2 className="w-3 h-3 text-emerald-400" />
+                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
                 <span>PostgreSQL DB Live</span>
               </span>
             ) : (
               <span className="inline-flex items-center space-x-1.5 text-amber-300 font-mono text-[11px] bg-amber-950/80 px-2.5 py-0.5 rounded-full border border-amber-700/50">
-                <AlertCircle className="w-3 h-3 text-amber-400" />
+                <AlertCircle className="w-3.5 h-3.5 text-amber-400" />
                 <span>Local Cache Mode</span>
               </span>
             )}
@@ -86,7 +86,7 @@ export const Navbar: React.FC<NavbarProps> = ({
       </div>
 
       {/* Main Bar */}
-      <div className="max-w-5xl mx-auto px-4 py-2.5">
+      <div className={`w-full mx-auto px-4 py-2.5 ${activeTab === 'admin' ? 'max-w-6xl' : 'max-w-5xl'}`}>
         <div className="flex items-center justify-between gap-4">
           {/* Brand & Identity */}
           <div 
