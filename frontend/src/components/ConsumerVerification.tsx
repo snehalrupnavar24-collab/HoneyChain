@@ -29,8 +29,10 @@ import { verifyPackageByCode } from '../services/api';
 import { ConsumerVerifyResponse } from '../types';
 import { HouseholdPuritySimulator } from './HouseholdPuritySimulator';
 import { RealCameraScannerModal } from './RealCameraScannerModal';
+import { useLanguage } from '../context/LanguageContext';
 
 export const ConsumerVerification: React.FC = () => {
+  const { lang, t } = useLanguage();
   const [packageCode, setPackageCode] = useState('PKG-MAHA-042-2697');
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState<ConsumerVerifyResponse | null>(null);
@@ -106,14 +108,14 @@ export const ConsumerVerification: React.FC = () => {
         <div className="relative z-10 max-w-3xl mx-auto text-center space-y-4">
           <div className="inline-flex items-center gap-2 bg-amber-100/80 text-amber-900 px-3.5 py-1 rounded-full text-xs font-semibold border border-amber-300">
             <Sparkles className="w-3.5 h-3.5 text-amber-700" />
-            <span>National Honey Mission • Consumer Transparency Gateway</span>
+            <span>{t.hero.badge}</span>
           </div>
 
           <h1 className="text-3xl sm:text-4xl font-serif font-bold text-stone-900 tracking-tight leading-tight">
-            Trace the Journey of Your Honey
+            {t.hero.title}
           </h1>
           <p className="text-sm sm:text-base text-stone-600 leading-relaxed max-w-2xl mx-auto">
-            Every drop of pure honey tells a human story. Inspect the verified chain of custody—from wild Sahyadri forest blooms and farmer hives to NABL laboratory purity certification.
+            {t.hero.subtitle}
           </p>
 
           {/* Action Bar: Direct Search + Real-Feel Camera Scanner Button */}
@@ -126,7 +128,7 @@ export const ConsumerVerification: React.FC = () => {
                 type="text"
                 value={packageCode}
                 onChange={(e) => setPackageCode(e.target.value)}
-                placeholder="Enter Jar Batch Code (e.g. PKG-MAHA-042-2697)"
+                placeholder={t.hero.placeholder}
                 className="w-full pl-10 pr-4 py-3.5 text-sm bg-white border border-stone-300 rounded-2xl focus:outline-hidden focus:ring-2 focus:ring-amber-500 font-mono shadow-xs"
               />
               <Search className="w-4 h-4 text-stone-400 absolute left-3.5 top-4" />
@@ -135,31 +137,31 @@ export const ConsumerVerification: React.FC = () => {
             <button
               onClick={() => handleSearch()}
               disabled={loading}
-              className="w-full sm:w-auto px-6 py-3.5 bg-stone-900 hover:bg-stone-950 text-white font-semibold text-sm rounded-2xl transition-all shadow-sm flex items-center justify-center gap-2 shrink-0 disabled:opacity-50"
+              className="w-full sm:w-auto px-6 py-3.5 bg-stone-900 hover:bg-stone-950 text-white font-semibold text-sm rounded-2xl transition-all shadow-sm flex items-center justify-center gap-2 shrink-0 disabled:opacity-50 cursor-pointer"
             >
-              {loading ? 'Verifying...' : 'Verify Jar'}
+              {loading ? t.hero.verifying : t.hero.verifyBtn}
             </button>
 
             <button
               id="btn-scan-qr"
               type="button"
               onClick={() => setIsScannerOpen(true)}
-              className="w-full sm:w-auto px-4 py-3.5 bg-amber-500 hover:bg-amber-600 text-stone-950 font-bold text-sm rounded-2xl transition-all shadow-sm flex items-center justify-center gap-2 shrink-0"
+              className="w-full sm:w-auto px-4 py-3.5 bg-amber-500 hover:bg-amber-600 text-stone-950 font-bold text-sm rounded-2xl transition-all shadow-sm flex items-center justify-center gap-2 shrink-0 cursor-pointer"
             >
               <Camera className="w-4 h-4 text-stone-950" />
-              <span>Scan QR</span>
+              <span>{t.hero.scanBtn}</span>
             </button>
           </div>
 
           {/* Verified Preset Chips */}
           <div className="flex flex-wrap items-center justify-center gap-2 text-xs text-stone-500 pt-1">
-            <span className="font-medium">Or test sample certified batch:</span>
+            <span className="font-medium">{t.hero.testBatchLabel}</span>
             <button
               type="button"
               onClick={() => { setPackageCode('PKG-MAHA-042-2697'); handleSearch('PKG-MAHA-042-2697'); }}
-              className="px-2.5 py-1 bg-white hover:bg-amber-50 border border-stone-200 rounded-lg text-amber-800 font-mono font-semibold transition-colors"
+              className="px-2.5 py-1 bg-white hover:bg-amber-50 border border-stone-200 rounded-lg text-amber-800 font-mono font-semibold transition-colors cursor-pointer"
             >
-              PKG-MAHA-042-2697 (Jamun Honey)
+              {t.hero.sampleJamun}
             </button>
           </div>
         </div>
@@ -176,11 +178,11 @@ export const ConsumerVerification: React.FC = () => {
                 <div className="flex flex-wrap items-center justify-between gap-3">
                   <div className="inline-flex items-center gap-2 bg-emerald-950/80 text-emerald-300 px-3 py-1 rounded-full text-xs font-semibold border border-emerald-600/40">
                     <ShieldCheck className="w-4 h-4 text-emerald-400" />
-                    <span>FSSAI & Agmark Special Grade • 100% Raw Forest Honey</span>
+                    <span>{t.batchCard.verifiedBadge}</span>
                   </div>
 
                   <span className="font-mono text-xs bg-emerald-900/60 text-emerald-200 px-3 py-1 rounded-lg border border-emerald-700">
-                    Batch: {data.package.package_code}
+                    {t.batchCard.batchLabel}: {data.package.package_code}
                   </span>
                 </div>
 
@@ -188,68 +190,79 @@ export const ConsumerVerification: React.FC = () => {
                   {data.package.product_name}
                 </h2>
                 <p className="text-sm text-emerald-100/80 leading-relaxed">
-                  Botanical Provenance: <strong className="text-white font-medium">{data.origin?.apiary_location || 'Kas Valley, Satara, Maharashtra'}</strong>. Sourced directly from tribal & smallholder beekeepers under National Honey Mission guidelines.
+                  {t.batchCard.locationLabel}: <strong className="text-white font-medium">{data.origin?.apiary_location || 'Kas Valley, Satara, Maharashtra'}</strong>. {t.ribbon.mission}.
                 </p>
               </div>
 
               {/* Lab Highlights Matrix */}
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-4 border-t border-emerald-800/80">
                 <div className="bg-emerald-950/60 p-3 rounded-2xl border border-emerald-800/50">
-                  <span className="text-[11px] text-emerald-300 font-medium block">Moisture Level</span>
+                  <span className="text-[11px] text-emerald-300 font-medium block">{t.batchCard.moistureLabel}</span>
                   <div className="text-xl font-black font-mono text-white mt-0.5">
                     {data.laboratory?.moisture_pct || 17.8}%
                   </div>
-                  <span className="text-[10px] text-emerald-400 font-medium">FSSAI Max 20% (Passed)</span>
+                  <span className="text-[10px] text-emerald-400 font-medium">{t.batchCard.moistureSub}</span>
                 </div>
 
                 <div className="bg-emerald-950/60 p-3 rounded-2xl border border-emerald-800/50">
-                  <span className="text-[11px] text-emerald-300 font-medium block">Purity Assay</span>
+                  <span className="text-[11px] text-emerald-300 font-medium block">{t.batchCard.purityLabel}</span>
                   <div className="text-xl font-black font-mono text-white mt-0.5">
                     {data.laboratory?.purity_score_pct || 99.1}%
                   </div>
-                  <span className="text-[10px] text-emerald-400 font-medium">Zero C4 Cane Sugar</span>
+                  <span className="text-[10px] text-emerald-400 font-medium">{t.batchCard.puritySub}</span>
                 </div>
 
                 <div className="bg-emerald-950/60 p-3 rounded-2xl border border-emerald-800/50">
-                  <span className="text-[11px] text-emerald-300 font-medium block">HMF Freshness</span>
+                  <span className="text-[11px] text-emerald-300 font-medium block">{t.batchCard.freshnessLabel}</span>
                   <div className="text-xl font-black font-mono text-white mt-0.5">
                     14.2 <span className="text-xs font-normal">mg/kg</span>
                   </div>
-                  <span className="text-[10px] text-emerald-400 font-medium">Unheated / Raw</span>
+                  <span className="text-[10px] text-emerald-400 font-medium">{t.batchCard.freshnessSub}</span>
                 </div>
 
                 <div className="bg-emerald-950/60 p-3 rounded-2xl border border-emerald-800/50">
-                  <span className="text-[11px] text-emerald-300 font-medium block">Ledger Trust</span>
+                  <span className="text-[11px] text-emerald-300 font-medium block">{t.batchCard.trustLabel}</span>
                   <div className="text-sm font-bold text-amber-300 mt-1 flex items-center gap-1 font-mono">
                     <Lock className="w-3.5 h-3.5 text-amber-400" />
                     <span>SHA-256 Valid</span>
                   </div>
-                  <span className="text-[10px] text-emerald-400 font-medium">{data.integrity_verification.blockchain_hash_anchors} Merkle Anchors</span>
+                  <span className="text-[10px] text-emerald-400 font-medium">{t.batchCard.trustSub}</span>
                 </div>
               </div>
 
               {/* View Certificate & Audio Read-Out Action */}
               <div className="flex flex-wrap items-center justify-between gap-3 pt-2">
                 <span className="text-xs text-emerald-200/80">
-                  Tested by NABL Accredited State Food Laboratory (Report: {data.laboratory?.report_code})
+                  Report: {data.laboratory?.report_code} • NABL Quality Lab
                 </span>
                 <div className="flex items-center gap-2">
                   <button
                     type="button"
                     onClick={() => {
-                      const text = `हनीचेन सत्यापन परिणाम: बैच कोड ${data.package.package_code}। महाबलेश्वर का शुद्ध जामुन शहद। NABL प्रयोगशाला रिपोर्ट में नमी 17.8 प्रतिशत और शून्य प्रतिशत C4 चीनी पाई गई है। इसे किसान रमेश पाटिल ने निकाला है। यह शहद शत-प्रतिशत शुद्ध है।`;
+                      let speechText = '';
+                      let speechLang = 'en-IN';
+                      if (lang === 'mr') {
+                        speechText = `हनीचेन सत्यापन यशस्वी झाले. हा मध १००% अस्सल आणि शुद्ध आहे. शेतकरी रमेश तुकाराम पाटील यांनी सह्याद्रीच्या रानातून हा मध काढला आहे. NABL लॅब तपासणीत शून्य टक्के कृत्रिम साखर आणि १७.८ टक्के नैसर्गिक ओलावा आढळला आहे.`;
+                        speechLang = 'mr-IN';
+                      } else if (lang === 'hi') {
+                        speechText = `हनीचेन सत्यापन सफल हुआ। यह शहद शत-प्रतिशत शुद्ध है। इसे महाबलेश्वर के पंजीकृत किसान श्री रमेश तुकाराम पाटिल ने निकाला है। NABL प्रयोगशाला जाँच में शून्य प्रतिशत C4 चीनी और 17.8 प्रतिशत नमी पाई गई है।`;
+                        speechLang = 'hi-IN';
+                      } else {
+                        speechText = `HoneyChain verification successful. This honey is 100% pure raw botanical honey, harvested by lead beekeeper Ramesh Patil. Laboratory testing confirms 0.0% C4 cane sugar and 17.8% moisture.`;
+                        speechLang = 'en-IN';
+                      }
                       if ('speechSynthesis' in window) {
                         window.speechSynthesis.cancel();
-                        const ut = new SpeechSynthesisUtterance(text);
-                        ut.lang = 'hi-IN';
+                        const ut = new SpeechSynthesisUtterance(speechText);
+                        ut.lang = speechLang;
                         window.speechSynthesis.speak(ut);
                       }
                     }}
                     className="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs rounded-xl transition-all shadow-sm flex items-center gap-1.5 cursor-pointer"
-                    title="रिपोर्ट सुनें (Listen Audio)"
+                    title="Audio Verification Report"
                   >
                     <Volume2 className="w-3.5 h-3.5" />
-                    <span>🔊 रिपोर्ट सुनें</span>
+                    <span>{t.batchCard.listenAudio}</span>
                   </button>
 
                   <button
@@ -259,7 +272,7 @@ export const ConsumerVerification: React.FC = () => {
                     className="px-4 py-2 bg-amber-400 hover:bg-amber-300 text-stone-950 font-bold text-xs rounded-xl transition-all shadow-sm flex items-center gap-2 cursor-pointer"
                   >
                     <Printer className="w-3.5 h-3.5" />
-                    <span>View Official Certificate</span>
+                    <span>{t.batchCard.printCertBtn}</span>
                   </button>
                 </div>
               </div>
@@ -271,7 +284,7 @@ export const ConsumerVerification: React.FC = () => {
                 <div className="flex items-center justify-between border-b border-amber-200 pb-3">
                   <span className="text-xs font-bold uppercase tracking-wider text-amber-900 flex items-center gap-1.5">
                     <Leaf className="w-3.5 h-3.5 text-emerald-700" />
-                    Botanical Terroir
+                    {t.batchCard.floralSourceLabel}
                   </span>
                   <span className="text-xs font-bold bg-amber-200/80 text-amber-950 px-2 py-0.5 rounded-full">
                     500g Glass Jar
@@ -281,23 +294,23 @@ export const ConsumerVerification: React.FC = () => {
                 {/* Jar Details */}
                 <div className="space-y-2 text-xs">
                   <div className="flex justify-between py-1 border-b border-amber-100">
-                    <span className="text-stone-500">Floral Nectar Source:</span>
+                    <span className="text-stone-500">{t.batchCard.floralSourceLabel}:</span>
                     <span className="font-bold text-stone-900">Syzygium cumini (Wild Jamun)</span>
                   </div>
                   <div className="flex justify-between py-1 border-b border-amber-100">
-                    <span className="text-stone-500">Apiary Elevation:</span>
-                    <span className="font-bold text-stone-900">1,353 m MSL (Western Ghats)</span>
+                    <span className="text-stone-500">{t.batchCard.locationLabel}:</span>
+                    <span className="font-bold text-stone-900">Western Ghats (1,353 m MSL)</span>
                   </div>
                   <div className="flex justify-between py-1 border-b border-amber-100">
-                    <span className="text-stone-500">Honey Color Profile:</span>
+                    <span className="text-stone-500">Color Profile:</span>
                     <span className="font-bold text-amber-900">Deep Amber / Pfund 65mm</span>
                   </div>
                   <div className="flex justify-between py-1 border-b border-amber-100">
-                    <span className="text-stone-500">Processing Method:</span>
-                    <span className="font-bold text-stone-900">Cold-Settled &lt;45°C</span>
+                    <span className="text-stone-500">Cold Settled:</span>
+                    <span className="font-bold text-stone-900">&lt;45°C Unpasteurized</span>
                   </div>
                   <div className="flex justify-between py-1">
-                    <span className="text-stone-500">Enzymatic Activity:</span>
+                    <span className="text-stone-500">Enzyme Activity:</span>
                     <span className="font-bold text-emerald-800">High Diastase (14.5 DN)</span>
                   </div>
                 </div>
@@ -311,7 +324,7 @@ export const ConsumerVerification: React.FC = () => {
                   className="w-14 h-14 rounded-xl object-cover shadow-xs border border-amber-300 shrink-0"
                 />
                 <div className="text-[11px] text-amber-950 leading-snug">
-                  <strong>Unpasteurized & Cold-Settled:</strong> Retains natural active diastase enzymes, raw bee pollen, and zero synthetic glucose syrups.
+                  <strong>{t.batchCard.freshnessSub}:</strong> {lang === 'mr' ? 'अस्सल नैसर्गिक मध, जिवंत पाचकद्रव्ये आणि शून्य कृत्रिम साखर.' : (lang === 'hi' ? 'प्राकृतिक कच्चा शहद, जीवित पाचक एंजाइम और शून्य कृत्रिम चाशनी।' : 'Cold-settled raw honey preserving live enzymes and zero syrup.')}
                 </div>
               </div>
             </div>
@@ -322,14 +335,14 @@ export const ConsumerVerification: React.FC = () => {
             <div className="flex items-center justify-between border-b border-stone-200 pb-4">
               <div>
                 <span className="text-xs font-bold uppercase tracking-wider text-amber-800 block">
-                  Grassroots Producer Attribution
+                  {lang === 'mr' ? 'कष्टकरी मधपाळ शेतकरी' : (lang === 'hi' ? 'पंजीकृत मधमक्खी पालक' : 'Grassroots Producer Attribution')}
                 </span>
                 <h3 className="text-xl font-serif font-bold text-stone-900">
-                  Meet the Beekeeper Behind This Honey
+                  {lang === 'mr' ? 'या मधामागील परिश्रमी शेतकरी' : (lang === 'hi' ? 'इस शहद के पीछे परिश्रमी किसान' : 'Meet the Beekeeper Behind This Honey')}
                 </h3>
               </div>
               <span className="text-xs bg-emerald-100 text-emerald-800 font-bold px-3 py-1 rounded-full border border-emerald-300">
-                Direct Benefit Transfer (DBT) Verified
+                {lang === 'mr' ? 'थेट बँक खात्यात हमीभाव (DBT)' : (lang === 'hi' ? 'सीधा बैंक खाता हस्तांतरण (DBT)' : 'Direct Benefit Transfer (DBT) Verified')}
               </span>
             </div>
 
@@ -352,21 +365,25 @@ export const ConsumerVerification: React.FC = () => {
               {/* Farmer Bio and Story */}
               <div className="flex-1 space-y-3 text-xs sm:text-sm text-stone-700 leading-relaxed">
                 <p className="italic bg-amber-50/70 p-4 rounded-2xl border border-amber-200 text-stone-800 font-serif">
-                  "Our family has practiced traditional apiculture in the Sahyadri mountains for three generations. During the wild Jamun flower bloom in April and May, the bees forage undisturbed across the Kas Plateau. We never heat the comb or feed sugar syrup. HoneyChain ensures that our traditional beekeeping craft is recognized and fairly rewarded."
+                  {lang === 'mr' 
+                    ? '"सह्याद्रीच्या पर्वतरांगेत आमची तिसरी पिढी नैसर्गिक मध गोळा करते. जांभूळ फुलोऱ्यात मधमाश्या कसल्याही कृत्रिम हस्तक्षेपाशिवाय शुद्ध मध तयार करतात. आम्ही मधाला कधीही तापवत नाही आणि साखरेचा पाक घालत नाही. हनीचेनमुळे आमच्या अस्सल कष्टाला योग्य सन्मान आणि रास्त भाव मिळतो."'
+                    : (lang === 'hi'
+                      ? '"सह्याद्री के जंगलों में हमारी तीन पीढ़ियां पारंपरिक मधुमक्खी पालन कर रही हैं। जंगली जामुन के मौसम में मक्खियां बिना किसी कृत्रिम छेड़छाड़ के शुद्ध शहद बनाती हैं। हम कभी भी छत्ते को गर्म नहीं करते और न ही चीनी की चाशनी देते हैं। हनीचेन हमारे पारंपरिक श्रम का पारदर्शी मूल्य सुनिश्चित करता है।"'
+                      : '"Our family has practiced traditional apiculture across the Western Ghats for three generations. During wild Jamun blooms, bees forage freely across Kas Plateau. We never heat combs or feed sugar. HoneyChain ensures our honest craft is directly recognized and fairly rewarded."')}
                 </p>
 
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1 text-xs">
                   <div className="bg-stone-50 p-3 rounded-xl border border-stone-200">
-                    <span className="text-stone-500 block">Village Apiary:</span>
+                    <span className="text-stone-500 block">{t.batchCard.locationLabel}:</span>
                     <span className="font-semibold text-stone-900">{data.origin?.apiary_name}</span>
                   </div>
                   <div className="bg-stone-50 p-3 rounded-xl border border-stone-200">
-                    <span className="text-stone-500 block">Queen Colony Box:</span>
+                    <span className="text-stone-500 block">{t.batchCard.hiveIdLabel}:</span>
                     <span className="font-mono font-bold text-stone-900">{data.origin?.hive_code}</span>
                   </div>
                   <div className="bg-stone-50 p-3 rounded-xl border border-stone-200">
-                    <span className="text-stone-500 block">Fair Farmer Remuneration:</span>
-                    <span className="font-bold text-emerald-700 font-mono">₹480 / kg Direct to Bank</span>
+                    <span className="text-stone-500 block">{t.batchCard.fairPriceLabel}:</span>
+                    <span className="font-bold text-emerald-700 font-mono">₹480 / kg ({t.batchCard.directPay})</span>
                   </div>
                 </div>
               </div>
@@ -499,31 +516,31 @@ export const ConsumerVerification: React.FC = () => {
           {/* HOUSEHOLD PURITY SIMULATOR (WATER & FLAME TESTS) */}
           <HouseholdPuritySimulator />
 
-          {/* INTERACTIVE 6-STEP PROVENANCE TIMELINE */}
+          {/* INTERACTIVE 5-STEP PROVENANCE TIMELINE */}
           <div className="bg-white rounded-3xl p-6 sm:p-8 border border-stone-200/90 shadow-sm space-y-6">
             <div className="flex items-center justify-between border-b border-stone-200 pb-4">
               <div>
                 <span className="text-xs font-bold uppercase tracking-wider text-emerald-800 block">
-                  Complete Chain of Custody
+                  {lang === 'mr' ? 'संपूर्ण भौतिक प्रवास' : (lang === 'hi' ? 'संपूर्ण भौतिक यात्रा' : 'Complete Chain of Custody')}
                 </span>
                 <h3 className="text-xl font-serif font-bold text-stone-900">
-                  Backward Physical Verification Journey
+                  {t.timeline.title}
                 </h3>
               </div>
               <span className="text-xs bg-amber-100 text-amber-900 font-bold px-3 py-1 rounded-full">
-                6 Anchored Milestones
+                5 Anchored Milestones
               </span>
             </div>
 
             <div className="space-y-6 relative before:absolute before:inset-0 before:left-5 before:w-0.5 before:bg-amber-200">
-              {/* Step 1: Hive & Beekeeper */}
+              {/* Step 1 */}
               <div className="relative flex items-start space-x-4">
                 <div className="w-10 h-10 rounded-full bg-stone-900 text-amber-400 flex items-center justify-center shrink-0 shadow-sm text-xs font-mono font-bold border-2 border-stone-700">
                   01
                 </div>
                 <div className="bg-stone-50 rounded-2xl p-4 border border-stone-200 flex-1 space-y-1.5 text-xs">
                   <div className="flex items-center justify-between">
-                    <span className="font-bold uppercase tracking-wider text-amber-800">1. Hive Origin & Floral Foraging</span>
+                    <span className="font-bold uppercase tracking-wider text-amber-800">{t.timeline.step1Title}</span>
                     <span className="font-mono font-bold text-stone-600">{data.origin?.hive_code}</span>
                   </div>
                   <div className="text-sm font-bold text-stone-900">{data.origin?.beekeeper_name}</div>
@@ -531,111 +548,77 @@ export const ConsumerVerification: React.FC = () => {
                     <MapPin className="w-3.5 h-3.5 text-amber-600" />
                     <span>{data.origin?.apiary_name} • {data.origin?.apiary_location}</span>
                   </div>
-                  <div className="text-stone-500 pt-1">
-                    Hive Type: <strong>{data.origin?.hive_type}</strong> | Registered under National Honey Mission
-                  </div>
+                  <p className="text-stone-600 leading-snug">{t.timeline.step1Desc}</p>
                 </div>
               </div>
 
-              {/* Step 2: Harvest Declaration */}
+              {/* Step 2 */}
               <div className="relative flex items-start space-x-4">
                 <div className="w-10 h-10 rounded-full bg-stone-900 text-amber-400 flex items-center justify-center shrink-0 shadow-sm text-xs font-mono font-bold border-2 border-stone-700">
                   02
                 </div>
                 <div className="bg-stone-50 rounded-2xl p-4 border border-stone-200 flex-1 space-y-1.5 text-xs">
                   <div className="flex items-center justify-between">
-                    <span className="font-bold uppercase tracking-wider text-amber-800">2. Field Harvest Declaration</span>
-                    <span className="font-mono font-bold text-stone-600">{data.harvest?.lot_code}</span>
+                    <span className="font-bold uppercase tracking-wider text-emerald-800">{t.timeline.step2Title}</span>
+                    <span className="font-mono font-bold text-stone-600">{data.collection?.collection_code}</span>
                   </div>
-                  <div className="text-sm font-bold text-stone-900">
-                    Declared Quantity: {data.harvest?.declared_quantity} {data.harvest?.unit}
+                  <div className="flex items-center gap-3 text-sm font-semibold">
+                    <span>Measured: <strong className="text-stone-900">{data.collection?.measured_quantity || 48.5} kg</strong></span>
+                    <span className="text-xs font-bold text-emerald-800 bg-emerald-100 px-2.5 py-0.5 rounded-full border border-emerald-300">
+                      ✓ Reconciled within 2% tolerance
+                    </span>
                   </div>
-                  <div className="text-stone-600 flex items-center gap-1">
-                    <Calendar className="w-3.5 h-3.5 text-stone-400" />
-                    <span>Harvest Date: {data.harvest?.harvest_date}</span>
-                  </div>
-                  <p className="text-stone-600 italic">
-                    "{data.harvest?.notes || 'Western Ghats Flora: Syzygium cumini (Jamun) nectar flow. Moisture naturally ripened.'}"
-                  </p>
+                  <p className="text-stone-600 leading-snug">{t.timeline.step2Desc}</p>
                 </div>
               </div>
 
-              {/* Step 3: Mandi Weighment */}
+              {/* Step 3 */}
               <div className="relative flex items-start space-x-4">
                 <div className="w-10 h-10 rounded-full bg-stone-900 text-amber-400 flex items-center justify-center shrink-0 shadow-sm text-xs font-mono font-bold border-2 border-stone-700">
                   03
                 </div>
                 <div className="bg-stone-50 rounded-2xl p-4 border border-stone-200 flex-1 space-y-1.5 text-xs">
                   <div className="flex items-center justify-between">
-                    <span className="font-bold uppercase tracking-wider text-emerald-800">3. Mandi Scale Weighment & Tare</span>
-                    <span className="font-mono font-bold text-stone-600">{data.collection?.collection_code}</span>
+                    <span className="font-bold uppercase tracking-wider text-stone-700">{t.timeline.step3Title}</span>
+                    <span className="font-mono font-bold text-stone-600">{data.processing?.processing_code}</span>
                   </div>
-                  <div className="flex items-center gap-3 text-sm font-semibold">
-                    <span>Measured: <strong className="text-stone-900">{data.collection?.measured_quantity} {data.collection?.unit}</strong></span>
-                    <span className="text-xs font-bold text-emerald-800 bg-emerald-100 px-2.5 py-0.5 rounded-full border border-emerald-300">
-                      ✓ Reconciled within 2% tolerance
-                    </span>
-                  </div>
-                  <div className="text-stone-600 flex items-center gap-1">
-                    <MapPin className="w-3.5 h-3.5 text-stone-400" />
-                    <span>Centre: {data.collection?.collection_center}</span>
-                  </div>
+                  <div className="text-sm font-bold text-stone-900">{data.processing?.processing_type}</div>
+                  <p className="text-stone-600 leading-snug">{t.timeline.step3Desc}</p>
                 </div>
               </div>
 
-              {/* Step 4: Processing Facility */}
+              {/* Step 4 */}
               <div className="relative flex items-start space-x-4">
                 <div className="w-10 h-10 rounded-full bg-stone-900 text-amber-400 flex items-center justify-center shrink-0 shadow-sm text-xs font-mono font-bold border-2 border-stone-700">
                   04
                 </div>
-                <div className="bg-stone-50 rounded-2xl p-4 border border-stone-200 flex-1 space-y-1.5 text-xs">
-                  <div className="flex items-center justify-between">
-                    <span className="font-bold uppercase tracking-wider text-stone-700">4. Processing & Mass Conservation</span>
-                    <span className="font-mono font-bold text-stone-600">{data.processing?.processing_code}</span>
-                  </div>
-                  <div className="text-sm font-bold text-stone-900">{data.processing?.processing_type}</div>
-                  <div className="text-stone-600">
-                    Input: {data.processing?.input_quantity} kg → Output: {data.processing?.output_quantity} kg ({data.processing?.loss_pct}% normal filtration loss)
-                  </div>
-                </div>
-              </div>
-
-              {/* Step 5: NABL Lab Assay */}
-              <div className="relative flex items-start space-x-4">
-                <div className="w-10 h-10 rounded-full bg-stone-900 text-amber-400 flex items-center justify-center shrink-0 shadow-sm text-xs font-mono font-bold border-2 border-stone-700">
-                  05
-                </div>
                 <div className="bg-emerald-50/70 rounded-2xl p-4 border border-emerald-200 flex-1 space-y-1.5 text-xs">
                   <div className="flex items-center justify-between">
-                    <span className="font-bold uppercase tracking-wider text-emerald-900">5. NABL Laboratory Quality Assay</span>
+                    <span className="font-bold uppercase tracking-wider text-emerald-900">{t.timeline.step4Title}</span>
                     <span className="font-mono font-bold text-emerald-800">{data.laboratory?.report_code}</span>
                   </div>
                   <div className="flex items-center gap-3 text-sm">
                     <span className="font-bold text-emerald-950">Result: {data.laboratory?.result}</span>
                     <span className="text-xs bg-emerald-200 text-emerald-900 px-2 py-0.5 rounded font-bold">
-                      Digitally Verified by Chief Chemist
+                      {t.timeline.verifiedStamp}
                     </span>
                   </div>
-                  <p className="text-stone-700">
-                    {data.laboratory?.remarks}
-                  </p>
+                  <p className="text-stone-700 leading-snug">{t.timeline.step4Desc}</p>
                 </div>
               </div>
 
-              {/* Step 6: Retail Package */}
+              {/* Step 5 */}
               <div className="relative flex items-start space-x-4">
                 <div className="w-10 h-10 rounded-full bg-emerald-800 text-white flex items-center justify-center shrink-0 shadow-sm text-xs font-mono font-bold border-2 border-emerald-600">
-                  06
+                  05
                 </div>
                 <div className="bg-stone-50 rounded-2xl p-4 border border-stone-200 flex-1 space-y-1.5 text-xs">
                   <div className="flex items-center justify-between">
-                    <span className="font-bold uppercase tracking-wider text-amber-800">6. Serialized Jar & Public QR</span>
+                    <span className="font-bold uppercase tracking-wider text-amber-800">{t.timeline.step5Title}</span>
                     <span className="font-mono font-bold text-stone-600">{data.package.package_code}</span>
                   </div>
                   <div className="text-sm font-bold text-stone-900">{data.package.product_name}</div>
-                  <div className="text-stone-600">
-                    Public QR Identifier: <code className="bg-stone-200 px-2 py-0.5 rounded text-[11px] font-mono">{data.package.qr_code}</code>
-                  </div>
+                  <p className="text-stone-600 leading-snug">{t.timeline.step5Desc}</p>
                 </div>
               </div>
             </div>

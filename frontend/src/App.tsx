@@ -9,13 +9,17 @@ import { AdminAuditDashboard } from './components/AdminAuditDashboard';
 import { StageHeader } from './components/StageHeader';
 import { HoneyVaaniVoiceWidget } from './components/HoneyVaaniVoiceWidget';
 import { MobileAccessModal } from './components/MobileAccessModal';
+import { CustomerJarQRGenerator } from './components/CustomerJarQRGenerator';
+import { LanguageProvider, useLanguage } from './context/LanguageContext';
 import { checkBackendHealth } from './services/api';
 import { Heart, ArrowLeft, ShieldCheck } from 'lucide-react';
 
-export const App: React.FC = () => {
+const MainLayout: React.FC = () => {
+  const { lang, t } = useLanguage();
   const [activeTab, setActiveTab] = useState<string>('website');
   const [isBackendConnected, setIsBackendConnected] = useState<boolean>(true);
   const [isMobileModalOpen, setIsMobileModalOpen] = useState<boolean>(false);
+  const [isCustomerQrOpen, setIsCustomerQrOpen] = useState<boolean>(false);
 
   useEffect(() => {
     // If URL contains ?batch=... (e.g. scanned from a phone camera), auto-switch to Consumer Verification!
@@ -59,6 +63,7 @@ export const App: React.FC = () => {
         onScanClick={handleGlobalScan}
         onCertificateClick={handleGlobalCert}
         onMobileClick={() => setIsMobileModalOpen(true)}
+        onGenerateQrClick={() => setIsCustomerQrOpen(true)}
       />
 
       {/* 2. Main Content Area */}
@@ -69,6 +74,7 @@ export const App: React.FC = () => {
             <WebsiteHome 
               onOpenPortal={(portalId) => setActiveTab(portalId)} 
               onOpenMobileModal={() => setIsMobileModalOpen(true)}
+              onOpenCustomerQrModal={() => setIsCustomerQrOpen(true)}
             />
           </main>
         ) : (
@@ -82,7 +88,9 @@ export const App: React.FC = () => {
                 className="px-4 py-2 rounded-xl bg-white/95 hover:bg-white text-stone-800 border border-stone-300 text-xs font-bold transition-all shadow-xs flex items-center gap-2 cursor-pointer hover:border-amber-400 hover:text-amber-900"
               >
                 <ArrowLeft className="w-3.5 h-3.5 text-amber-700" />
-                <span>← Back to HoneyChain Public Website</span>
+                <span>
+                  {lang === 'mr' ? '← हनीचेन मुख्य पानावर परत जा' : (lang === 'hi' ? '← हनीचेन मुख्य पृष्ठ पर लौटें' : '← Back to HoneyChain Public Website')}
+                </span>
               </button>
 
               <div className="flex items-center gap-2 text-xs text-stone-600 font-mono">
@@ -124,38 +132,38 @@ export const App: React.FC = () => {
                 <span className="font-serif font-bold text-white text-base">HoneyChain India</span>
               </div>
               <p className="text-stone-400 leading-relaxed">
-                National Honey Mission Authenticity & Provenance Protocol. Empowering rural beekeepers across the Western Ghats, Sunderbans, and Kashmir through cryptographic origin tracking.
+                {t.footer.desc}
               </p>
             </div>
 
             <div>
               <h4 className="font-bold text-white uppercase tracking-wider mb-2.5 text-[11px]">
-                Physical Journey Stations
+                {t.footer.stationsTitle}
               </h4>
               <ul className="space-y-1.5 text-stone-400">
                 <li>
                   <button onClick={() => setActiveTab('consumer')} className="hover:text-amber-400 text-left">
-                    • 01. Public Consumer QR Verification
+                    • 01. {t.nav.verify}
                   </button>
                 </li>
                 <li>
                   <button onClick={() => setActiveTab('beekeeper')} className="hover:text-amber-400 text-left">
-                    • 02. Beekeeper Voice & IoT Telemetry
+                    • 02. {t.nav.beekeeper}
                   </button>
                 </li>
                 <li>
                   <button onClick={() => setActiveTab('collection')} className="hover:text-amber-400 text-left">
-                    • 03. Mandi Scale & Tare Reconciliation
+                    • 03. {t.nav.mandi}
                   </button>
                 </li>
                 <li>
                   <button onClick={() => setActiveTab('processing')} className="hover:text-amber-400 text-left">
-                    • 04. Agro-Processing & NABL Quality Lab
+                    • 04. {t.nav.processing}
                   </button>
                 </li>
                 <li>
                   <button onClick={() => setActiveTab('admin')} className="hover:text-amber-400 text-left">
-                    • 05. Central Regulatory Audit Console
+                    • 05. {t.nav.admin}
                   </button>
                 </li>
               </ul>
@@ -163,7 +171,7 @@ export const App: React.FC = () => {
 
             <div>
               <h4 className="font-bold text-white uppercase tracking-wider mb-2.5 text-[11px]">
-                Compliance & Standards
+                {t.footer.complianceTitle}
               </h4>
               <ul className="space-y-1.5 text-stone-400">
                 <li>• FSSAI Gazette (Honey Standards 2020)</li>
@@ -188,8 +196,8 @@ export const App: React.FC = () => {
           </div>
 
           <div className="border-t border-emerald-950 pt-4 flex flex-col sm:flex-row items-center justify-between text-[11px] text-stone-500 gap-2">
-            <span>© 2026 HoneyChain National Initiative • Government of India Collaboration</span>
-            <span>Zero Synthetic Sweeteners • 100% Verifiable Botanical Origin</span>
+            <span>{t.footer.copyright}</span>
+            <span>{t.footer.tagline}</span>
           </div>
         </div>
       </footer>
@@ -209,12 +217,39 @@ export const App: React.FC = () => {
         port="5173"
       />
 
+      {/* Customer Honey Jar QR Generator Modal */}
+      <CustomerJarQRGenerator
+        isOpen={isCustomerQrOpen}
+        onClose={() => setIsCustomerQrOpen(false)}
+        onTestVerify={(batchCode) => {
+          setIsCustomerQrOpen(false);
+          setActiveTab('consumer');
+          setTimeout(() => {
+            const input = document.querySelector('input[type="text"]') as HTMLInputElement;
+            if (input) {
+              input.value = batchCode;
+              input.dispatchEvent(new Event('input', { bubbles: true }));
+            }
+          }, 150);
+        }}
+        localIp="10.196.224.19"
+        port="5173"
+      />
+
       {/* HoneyVaani Hands-Free Voice Assistant for Rural & Non-Typing Users */}
       <HoneyVaaniVoiceWidget
         onNavigateTab={(tab) => setActiveTab(tab)}
         activeTab={activeTab}
       />
     </div>
+  );
+};
+
+export const App: React.FC = () => {
+  return (
+    <LanguageProvider>
+      <MainLayout />
+    </LanguageProvider>
   );
 };
 export default App;

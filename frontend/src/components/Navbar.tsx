@@ -16,6 +16,7 @@ import {
   Layers,
   Smartphone
 } from 'lucide-react';
+import { useLanguage } from '../context/LanguageContext';
 
 interface NavbarProps {
   activeTab: string;
@@ -24,6 +25,7 @@ interface NavbarProps {
   onScanClick: () => void;
   onCertificateClick: () => void;
   onMobileClick?: () => void;
+  onGenerateQrClick?: () => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
@@ -33,16 +35,18 @@ export const Navbar: React.FC<NavbarProps> = ({
   onScanClick,
   onCertificateClick,
   onMobileClick,
+  onGenerateQrClick,
 }) => {
+  const { lang, setLang, t } = useLanguage();
   const [mobileDrawerOpen, setMobileDrawerOpen] = React.useState(false);
 
   const navLinks = [
-    { id: 'website', label: 'Home', icon: Home },
-    { id: 'consumer', label: 'Verify Honey', icon: QrCode },
-    { id: 'beekeeper', label: 'Beekeeper Log', icon: Radio },
-    { id: 'collection', label: 'Mandi Scale', icon: Scale },
-    { id: 'processing', label: 'Processing & Lab', icon: FlaskConical },
-    { id: 'admin', label: 'Regulatory DAG', icon: ShieldCheck },
+    { id: 'website', label: t.nav.home, icon: Home },
+    { id: 'consumer', label: t.nav.verify, icon: QrCode },
+    { id: 'beekeeper', label: t.nav.beekeeper, icon: Radio },
+    { id: 'collection', label: t.nav.mandi, icon: Scale },
+    { id: 'processing', label: t.nav.processing, icon: FlaskConical },
+    { id: 'admin', label: t.nav.admin, icon: ShieldCheck },
   ];
 
   return (
@@ -53,11 +57,11 @@ export const Navbar: React.FC<NavbarProps> = ({
           <div className="flex items-center space-x-3">
             <span className="flex items-center space-x-1.5">
               <span className="inline-block w-2 h-2 rounded-full bg-amber-400"></span>
-              <span className="tracking-wide text-white">Khadi & Village Industries Commission (KVIC)</span>
+              <span className="tracking-wide text-white">{t.ribbon.kvic}</span>
             </span>
             <span className="text-emerald-500 hidden md:inline">|</span>
             <span className="text-emerald-200/80 hidden md:inline">
-              National Honey Mission • FSSAI Food Safety Standards Gazette No. 2020/2.8.2
+              {t.ribbon.mission}
             </span>
           </div>
           <div className="flex items-center space-x-2">
@@ -89,12 +93,12 @@ export const Navbar: React.FC<NavbarProps> = ({
             </div>
             <div>
               <div className="flex items-center space-x-2">
-                <h1 className="text-xl font-bold font-serif text-stone-900 tracking-tight">HoneyChain</h1>
+                <h1 className="text-xl font-bold font-serif text-stone-900 tracking-tight">{t.nav.brand}</h1>
                 <span className="text-[10px] uppercase tracking-wider font-bold px-2 py-0.5 rounded bg-amber-100 text-amber-900 border border-amber-200 hidden sm:inline-block">
-                  National Protocol
+                  {t.nav.tag}
                 </span>
               </div>
-              <p className="text-xs text-stone-600 hidden sm:block">AI-Verified Blockchain Traceability Platform for Indian Honey</p>
+              <p className="text-xs text-stone-600 hidden sm:block">{t.nav.subtitle}</p>
             </div>
           </div>
 
@@ -121,18 +125,71 @@ export const Navbar: React.FC<NavbarProps> = ({
             })}
           </nav>
 
-          {/* Right Fast Actions & Officer Profile */}
+          {/* Right Fast Actions: Language Pill + Actions */}
           <div className="flex items-center space-x-2">
+            {/* 3-Language Selector Pill */}
+            <div className="flex items-center bg-stone-200/90 p-0.5 rounded-xl border border-stone-300 text-xs font-bold shadow-2xs">
+              <button
+                type="button"
+                onClick={() => setLang('en')}
+                className={`px-2 py-1 rounded-lg transition-all cursor-pointer ${
+                  lang === 'en'
+                    ? 'bg-stone-900 text-amber-400 shadow-xs'
+                    : 'text-stone-700 hover:text-stone-950'
+                }`}
+                title="Switch to English"
+              >
+                EN
+              </button>
+              <button
+                type="button"
+                onClick={() => setLang('hi')}
+                className={`px-2 py-1 rounded-lg transition-all cursor-pointer ${
+                  lang === 'hi'
+                    ? 'bg-stone-900 text-amber-400 shadow-xs'
+                    : 'text-stone-700 hover:text-stone-950'
+                }`}
+                title="हिन्दी में बदलें"
+              >
+                हिन्दी
+              </button>
+              <button
+                type="button"
+                onClick={() => setLang('mr')}
+                className={`px-2 py-1 rounded-lg transition-all cursor-pointer ${
+                  lang === 'mr'
+                    ? 'bg-stone-900 text-amber-400 shadow-xs'
+                    : 'text-stone-700 hover:text-stone-950'
+                }`}
+                title="मराठीत बदला"
+              >
+                मराठी
+              </button>
+            </div>
+
+            {/* Customer Honey Jar QR Generator */}
+            {onGenerateQrClick && (
+              <button
+                type="button"
+                onClick={onGenerateQrClick}
+                className="px-3 py-1.5 bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs rounded-xl transition-all shadow-xs flex items-center gap-1.5 cursor-pointer border border-amber-500"
+                title="Generate Printable Customer Honey Jar QR Label"
+              >
+                <QrCode className="w-3.5 h-3.5 text-amber-200" />
+                <span className="hidden sm:inline">{t.nav.generateQr}</span>
+                <span className="sm:hidden">QR</span>
+              </button>
+            )}
+
             {onMobileClick && (
               <button
                 type="button"
                 onClick={onMobileClick}
-                className="px-3 py-1.5 bg-emerald-800 hover:bg-emerald-900 text-amber-200 font-bold text-xs rounded-xl transition-all shadow-xs flex items-center gap-1.5 cursor-pointer border border-emerald-700 hover:border-amber-400"
+                className="px-3 py-1.5 bg-emerald-800 hover:bg-emerald-900 text-amber-200 font-bold text-xs rounded-xl transition-all shadow-xs flex items-center gap-1.5 cursor-pointer border border-emerald-700 hover:border-amber-400 hidden md:flex"
                 title="Open HoneyChain on your phone and scan QR codes"
               >
                 <Smartphone className="w-3.5 h-3.5 text-amber-300" />
-                <span className="hidden sm:inline">📱 Mobile / QR Hub</span>
-                <span className="sm:hidden">📱 Phone</span>
+                <span>{t.nav.mobileHub}</span>
               </button>
             )}
 
@@ -142,17 +199,17 @@ export const Navbar: React.FC<NavbarProps> = ({
               className="px-3 py-1.5 bg-amber-500 hover:bg-amber-600 text-stone-950 font-bold text-xs rounded-xl transition-all shadow-xs flex items-center gap-1.5 cursor-pointer"
             >
               <Camera className="w-3.5 h-3.5" />
-              <span className="hidden sm:inline">Scan Jar QR</span>
+              <span className="hidden sm:inline">{t.nav.scanJar}</span>
               <span className="sm:hidden">Scan</span>
             </button>
 
             <button
               type="button"
               onClick={onCertificateClick}
-              className="px-3 py-1.5 bg-stone-900 hover:bg-stone-800 text-white font-bold text-xs rounded-xl transition-all shadow-xs flex items-center gap-1.5 cursor-pointer hidden md:flex"
+              className="px-3 py-1.5 bg-stone-900 hover:bg-stone-800 text-white font-bold text-xs rounded-xl transition-all shadow-xs flex items-center gap-1.5 cursor-pointer hidden lg:flex"
             >
               <Printer className="w-3.5 h-3.5 text-amber-400" />
-              <span>Print NABL Cert</span>
+              <span>{t.nav.printCert}</span>
             </button>
 
             {/* Mobile Drawer Button */}
@@ -170,7 +227,54 @@ export const Navbar: React.FC<NavbarProps> = ({
 
       {/* Mobile Drawer Dropdown */}
       {mobileDrawerOpen && (
-        <div className="lg:hidden border-t border-stone-200 bg-white p-3 space-y-2 shadow-lg animate-in slide-in-from-top-2">
+        <div className="lg:hidden border-t border-stone-200 bg-white p-3 space-y-2.5 shadow-lg animate-in slide-in-from-top-2">
+          {/* Mobile Language Selector */}
+          <div className="flex items-center justify-between p-2 bg-stone-100 rounded-xl">
+            <span className="text-xs font-bold text-stone-600">भाषा / Language:</span>
+            <div className="flex items-center gap-1">
+              <button
+                type="button"
+                onClick={() => setLang('en')}
+                className={`px-2.5 py-1 rounded-lg text-xs font-bold ${lang === 'en' ? 'bg-stone-900 text-amber-400' : 'text-stone-700'}`}
+              >
+                EN
+              </button>
+              <button
+                type="button"
+                onClick={() => setLang('hi')}
+                className={`px-2.5 py-1 rounded-lg text-xs font-bold ${lang === 'hi' ? 'bg-stone-900 text-amber-400' : 'text-stone-700'}`}
+              >
+                हिन्दी
+              </button>
+              <button
+                type="button"
+                onClick={() => setLang('mr')}
+                className={`px-2.5 py-1 rounded-lg text-xs font-bold ${lang === 'mr' ? 'bg-stone-900 text-amber-400' : 'text-stone-700'}`}
+              >
+                मराठी
+              </button>
+            </div>
+          </div>
+
+          {onGenerateQrClick && (
+            <button
+              type="button"
+              onClick={() => {
+                onGenerateQrClick();
+                setMobileDrawerOpen(false);
+              }}
+              className="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-bold text-left bg-amber-600 text-white shadow-xs"
+            >
+              <div className="flex items-center gap-2">
+                <QrCode className="w-4 h-4 text-amber-200" />
+                <span>{t.nav.generateQr}</span>
+              </div>
+              <span className="text-[10px] bg-amber-900/40 px-2 py-0.5 rounded text-amber-100">
+                Sticker
+              </span>
+            </button>
+          )}
+
           {onMobileClick && (
             <button
               type="button"
@@ -182,13 +286,14 @@ export const Navbar: React.FC<NavbarProps> = ({
             >
               <div className="flex items-center gap-2">
                 <Smartphone className="w-4 h-4 text-amber-300" />
-                <span>📱 Open Mobile Access & QR Hub</span>
+                <span>{t.nav.mobileHub}</span>
               </div>
               <span className="text-[10px] bg-emerald-950 px-2 py-0.5 rounded text-emerald-300">
                 Tap Here
               </span>
             </button>
           )}
+
           <div className="text-[10px] uppercase font-mono font-bold text-stone-500 px-2">
             Navigation
           </div>
@@ -215,20 +320,6 @@ export const Navbar: React.FC<NavbarProps> = ({
                 </button>
               );
             })}
-          </div>
-
-          <div className="pt-2 border-t border-stone-200 flex items-center justify-between text-xs px-2 text-stone-600">
-            <span>Active Batch: PKG-MAHA-042</span>
-            <button
-              type="button"
-              onClick={() => {
-                onCertificateClick();
-                setMobileDrawerOpen(false);
-              }}
-              className="text-amber-700 font-bold underline"
-            >
-              Print Cert
-            </button>
           </div>
         </div>
       )}
