@@ -25,9 +25,15 @@ const MainLayout: React.FC = () => {
   const [isLoginModalOpen, setIsLoginModalOpen] = useState<boolean>(false);
 
   useEffect(() => {
-    // If URL contains ?batch=... (e.g. scanned from a phone camera), auto-switch to Consumer Verification!
     const urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.get('batch')) {
+    const tabParam = urlParams.get('tab');
+    if (tabParam) {
+      if (tabParam === 'dashboard' || tabParam === 'admin') {
+        setActiveTab('admin');
+      } else {
+        setActiveTab(tabParam);
+      }
+    } else if (urlParams.get('batch')) {
       setActiveTab('consumer');
     }
 
@@ -71,7 +77,7 @@ const MainLayout: React.FC = () => {
       />
 
       {/* 2. Main Content Area */}
-      <div className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 relative z-10">
+      <div className="flex-1 w-full max-w-5xl mx-auto px-4 sm:px-6 py-6 relative z-10">
         {activeTab === 'website' ? (
           /* Public Facing High-Impact Website */
           <main className="animate-in fade-in duration-300">

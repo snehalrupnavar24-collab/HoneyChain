@@ -5,33 +5,23 @@ import {
   Search,
   Camera,
   MapPin,
-  Calendar,
-  Scale,
   Lock,
   Printer,
   Sparkles,
-  ExternalLink,
-  ChevronRight,
-  Leaf,
-  Award,
   CheckCircle2,
-  FileCheck,
-  Radio,
-  Building2,
-  FlaskConical,
-  ArrowRight,
   Volume2,
-  Mic,
   Smartphone,
   QrCode,
-  Check
+  UserCheck,
+  ChevronRight,
+  FlaskConical,
+  ArrowRight
 } from 'lucide-react';
 import { verifyPackageByCode } from '../services/api';
 import { ConsumerVerifyResponse } from '../types';
 import { HoneyJar3DViewer } from './HoneyJar3DViewer';
 import { HouseholdPuritySimulator } from './HouseholdPuritySimulator';
 import { RealCameraScannerModal } from './RealCameraScannerModal';
-import { CustomerProcessGuide } from './CustomerProcessGuide';
 import { CustomerLoginModal } from './CustomerLoginModal';
 import { useLanguage } from '../context/LanguageContext';
 import { useAuth } from '../context/AuthContext';
@@ -48,7 +38,7 @@ export const WebsiteHome: React.FC<WebsiteHomeProps> = ({
   onOpenCustomerQrModal 
 }) => {
   const { lang, t } = useLanguage();
-  const { addScannedBatch } = useAuth();
+  const { user, isLoggedIn, addScannedBatch } = useAuth();
   const [packageCode, setPackageCode] = useState('PKG-MAHA-042-2697');
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState<ConsumerVerifyResponse | null>(null);
@@ -105,37 +95,50 @@ export const WebsiteHome: React.FC<WebsiteHomeProps> = ({
     handleSearch(initialCode);
   }, []);
 
-  return (
-    <div className="space-y-10 max-w-5xl mx-auto">
-      {/* CUSTOMER GUIDED PROCESS (STEP 1: LOGIN ➔ STEP 2: SCAN ➔ STEP 3: VERIFY & FARMER ➔ STEP 4: 3D & CERT) */}
-      <CustomerProcessGuide
-        onOpenLogin={() => setIsLoginModalOpen(true)}
-        onOpenScanner={() => setIsScannerOpen(true)}
-        onOpenCertificate={() => setIsCertificateOpen(true)}
-        onScrollTo3D={() => {
-          const el = document.getElementById('honey-jar-3d-section');
-          if (el) el.scrollIntoView({ behavior: 'smooth' });
-        }}
-      />
+  const handleAudioNarration = () => {
+    let speechText = '';
+    let speechLang = 'en-IN';
+    if (lang === 'mr') {
+      speechText = `हनीचेन सत्यापन यशस्वी झाले. हा मध १००% अस्सल आहे. शेतकरी रमेश तुकाराम पाटील यांनी सह्याद्रीच्या रानातून हा मध काढला आहे. NABL लॅब तपासणीत शून्य टक्के कृत्रिम साखर आढळली आहे.`;
+      speechLang = 'mr-IN';
+    } else if (lang === 'hi') {
+      speechText = `हनीचेन सत्यापन सफल हुआ। यह शत-प्रतिशत शुद्ध कच्चा शहद है। इसे महाबलेश्वर के पंजीकृत किसान रमेश तुकाराम पाटिल ने निकाला है। इसमें शून्य प्रतिशत कृत्रिम चीनी है।`;
+      speechLang = 'hi-IN';
+    } else {
+      speechText = `HoneyChain verification successful. This honey is 100% pure raw honey from beekeeper Ramesh Patil. Laboratory testing confirms 0.0% added sugar and 17.8% moisture.`;
+      speechLang = 'en-IN';
+    }
+    if ('speechSynthesis' in window) {
+      window.speechSynthesis.cancel();
+      const ut = new SpeechSynthesisUtterance(speechText);
+      ut.lang = speechLang;
+      window.speechSynthesis.speak(ut);
+    }
+  };
 
-      {/* 1. CLEAN, FOCUSED HERO & SCANNER */}
-      <section className="relative rounded-3xl overflow-hidden border border-amber-200/90 shadow-sm bg-gradient-to-b from-[#FEFCF8] to-[#FDF9F0] p-6 sm:p-10 text-center space-y-4">
-        <div className="inline-flex items-center gap-2 bg-white px-3.5 py-1 rounded-full text-xs font-semibold border border-amber-300 text-stone-900 shadow-2xs">
+  return (
+    <div className="space-y-6 max-w-4xl mx-auto">
+      {/* 1. ULTRA-CLEAN HIGH-VISIBILITY HERO & UNIFIED PROCESS */}
+      <section className="bg-white rounded-3xl border border-stone-200 shadow-sm p-6 sm:p-8 space-y-5 text-center">
+        {/* Top Trust Guarantee Badge */}
+        <div className="inline-flex items-center gap-2 bg-emerald-50 text-emerald-900 px-4 py-1.5 rounded-full text-xs font-bold border border-emerald-300 shadow-2xs">
           <ShieldCheck className="w-4 h-4 text-emerald-700" />
           <span>{t.hero.badge}</span>
         </div>
 
-        <h1 className="text-3xl sm:text-4xl font-serif font-black text-stone-900 tracking-tight leading-snug">
-          {t.hero.title}
-        </h1>
+        {/* High-Contrast Bold Headline */}
+        <div className="space-y-1.5">
+          <h1 className="text-3xl sm:text-4xl font-serif font-black text-stone-900 tracking-tight leading-snug">
+            {t.hero.title}
+          </h1>
+          <p className="text-xs sm:text-sm text-stone-700 max-w-lg mx-auto leading-relaxed">
+            {t.hero.subtitle}
+          </p>
+        </div>
 
-        <p className="text-sm sm:text-base text-stone-600 max-w-xl mx-auto leading-relaxed">
-          {t.hero.subtitle}
-        </p>
-
-        {/* Clean Single Search & Scan Bar */}
-        <div className="pt-2 max-w-xl mx-auto">
-          <div className="flex flex-col sm:flex-row items-center gap-2 bg-white p-2 rounded-2xl border border-stone-300 shadow-sm">
+        {/* High-Contrast Search & Camera Action */}
+        <div className="max-w-lg mx-auto space-y-2.5 pt-1">
+          <div className="flex flex-col sm:flex-row items-center gap-2 bg-stone-50 p-2 rounded-2xl border-2 border-stone-300 focus-within:border-amber-500 focus-within:bg-white transition-all shadow-xs">
             <form 
               onSubmit={(e) => { e.preventDefault(); handleSearch(); }}
               className="flex-1 w-full relative"
@@ -145,9 +148,9 @@ export const WebsiteHome: React.FC<WebsiteHomeProps> = ({
                 value={packageCode}
                 onChange={(e) => setPackageCode(e.target.value)}
                 placeholder={t.hero.placeholder}
-                className="w-full pl-10 pr-3 py-2.5 text-sm bg-transparent border-none focus:outline-hidden font-mono text-stone-900"
+                className="w-full pl-10 pr-3 py-2 text-sm bg-transparent border-none focus:outline-hidden font-mono font-bold text-stone-900 placeholder:text-stone-400"
               />
-              <Search className="w-4 h-4 text-stone-400 absolute left-3 top-3" />
+              <Search className="w-4 h-4 text-stone-500 absolute left-3 top-3" />
             </form>
 
             <div className="flex items-center gap-2 w-full sm:w-auto">
@@ -155,7 +158,7 @@ export const WebsiteHome: React.FC<WebsiteHomeProps> = ({
                 type="button"
                 onClick={() => handleSearch()}
                 disabled={loading}
-                className="flex-1 sm:flex-none px-5 py-2.5 bg-stone-900 hover:bg-stone-950 text-white font-bold text-xs rounded-xl transition-all shadow-xs disabled:opacity-50 cursor-pointer"
+                className="flex-1 sm:flex-none px-4 py-2 bg-stone-900 hover:bg-black text-white font-bold text-xs rounded-xl transition-all shadow-xs disabled:opacity-50 cursor-pointer"
               >
                 {loading ? t.hero.verifying : t.hero.verifyBtn}
               </button>
@@ -163,7 +166,7 @@ export const WebsiteHome: React.FC<WebsiteHomeProps> = ({
               <button
                 type="button"
                 onClick={() => setIsScannerOpen(true)}
-                className="px-4 py-2.5 bg-amber-500 hover:bg-amber-600 text-stone-950 font-bold text-xs rounded-xl transition-all shadow-xs flex items-center gap-1.5 cursor-pointer"
+                className="px-3.5 py-2 bg-amber-500 hover:bg-amber-600 text-stone-950 font-bold text-xs rounded-xl transition-all shadow-xs flex items-center gap-1.5 cursor-pointer"
                 title="Scan Jar QR with Camera"
               >
                 <Camera className="w-4 h-4" />
@@ -172,47 +175,131 @@ export const WebsiteHome: React.FC<WebsiteHomeProps> = ({
             </div>
           </div>
 
-          {/* Quick Test Chip */}
-          <div className="flex flex-wrap items-center justify-center gap-2 text-xs text-stone-500 pt-3">
-            <span className="font-medium">{t.hero.testBatchLabel}</span>
+          {/* Quick 1-Tap Sample Batch & Mobile QR Link */}
+          <div className="flex flex-wrap items-center justify-center gap-2 text-xs pt-0.5">
+            <span className="text-stone-600 font-semibold">{t.hero.testBatchLabel}</span>
             <button
               type="button"
               onClick={() => { setPackageCode('PKG-MAHA-042-2697'); handleSearch('PKG-MAHA-042-2697'); }}
-              className="px-2.5 py-0.5 bg-amber-50 hover:bg-amber-100 border border-amber-300 rounded-lg text-amber-900 font-mono font-semibold transition-colors cursor-pointer"
+              className="px-2.5 py-0.5 bg-amber-100 hover:bg-amber-200 border border-amber-300 rounded-lg text-amber-950 font-mono font-bold transition-colors cursor-pointer shadow-2xs"
             >
-              {t.hero.sampleJamun}
+              🍯 {t.hero.sampleJamun}
             </button>
             {onOpenMobileModal && (
               <button
                 type="button"
                 onClick={onOpenMobileModal}
-                className="px-2.5 py-0.5 bg-emerald-50 hover:bg-emerald-100 border border-emerald-300 rounded-lg text-emerald-900 font-medium transition-colors cursor-pointer flex items-center gap-1"
+                className="px-2.5 py-0.5 bg-emerald-100 hover:bg-emerald-200 border border-emerald-300 rounded-lg text-emerald-950 font-semibold transition-colors cursor-pointer flex items-center gap-1 shadow-2xs"
               >
-                <Smartphone className="w-3 h-3 text-emerald-700" />
+                <Smartphone className="w-3 h-3 text-emerald-800" />
                 <span>{t.hero.mobileTestBtn}</span>
               </button>
             )}
           </div>
         </div>
+
+        {/* STREAMLINED 4-STEP CUSTOMER PROCESS BAR (INTEGRATED & CLEAN) */}
+        <div className="pt-3 border-t border-stone-200">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-left">
+            {/* Step 1: Customer Sign In */}
+            <div 
+              onClick={() => setIsLoginModalOpen(true)}
+              className="p-2 rounded-xl border border-stone-200 hover:border-amber-300 bg-stone-50 hover:bg-amber-50/50 cursor-pointer transition-all flex items-center gap-2 group"
+            >
+              <div className={`w-6 h-6 rounded-lg flex items-center justify-center text-xs font-bold shrink-0 ${
+                isLoggedIn ? 'bg-emerald-600 text-white' : 'bg-stone-200 text-stone-800 group-hover:bg-amber-500 group-hover:text-stone-950'
+              }`}>
+                {isLoggedIn ? '✓' : '1'}
+              </div>
+              <div className="min-w-0">
+                <span className="text-[11px] font-bold text-stone-900 block truncate">
+                  {lang === 'mr' ? '१. ग्राहक खाते' : (lang === 'hi' ? '1. ग्राहक खाता' : '1. Sign In')}
+                </span>
+                <span className="text-[10px] text-stone-600 truncate block">
+                  {isLoggedIn ? user?.name.split(' ')[0] : (lang === 'mr' ? 'लॉगिन करा' : (lang === 'hi' ? 'लॉगिन' : '1-Click Access'))}
+                </span>
+              </div>
+            </div>
+
+            {/* Step 2: Scan Jar QR */}
+            <div 
+              onClick={() => setIsScannerOpen(true)}
+              className="p-2 rounded-xl border border-stone-200 hover:border-amber-300 bg-stone-50 hover:bg-amber-50/50 cursor-pointer transition-all flex items-center gap-2 group"
+            >
+              <div className="w-6 h-6 rounded-lg bg-stone-200 text-stone-800 group-hover:bg-amber-500 group-hover:text-stone-950 flex items-center justify-center text-xs font-bold shrink-0">
+                2
+              </div>
+              <div className="min-w-0">
+                <span className="text-[11px] font-bold text-stone-900 block truncate">
+                  {lang === 'mr' ? '२. QR स्कॅन' : (lang === 'hi' ? '2. QR स्कैन' : '2. Scan QR')}
+                </span>
+                <span className="text-[10px] text-stone-600 truncate block">
+                  {lang === 'mr' ? 'कॅमेरा उघडा' : (lang === 'hi' ? 'कैमरा खोलें' : 'Point Camera')}
+                </span>
+              </div>
+            </div>
+
+            {/* Step 3: Verified Lab & Farmer */}
+            <div 
+              onClick={() => {
+                const el = document.getElementById('verified-batch-section');
+                if (el) el.scrollIntoView({ behavior: 'smooth' });
+              }}
+              className="p-2 rounded-xl border border-emerald-300 bg-emerald-50/60 cursor-pointer transition-all flex items-center gap-2"
+            >
+              <div className="w-6 h-6 rounded-lg bg-emerald-700 text-white flex items-center justify-center text-xs font-bold shrink-0">
+                ✓
+              </div>
+              <div className="min-w-0">
+                <span className="text-[11px] font-bold text-emerald-950 block truncate">
+                  {lang === 'mr' ? '३. लॅब व शेतकरी' : (lang === 'hi' ? '3. लैब व किसान' : '3. Lab & Farmer')}
+                </span>
+                <span className="text-[10px] text-emerald-800 font-semibold truncate block">
+                  99.1% {lang === 'mr' ? 'शुद्ध' : (lang === 'hi' ? 'शुद्ध' : 'Pure')}
+                </span>
+              </div>
+            </div>
+
+            {/* Step 4: 3D Twin & Certificate */}
+            <div 
+              onClick={() => {
+                const el = document.getElementById('honey-jar-3d-section');
+                if (el) el.scrollIntoView({ behavior: 'smooth' });
+              }}
+              className="p-2 rounded-xl border border-stone-200 hover:border-amber-300 bg-stone-50 hover:bg-amber-50/50 cursor-pointer transition-all flex items-center gap-2 group"
+            >
+              <div className="w-6 h-6 rounded-lg bg-stone-200 text-stone-800 group-hover:bg-amber-500 group-hover:text-stone-950 flex items-center justify-center text-xs font-bold shrink-0">
+                4
+              </div>
+              <div className="min-w-0">
+                <span className="text-[11px] font-bold text-stone-900 block truncate">
+                  {lang === 'mr' ? '४. 3D व प्रमाणपत्र' : (lang === 'hi' ? '4. 3D व प्रमाण पत्र' : '4. 3D Jar & Cert')}
+                </span>
+                <span className="text-[10px] text-stone-600 truncate block">
+                  {lang === 'mr' ? '३६०° फिरवा' : (lang === 'hi' ? '360° घुमाएं' : '360° Spin')}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
       </section>
 
-      {/* 2. VERIFIED HONEY CARD (ESSENTIAL INFO FOR THE CUSTOMER) */}
+      {/* 2. VERIFIED AUTHENTICITY CARD (HIGH CONTRAST & CLEAN) */}
       {data && (
-        <section id="verified-batch-section" className="space-y-6 animate-in fade-in duration-300">
-          {/* Main Verification Card */}
-          <div className="bg-white rounded-3xl p-6 sm:p-8 border border-amber-200 shadow-sm space-y-6">
+        <section id="verified-batch-section" className="space-y-5 animate-in fade-in duration-300">
+          <div className="bg-white rounded-3xl p-6 sm:p-7 border border-stone-200 shadow-sm space-y-5">
             {/* Top Status Header */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-stone-200 pb-4">
               <div className="space-y-1">
-                <div className="inline-flex items-center gap-1.5 bg-emerald-100 text-emerald-900 px-3 py-1 rounded-full text-xs font-bold border border-emerald-300">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-700" />
+                <div className="inline-flex items-center gap-1.5 bg-emerald-600 text-white px-3 py-1 rounded-full text-xs font-bold shadow-2xs">
+                  <CheckCircle2 className="w-3.5 h-3.5" />
                   <span>{t.batchCard.verifiedBadge}</span>
                 </div>
-                <h2 className="text-2xl font-serif font-black text-stone-900 pt-1">
+                <h2 className="text-xl sm:text-2xl font-serif font-black text-stone-900 pt-0.5">
                   {data.package.product_name}
                 </h2>
-                <div className="text-xs text-stone-600 flex items-center gap-2">
-                  <span className="font-mono bg-stone-100 px-2 py-0.5 rounded border border-stone-200 text-stone-800 font-bold">
+                <div className="text-xs text-stone-700 flex items-center gap-2 font-medium">
+                  <span className="font-mono bg-stone-100 px-2 py-0.5 rounded-md border border-stone-300 text-stone-900 font-bold">
                     {t.batchCard.batchLabel}: {data.package.package_code}
                   </span>
                   <span>•</span>
@@ -224,36 +311,18 @@ export const WebsiteHome: React.FC<WebsiteHomeProps> = ({
               <div className="flex items-center gap-2 shrink-0">
                 <button
                   type="button"
-                  onClick={() => {
-                    let speechText = '';
-                    let speechLang = 'en-IN';
-                    if (lang === 'mr') {
-                      speechText = `हनीचेन सत्यापन यशस्वी झाले. हा मध १००% अस्सल आहे. शेतकरी रमेश तुकाराम पाटील यांनी सह्याद्रीच्या रानातून हा मध काढला आहे. NABL लॅब तपासणीत शून्य टक्के कृत्रिम साखर आढळली आहे.`;
-                      speechLang = 'mr-IN';
-                    } else if (lang === 'hi') {
-                      speechText = `हनीचेन सत्यापन सफल हुआ। यह शत-प्रतिशत शुद्ध कच्चा शहद है। इसे महाबलेश्वर के पंजीकृत किसान रमेश तुकाराम पाटिल ने निकाला है। इसमें शून्य प्रतिशत कृत्रिम चीनी है।`;
-                      speechLang = 'hi-IN';
-                    } else {
-                      speechText = `HoneyChain verification successful. This honey is 100% pure raw honey from beekeeper Ramesh Patil. Laboratory testing confirms 0.0% added sugar and 17.8% moisture.`;
-                      speechLang = 'en-IN';
-                    }
-                    if ('speechSynthesis' in window) {
-                      window.speechSynthesis.cancel();
-                      const ut = new SpeechSynthesisUtterance(speechText);
-                      ut.lang = speechLang;
-                      window.speechSynthesis.speak(ut);
-                    }
-                  }}
-                  className="px-3 py-2 bg-amber-100 hover:bg-amber-200 text-amber-950 text-xs font-bold rounded-xl flex items-center gap-1.5 transition-all border border-amber-300 cursor-pointer"
+                  onClick={handleAudioNarration}
+                  className="px-3 py-2 bg-amber-100 hover:bg-amber-200 text-amber-950 text-xs font-bold rounded-xl flex items-center gap-1.5 transition-all border border-amber-300 cursor-pointer shadow-2xs"
                   title="Listen in Audio"
                 >
-                  <Volume2 className="w-3.5 h-3.5 text-amber-700" />
+                  <Volume2 className="w-3.5 h-3.5 text-amber-800" />
                   <span>{t.batchCard.listenAudio}</span>
                 </button>
 
                 <button
+                  type="button"
                   onClick={() => setIsCertificateOpen(true)}
-                  className="px-3.5 py-2 bg-stone-900 hover:bg-stone-800 text-white text-xs font-bold rounded-xl flex items-center gap-1.5 transition-all shadow-xs cursor-pointer"
+                  className="px-3.5 py-2 bg-stone-900 hover:bg-black text-white text-xs font-bold rounded-xl flex items-center gap-1.5 transition-all shadow-xs cursor-pointer"
                 >
                   <Printer className="w-3.5 h-3.5 text-amber-400" />
                   <span>{t.batchCard.printCertBtn}</span>
@@ -261,56 +330,53 @@ export const WebsiteHome: React.FC<WebsiteHomeProps> = ({
               </div>
             </div>
 
-            {/* 4 Simple Key Lab Metrics (No jargon, clear to read) */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-              <div className="bg-amber-50/80 p-3.5 rounded-2xl border border-amber-200">
-                <span className="text-[11px] text-amber-900 font-semibold block">{t.batchCard.moistureLabel}</span>
-                <div className="text-xl font-black font-mono text-stone-900 mt-0.5">
-                  {data.laboratory?.moisture_pct || 17.8}%
-                </div>
-                <span className="text-[10px] text-emerald-700 font-medium">✓ {t.batchCard.moistureSub}</span>
-              </div>
-
-              <div className="bg-emerald-50/80 p-3.5 rounded-2xl border border-emerald-200">
-                <span className="text-[11px] text-emerald-900 font-semibold block">{t.batchCard.purityLabel}</span>
-                <div className="text-xl font-black font-mono text-emerald-900 mt-0.5">
+            {/* 3 High-Visibility Key Numbers */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <div className="bg-emerald-50/90 p-3.5 rounded-2xl border border-emerald-300">
+                <span className="text-xs text-emerald-950 font-bold block">{t.batchCard.purityLabel}</span>
+                <div className="text-2xl font-black font-mono text-emerald-900 mt-0.5">
                   {data.laboratory?.purity_score_pct || 99.1}%
                 </div>
-                <span className="text-[10px] text-emerald-700 font-medium">✓ {t.batchCard.puritySub}</span>
+                <span className="text-[11px] text-emerald-800 font-semibold block mt-0.5">
+                  ✓ {lang === 'mr' ? 'शून्य टक्के कृत्रिम साखर (C4 उत्तीर्ण)' : (lang === 'hi' ? 'शून्य प्रतिशत चाशनी (C4 उत्तीर्ण)' : '0.0% Added Sugar (C4 Passed)')}
+                </span>
               </div>
 
-              <div className="bg-amber-50/80 p-3.5 rounded-2xl border border-amber-200">
-                <span className="text-[11px] text-amber-900 font-semibold block">{t.batchCard.freshnessLabel}</span>
-                <div className="text-xl font-black font-mono text-stone-900 mt-0.5">
-                  14.2 <span className="text-xs font-normal font-sans">DN</span>
+              <div className="bg-amber-50/90 p-3.5 rounded-2xl border border-amber-300">
+                <span className="text-xs text-amber-950 font-bold block">{t.batchCard.moistureLabel}</span>
+                <div className="text-2xl font-black font-mono text-stone-900 mt-0.5">
+                  {data.laboratory?.moisture_pct || 17.8}%
                 </div>
-                <span className="text-[10px] text-emerald-700 font-medium">✓ {t.batchCard.freshnessSub}</span>
+                <span className="text-[11px] text-amber-900 font-semibold block mt-0.5">
+                  ✓ {t.batchCard.moistureSub}
+                </span>
               </div>
 
-              <div className="bg-stone-50 p-3.5 rounded-2xl border border-stone-200">
-                <span className="text-[11px] text-stone-700 font-semibold block">{t.batchCard.trustLabel}</span>
-                <div className="text-sm font-bold text-stone-900 mt-1 flex items-center gap-1 font-mono">
-                  <Lock className="w-3.5 h-3.5 text-emerald-700" />
-                  <span>SHA-256</span>
+              <div className="bg-stone-50 p-3.5 rounded-2xl border border-stone-300">
+                <span className="text-xs text-stone-800 font-bold block">{t.batchCard.fairPriceLabel}</span>
+                <div className="text-2xl font-black font-mono text-emerald-800 mt-0.5">
+                  ₹480 / kg
                 </div>
-                <span className="text-[10px] text-emerald-700 font-medium">✓ {t.batchCard.trustSub}</span>
+                <span className="text-[11px] text-stone-700 font-semibold block mt-0.5">
+                  ✓ {lang === 'mr' ? 'शेतकऱ्याला थेट बँक खात्यात पूर्ण मोबदला' : (lang === 'hi' ? 'किसान को सीधे बैंक खाते में भुगतान' : '100% Direct DBT to Beekeeper')}
+                </span>
               </div>
             </div>
 
-            {/* Beekeeper & Location Profile (Customer Favorite) */}
-            <div className="bg-stone-50/90 rounded-2xl p-5 border border-stone-200 space-y-4">
-              <div className="flex items-center justify-between border-b border-stone-200 pb-3">
+            {/* Humanized Beekeeper Profile (Customer Favorite) */}
+            <div className="bg-stone-50/90 rounded-2xl p-4 sm:p-5 border border-stone-200 space-y-3.5">
+              <div className="flex items-center justify-between border-b border-stone-200 pb-2.5">
                 <span className="text-xs font-bold uppercase tracking-wider text-amber-900">
                   {t.batchCard.beekeeperSectionTitle}
                 </span>
-                <span className="text-xs font-bold bg-emerald-100 text-emerald-900 px-2.5 py-0.5 rounded-full border border-emerald-300">
-                  {t.batchCard.dbtVerified}
+                <span className="text-xs font-bold bg-emerald-100 text-emerald-950 px-2.5 py-0.5 rounded-full border border-emerald-300">
+                  ✓ {t.batchCard.dbtVerified}
                 </span>
               </div>
 
               <div className="flex flex-col sm:flex-row items-start gap-4">
                 {/* Beekeeper Photo */}
-                <div className="w-20 h-20 rounded-2xl overflow-hidden shadow-xs border-2 border-amber-300 bg-stone-200 shrink-0 self-center sm:self-start">
+                <div className="w-18 h-18 rounded-2xl overflow-hidden shadow-xs border-2 border-amber-400 bg-stone-200 shrink-0 self-center sm:self-start">
                   <img
                     src="https://images.unsplash.com/photo-1605000797499-95a51c5269ae?auto=format&fit=crop&w=300&q=80"
                     alt="Ramesh Tukaram Patil"
@@ -325,14 +391,14 @@ export const WebsiteHome: React.FC<WebsiteHomeProps> = ({
                       <h3 className="text-base font-bold text-stone-900">
                         {data.origin?.beekeeper_name || 'Ramesh Tukaram Patil'}
                       </h3>
-                      <span className="text-stone-500 font-mono text-[11px]">KVIC-MH-2024-8841</span>
+                      <span className="text-stone-600 font-mono text-xs font-medium">KVIC-MH-2024-8841</span>
                     </div>
-                    <div className="bg-white px-3 py-1 rounded-xl border border-emerald-200 text-emerald-900 font-bold font-mono">
+                    <div className="bg-white px-2.5 py-1 rounded-xl border border-emerald-300 text-emerald-900 font-bold font-mono text-xs">
                       ₹480 / kg ({t.batchCard.directPay})
                     </div>
                   </div>
 
-                  <p className="text-stone-700 leading-relaxed italic bg-white p-3 rounded-xl border border-amber-100 font-serif">
+                  <p className="text-stone-800 leading-relaxed italic bg-white p-2.5 rounded-xl border border-stone-200 font-serif text-xs">
                     {lang === 'mr'
                       ? '"सह्याद्रीच्या रानातून काढलेला हा १००% अस्सल जांभूळ मध आहे. आम्ही मधाला कधीही तापवत नाही आणि साखर घालत नाही."'
                       : (lang === 'hi'
@@ -340,74 +406,66 @@ export const WebsiteHome: React.FC<WebsiteHomeProps> = ({
                         : '"100% pure raw Jamun honey harvested in the Western Ghats. Cold-extracted without heat or synthetic syrups."')}
                   </p>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 pt-1">
-                    <div className="bg-white p-2 rounded-lg border border-stone-200">
-                      <span className="text-stone-500 text-[10px] block">{t.batchCard.locationLabel}:</span>
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 pt-0.5">
+                    <div className="bg-white p-2 rounded-xl border border-stone-200">
+                      <span className="text-stone-600 text-[10px] block font-semibold">{t.batchCard.locationLabel}:</span>
                       <span className="font-bold text-stone-900">{data.origin?.apiary_location}</span>
                     </div>
-                    <div className="bg-white p-2 rounded-lg border border-stone-200">
-                      <span className="text-stone-500 text-[10px] block">{t.batchCard.hiveIdLabel}:</span>
+                    <div className="bg-white p-2 rounded-xl border border-stone-200">
+                      <span className="text-stone-600 text-[10px] block font-semibold">{t.batchCard.hiveIdLabel}:</span>
                       <span className="font-mono font-bold text-stone-900">{data.origin?.hive_code}</span>
                     </div>
-                    <div className="bg-white p-2 rounded-lg border border-stone-200">
-                      <span className="text-stone-500 text-[10px] block">{t.batchCard.floralSourceLabel}:</span>
-                      <span className="font-bold text-amber-900">Syzygium cumini (Wild Jamun)</span>
+                    <div className="bg-white p-2 rounded-xl border border-stone-200">
+                      <span className="text-stone-600 text-[10px] block font-semibold">{t.batchCard.floralSourceLabel}:</span>
+                      <span className="font-bold text-amber-950">Syzygium cumini (Wild Jamun)</span>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
 
-            {/* Simple 5-Step Visual Stepper (Concise & Clean) */}
-            <div className="space-y-3 pt-2">
+            {/* Simple 4-Step Chain of Custody */}
+            <div className="space-y-2.5 pt-1">
               <div className="flex items-center justify-between text-xs">
                 <span className="font-bold text-stone-800 uppercase tracking-wider">
                   {t.timeline.title}
                 </span>
-                <span className="text-stone-500 font-mono text-[11px]">
+                <span className="text-stone-600 font-mono text-xs">
                   {t.timeline.custodyBadge}
                 </span>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-5 gap-2 text-xs">
-                <div className="bg-stone-50 p-3 rounded-xl border border-stone-200 space-y-1">
-                  <div className="flex items-center gap-1.5 font-bold text-amber-900">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
+                <div className="bg-stone-50 p-2.5 rounded-xl border border-stone-200 space-y-0.5">
+                  <div className="flex items-center gap-1.5 font-bold text-amber-950">
                     <span className="w-5 h-5 rounded-full bg-amber-500 text-stone-950 flex items-center justify-center text-[10px] font-mono">1</span>
                     <span className="truncate">{t.timeline.step1Title}</span>
                   </div>
-                  <p className="text-[11px] text-stone-600 truncate">{data.origin?.beekeeper_name}</p>
+                  <p className="text-[11px] text-stone-700 truncate">{data.origin?.beekeeper_name}</p>
                 </div>
 
-                <div className="bg-stone-50 p-3 rounded-xl border border-stone-200 space-y-1">
-                  <div className="flex items-center gap-1.5 font-bold text-emerald-900">
+                <div className="bg-stone-50 p-2.5 rounded-xl border border-stone-200 space-y-0.5">
+                  <div className="flex items-center gap-1.5 font-bold text-emerald-950">
                     <span className="w-5 h-5 rounded-full bg-emerald-600 text-white flex items-center justify-center text-[10px] font-mono">2</span>
                     <span className="truncate">{t.timeline.step2Title}</span>
                   </div>
-                  <p className="text-[11px] text-stone-600 truncate">{data.collection?.measured_quantity || 48.5} kg</p>
+                  <p className="text-[11px] text-stone-700 truncate">{data.collection?.measured_quantity || 48.5} kg</p>
                 </div>
 
-                <div className="bg-stone-50 p-3 rounded-xl border border-stone-200 space-y-1">
-                  <div className="flex items-center gap-1.5 font-bold text-stone-800">
-                    <span className="w-5 h-5 rounded-full bg-stone-700 text-white flex items-center justify-center text-[10px] font-mono">3</span>
+                <div className="bg-stone-50 p-2.5 rounded-xl border border-stone-200 space-y-0.5">
+                  <div className="flex items-center gap-1.5 font-bold text-stone-900">
+                    <span className="w-5 h-5 rounded-full bg-stone-800 text-white flex items-center justify-center text-[10px] font-mono">3</span>
                     <span className="truncate">{t.timeline.step3Title}</span>
                   </div>
-                  <p className="text-[11px] text-stone-600 truncate">&lt;45°C Micro-mesh</p>
+                  <p className="text-[11px] text-stone-700 truncate">&lt;45°C Micro-mesh</p>
                 </div>
 
-                <div className="bg-emerald-50 p-3 rounded-xl border border-emerald-200 space-y-1">
+                <div className="bg-emerald-50 p-2.5 rounded-xl border border-emerald-300 space-y-0.5">
                   <div className="flex items-center gap-1.5 font-bold text-emerald-950">
                     <span className="w-5 h-5 rounded-full bg-emerald-700 text-white flex items-center justify-center text-[10px] font-mono">4</span>
                     <span className="truncate">{t.timeline.step4Title}</span>
                   </div>
-                  <p className="text-[11px] text-emerald-800 truncate font-semibold">0.0% C4 (Passed)</p>
-                </div>
-
-                <div className="bg-stone-50 p-3 rounded-xl border border-stone-200 space-y-1">
-                  <div className="flex items-center gap-1.5 font-bold text-amber-900">
-                    <span className="w-5 h-5 rounded-full bg-stone-900 text-amber-400 flex items-center justify-center text-[10px] font-mono">5</span>
-                    <span className="truncate">{t.timeline.step5Title}</span>
-                  </div>
-                  <p className="text-[11px] text-stone-600 truncate">{data.package.package_code}</p>
+                  <p className="text-[11px] text-emerald-900 font-bold truncate">0.0% C4 (Passed)</p>
                 </div>
               </div>
             </div>
@@ -415,19 +473,19 @@ export const WebsiteHome: React.FC<WebsiteHomeProps> = ({
         </section>
       )}
 
-      {/* 3. INTERACTIVE 3D HONEY JAR MODEL (VISUAL & INTUITIVE) */}
+      {/* 3. INTERACTIVE 3D HONEY JAR MODEL (HIGH VISIBILITY STUDIO) */}
       <section id="honey-jar-3d-section">
         <HoneyJar3DViewer />
       </section>
 
-      {/* 4. OPTIONAL KITCHEN PURITY SIMULATOR (COLLAPSIBLE / COMPACT) */}
-      <section className="bg-white rounded-3xl border border-amber-200 p-6 shadow-xs space-y-4">
-        <div className="flex items-center justify-between">
+      {/* 4. OPTIONAL KITCHEN PURITY SIMULATOR (CLEAN & COLLAPSIBLE) */}
+      <section className="bg-white rounded-3xl border border-stone-200 p-5 shadow-xs space-y-3">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div className="space-y-0.5">
             <span className="text-xs font-bold text-amber-900 uppercase tracking-wider block">
               {t.puritySim.tag}
             </span>
-            <h3 className="text-lg sm:text-xl font-serif font-bold text-stone-900">
+            <h3 className="text-base sm:text-lg font-serif font-bold text-stone-900">
               {t.puritySim.title}
             </h3>
             <p className="text-xs text-stone-600">
@@ -438,7 +496,7 @@ export const WebsiteHome: React.FC<WebsiteHomeProps> = ({
           <button
             type="button"
             onClick={() => setShowPuritySim(!showPuritySim)}
-            className="px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-600 text-stone-950 text-xs font-bold transition-all cursor-pointer shrink-0"
+            className="px-3.5 py-2 rounded-xl bg-amber-500 hover:bg-amber-600 text-stone-950 text-xs font-bold transition-all cursor-pointer shrink-0 shadow-2xs self-start sm:self-auto"
           >
             {showPuritySim 
               ? (lang === 'mr' ? 'सिम्युलेटर लपवा ✕' : (lang === 'hi' ? 'सिम्युलेटर छुपाएं ✕' : 'Hide Test ✕'))
@@ -466,7 +524,7 @@ export const WebsiteHome: React.FC<WebsiteHomeProps> = ({
       {/* OFFICIAL PRINTABLE CERTIFICATE MODAL */}
       {isCertificateOpen && data && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 z-50 overflow-y-auto">
-          <div className="bg-[#FAF7F0] text-stone-900 rounded-3xl max-w-2xl w-full p-8 border-4 border-amber-800/80 shadow-2xl space-y-6 my-8 print:border-none print:shadow-none print:p-0">
+          <div className="bg-[#FAF7F0] text-stone-900 rounded-3xl max-w-2xl w-full p-6 sm:p-8 border-4 border-amber-800/80 shadow-2xl space-y-6 my-8 print:border-none print:shadow-none print:p-0">
             {/* Action Bar */}
             <div className="flex items-center justify-between border-b border-stone-300 pb-3 print:hidden">
               <span className="text-xs font-bold uppercase tracking-wider text-amber-900">
@@ -475,9 +533,9 @@ export const WebsiteHome: React.FC<WebsiteHomeProps> = ({
               <div className="flex items-center gap-2">
                 <button
                   onClick={() => window.print()}
-                  className="px-3 py-1.5 bg-stone-900 hover:bg-stone-800 text-white text-xs font-bold rounded-lg flex items-center gap-1.5 transition-colors cursor-pointer"
+                  className="px-3.5 py-1.5 bg-stone-900 hover:bg-black text-white text-xs font-bold rounded-xl flex items-center gap-1.5 transition-colors cursor-pointer"
                 >
-                  <Printer className="w-3.5 h-3.5" /> {lang === 'mr' ? 'प्रिंट / सेव्ह करा' : (lang === 'hi' ? 'प्रिंट / सहेजें' : 'Print / Save PDF')}
+                  <Printer className="w-3.5 h-3.5 text-amber-400" /> {lang === 'mr' ? 'प्रिंट / सेव्ह करा' : (lang === 'hi' ? 'प्रिंट / सहेजें' : 'Print / Save PDF')}
                 </button>
                 <button
                   onClick={() => setIsCertificateOpen(false)}
@@ -527,28 +585,28 @@ export const WebsiteHome: React.FC<WebsiteHomeProps> = ({
                 </thead>
                 <tbody className="divide-y divide-stone-300">
                   <tr>
-                    <td className="p-2 border border-stone-300">{lang === 'mr' ? 'ओलावा (Moisture)' : (lang === 'hi' ? 'नमी की मात्रा' : 'Moisture Content')}</td>
+                    <td className="p-2 border border-stone-300 font-semibold">{lang === 'mr' ? 'ओलावा (Moisture)' : (lang === 'hi' ? 'नमी की मात्रा' : 'Moisture Content')}</td>
                     <td className="p-2 border border-stone-300">Max 20.0%</td>
                     <td className="p-2 border border-stone-300 font-mono font-bold">{data.laboratory?.moisture_pct || 17.8}%</td>
-                    <td className="p-2 border border-stone-300 text-emerald-700 font-bold">{lang === 'mr' ? 'उत्तीर्ण' : (lang === 'hi' ? 'उत्तीर्ण' : 'COMPLIANT')}</td>
+                    <td className="p-2 border border-stone-300 text-emerald-800 font-bold">{lang === 'mr' ? 'उत्तीर्ण' : (lang === 'hi' ? 'उत्तीर्ण' : 'COMPLIANT')}</td>
                   </tr>
                   <tr>
-                    <td className="p-2 border border-stone-300">{lang === 'mr' ? 'F/G गुणोत्तर (फ्रुक्टोज/ग्लुकोज)' : (lang === 'hi' ? 'F/G अनुपात (फ्रुक्टोज़/ग्लूकोज)' : 'F/G Ratio (Fructose/Glucose)')}</td>
+                    <td className="p-2 border border-stone-300 font-semibold">{lang === 'mr' ? 'F/G गुणोत्तर (फ्रुक्टोज/ग्लुकोज)' : (lang === 'hi' ? 'F/G अनुपात (फ्रुक्टोज़/ग्लूकोज)' : 'F/G Ratio (Fructose/Glucose)')}</td>
                     <td className="p-2 border border-stone-300">Min 1.0</td>
                     <td className="p-2 border border-stone-300 font-mono font-bold">1.22</td>
-                    <td className="p-2 border border-stone-300 text-emerald-700 font-bold">{lang === 'mr' ? 'उत्तीर्ण' : (lang === 'hi' ? 'उत्तीर्ण' : 'COMPLIANT')}</td>
+                    <td className="p-2 border border-stone-300 text-emerald-800 font-bold">{lang === 'mr' ? 'उत्तीर्ण' : (lang === 'hi' ? 'उत्तीर्ण' : 'COMPLIANT')}</td>
                   </tr>
                   <tr>
-                    <td className="p-2 border border-stone-300">Hydroxymethylfurfural (HMF)</td>
+                    <td className="p-2 border border-stone-300 font-semibold">Hydroxymethylfurfural (HMF)</td>
                     <td className="p-2 border border-stone-300">Max 40 mg/kg</td>
                     <td className="p-2 border border-stone-300 font-mono font-bold">14.2 mg/kg</td>
-                    <td className="p-2 border border-stone-300 text-emerald-700 font-bold">{lang === 'mr' ? 'शीत प्रक्रिया (कच्चा मध)' : (lang === 'hi' ? 'कच्चा शहद (शीत निष्कर्षित)' : 'RAW / UNHEATED')}</td>
+                    <td className="p-2 border border-stone-300 text-emerald-800 font-bold">{lang === 'mr' ? 'शीत प्रक्रिया (कच्चा मध)' : (lang === 'hi' ? 'कच्चा शहद (शीत निष्कर्षित)' : 'RAW / UNHEATED')}</td>
                   </tr>
                   <tr>
-                    <td className="p-2 border border-stone-300">EA-IRMS C4 Sugar Isotope</td>
+                    <td className="p-2 border border-stone-300 font-semibold">EA-IRMS C4 Sugar Isotope</td>
                     <td className="p-2 border border-stone-300">Negative</td>
                     <td className="p-2 border border-stone-300 font-mono font-bold">&lt; -23.5‰ δ13C</td>
-                    <td className="p-2 border border-stone-300 text-emerald-700 font-bold">{lang === 'mr' ? 'शून्य साखर पाक भेसळ' : (lang === 'hi' ? 'शून्य चीनी चाशनी' : 'ZERO CORN/CANE SYRUP')}</td>
+                    <td className="p-2 border border-stone-300 text-emerald-800 font-bold">{lang === 'mr' ? 'शून्य साखर पाक भेसळ' : (lang === 'hi' ? 'शून्य चीनी चाशनी' : 'ZERO CORN/CANE SYRUP')}</td>
                   </tr>
                 </tbody>
               </table>

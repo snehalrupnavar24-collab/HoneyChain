@@ -74,21 +74,21 @@ export const HoneyJar3DViewer: React.FC = () => {
     container.innerHTML = '';
     container.appendChild(renderer.domElement);
 
-    // 4. Lighting
-    const ambientLight = new THREE.AmbientLight(0xfffbeb, 1.2);
+    // 4. Bright Studio Lighting for Maximum Visibility
+    const ambientLight = new THREE.AmbientLight(0xfffbeb, 1.6);
     scene.add(ambientLight);
 
-    const keyLight = new THREE.DirectionalLight(0xffffff, 2.0);
+    const keyLight = new THREE.DirectionalLight(0xffffff, 2.8);
     keyLight.position.set(3, 5, 4);
     keyLight.castShadow = true;
     scene.add(keyLight);
 
-    const rimLight = new THREE.DirectionalLight(0xfef3c7, 1.5);
+    const rimLight = new THREE.DirectionalLight(0xfef3c7, 2.2);
     rimLight.position.set(-3, -2, -3);
     scene.add(rimLight);
 
-    // Internal Glow PointLight inside the honey liquid
-    const honeyGlowLight = new THREE.PointLight(varietyColors[variety].lightColor, 2.2, 3);
+    // Internal Glow PointLight inside the golden honey liquid
+    const honeyGlowLight = new THREE.PointLight(varietyColors[variety].lightColor, 3.2, 3.5);
     honeyGlowLight.position.set(0, 0, 0);
     scene.add(honeyGlowLight);
     honeyGlowLightRef.current = honeyGlowLight;
@@ -349,18 +349,18 @@ export const HoneyJar3DViewer: React.FC = () => {
   }, [variety]);
 
   return (
-    <div className="bg-gradient-to-br from-[#FEFAF0] via-[#FAF4E6] to-[#F7EED9] rounded-3xl border border-amber-200/90 shadow-sm p-6 sm:p-8 space-y-6">
+    <div className="bg-white rounded-3xl border border-stone-200 shadow-sm p-5 sm:p-7 space-y-5">
       {/* Top Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-amber-200/80 pb-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-stone-200 pb-3">
         <div>
-          <div className="inline-flex items-center gap-1.5 bg-amber-200/80 text-amber-900 px-3 py-1 rounded-full text-xs font-bold border border-amber-300">
+          <div className="inline-flex items-center gap-1.5 bg-amber-100 text-amber-900 px-3 py-1 rounded-full text-xs font-bold border border-amber-300">
             <Sparkles className="w-3.5 h-3.5 text-amber-700" />
             <span>{t.viewer3d.tag}</span>
           </div>
-          <h3 className="text-2xl sm:text-3xl font-serif font-black text-stone-900 tracking-tight mt-1.5">
+          <h3 className="text-xl sm:text-2xl font-serif font-black text-stone-900 tracking-tight mt-1">
             {t.viewer3d.title}
           </h3>
-          <p className="text-xs sm:text-sm text-stone-700 mt-1 max-w-2xl leading-relaxed">
+          <p className="text-xs text-stone-700 mt-0.5 max-w-xl leading-relaxed">
             {t.viewer3d.subtitle}
           </p>
         </div>
@@ -404,19 +404,19 @@ export const HoneyJar3DViewer: React.FC = () => {
       </div>
 
       {/* 3D Canvas + Technical Specification HUD */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-center">
         {/* Left 7 Cols: Interactive 3D WebGL Canvas */}
-        <div className="lg:col-span-7 bg-radial from-amber-50/60 to-amber-100/40 rounded-3xl border border-amber-300/80 shadow-inner relative overflow-hidden flex flex-col items-center justify-center min-h-[420px]">
+        <div className="lg:col-span-7 bg-white rounded-2xl border-2 border-stone-200 shadow-xs relative overflow-hidden flex flex-col items-center justify-center min-h-[380px]">
           {/* Subtle 3D background rings */}
           <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-20">
-            <div className="w-80 h-80 rounded-full border-2 border-dashed border-amber-600" />
-            <div className="w-56 h-56 rounded-full border border-amber-500" />
+            <div className="w-72 h-72 rounded-full border-2 border-dashed border-amber-600" />
+            <div className="w-52 h-52 rounded-full border border-amber-500" />
           </div>
 
           {/* Three.js Canvas Container */}
           <div 
             ref={mountRef} 
-            className="w-full h-[400px] cursor-grab active:cursor-grabbing z-10 flex items-center justify-center"
+            className="w-full h-[360px] cursor-grab active:cursor-grabbing z-10 flex items-center justify-center"
             title="Click and drag horizontally to spin the 3D Honey Jar"
           />
 

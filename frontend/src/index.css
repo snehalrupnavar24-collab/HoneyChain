@@ -4,39 +4,25 @@
 
 @layer base {
   body {
-    background-color: #FDFBF7;
-    color: #1C1917;
+    background-color: #F8F7F4;
+    color: #0F172A;
     font-feature-settings: "cv02", "cv03", "cv04", "cv11";
   }
 }
 
-/* Light, Real Photographic Backgrounds with Decent Soft Warm Wash */
+/* Crisp, Clean High-Visibility Background */
 .bg-real-honey-photo {
-  background-color: #FDFBF7;
-  background-image: 
-    linear-gradient(180deg, rgba(253, 251, 247, 0.92) 0%, rgba(253, 251, 247, 0.96) 100%),
-    url('https://images.unsplash.com/photo-1587049352846-4a222e784d38?auto=format&fit=crop&w=1920&q=80');
-  background-size: cover;
-  background-position: center top;
-  background-attachment: fixed;
+  background-color: #F8F7F4;
+  background-image: radial-gradient(#E5DFD3 0.8px, #F8F7F4 0.8px);
+  background-size: 24px 24px;
 }
 
 .bg-honey-drip-light {
-  background-color: #FDFBF7;
-  background-image: 
-    linear-gradient(180deg, rgba(254, 252, 248, 0.90) 0%, rgba(253, 249, 240, 0.96) 100%),
-    url('https://images.unsplash.com/photo-1589927986089-35812388d1f4?auto=format&fit=crop&w=1920&q=80');
-  background-size: cover;
-  background-position: center;
+  background-color: #F8F7F4;
 }
 
 .bg-honeycomb-light {
-  background-color: #FDFBF7;
-  background-image: 
-    linear-gradient(180deg, rgba(254, 252, 248, 0.91) 0%, rgba(253, 249, 240, 0.96) 100%),
-    url('https://images.unsplash.com/photo-1587049352851-8d4e89133924?auto=format&fit=crop&w=1920&q=80');
-  background-size: cover;
-  background-position: center;
+  background-color: #F8F7F4;
 }
 
 /* Custom scrollbar */
@@ -45,26 +31,26 @@
   height: 8px;
 }
 ::-webkit-scrollbar-track {
-  background: #F5F1E8;
+  background: #F1ECE3;
 }
 ::-webkit-scrollbar-thumb {
-  background: #D8CFBE;
+  background: #D1C7B7;
   border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #B8A990;
+  background: #B5A995;
 }
 
 /* Authentic Paper & Humanized Card Elevation */
 .card-subtle {
   background: #FFFFFF;
-  border: 1px solid #EAE3D2;
-  box-shadow: 0 1px 3px 0 rgba(44, 39, 32, 0.03), 0 1px 2px -1px rgba(44, 39, 32, 0.02);
+  border: 1px solid #E2E8F0;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
 }
 
 .card-subtle:hover {
-  border-color: #D6CAAF;
-  box-shadow: 0 4px 6px -1px rgba(44, 39, 32, 0.05), 0 2px 4px -2px rgba(44, 39, 32, 0.03);
+  border-color: #CBD5E1;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.08);
 }
 
 /* Printable Certificate styles */
@@ -73,7 +59,7 @@
     background: #FFFFFF !important;
     color: #000000 !important;
   }
-  .print\\:hidden {
+  .print\:hidden {
     display: none !important;
   }
 }
