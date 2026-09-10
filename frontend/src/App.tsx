@@ -5,7 +5,6 @@ import { ConsumerVerification } from './components/ConsumerVerification';
 import { BeekeeperPortal } from './components/BeekeeperPortal';
 import { CollectionTerminal } from './components/CollectionTerminal';
 import { ProcessingFacility } from './components/ProcessingFacility';
-import { AdminAuditDashboard } from './components/AdminAuditDashboard';
 import { StageHeader } from './components/StageHeader';
 import { HoneyVaaniVoiceWidget } from './components/HoneyVaaniVoiceWidget';
 import { MobileAccessModal } from './components/MobileAccessModal';
@@ -22,7 +21,7 @@ const MainLayout: React.FC = () => {
     if (typeof window !== 'undefined') {
       const urlParams = new URLSearchParams(window.location.search);
       const tabParam = urlParams.get('tab');
-      if (tabParam === 'dashboard' || tabParam === 'admin') return 'admin';
+      if (tabParam === 'dashboard' || tabParam === 'admin') return 'website';
       if (tabParam) return tabParam;
       if (urlParams.get('batch')) return 'consumer';
     }
@@ -38,7 +37,7 @@ const MainLayout: React.FC = () => {
     const tabParam = urlParams.get('tab');
     if (tabParam) {
       if (tabParam === 'dashboard' || tabParam === 'admin') {
-        setActiveTab('admin');
+        setActiveTab('website');
       } else {
         setActiveTab(tabParam);
       }
@@ -73,7 +72,7 @@ const MainLayout: React.FC = () => {
 
   return (
     <div className="min-h-screen flex flex-col bg-real-honey-photo text-stone-900 font-sans selection:bg-amber-200 selection:text-stone-950 relative">
-      {/* 1. Official Government Institutional Navbar with Real Website Navigation */}
+      {/* 1. Official Government Institutional Navbar */}
       <Navbar
         activeTab={activeTab}
         setActiveTab={setActiveTab}
@@ -86,9 +85,9 @@ const MainLayout: React.FC = () => {
       />
 
       {/* 2. Main Content Area */}
-      <div className={`flex-1 w-full mx-auto px-4 sm:px-6 py-6 relative z-10 ${activeTab === 'admin' ? 'max-w-6xl' : 'max-w-5xl'}`}>
+      <div className="flex-1 w-full max-w-5xl mx-auto px-4 sm:px-6 py-6 relative z-10">
         {activeTab === 'website' ? (
-          /* Public Facing High-Impact Website */
+          /* Public Facing High-Impact Website with All Unified Audit Features */
           <main className="animate-in fade-in duration-300">
             <WebsiteHome 
               onOpenPortal={(portalId) => setActiveTab(portalId)} 
@@ -97,7 +96,7 @@ const MainLayout: React.FC = () => {
             />
           </main>
         ) : (
-          /* Operational Feature Terminals (Spacious, Full Width, Uncramped) */
+          /* Operational Terminals */
           <main className="space-y-6 animate-in fade-in duration-300">
             {/* Context Navigation Bar */}
             <div className="flex items-center justify-between pb-1">
@@ -133,7 +132,6 @@ const MainLayout: React.FC = () => {
               {activeTab === 'beekeeper' && <BeekeeperPortal />}
               {activeTab === 'collection' && <CollectionTerminal />}
               {activeTab === 'processing' && <ProcessingFacility />}
-              {activeTab === 'admin' && <AdminAuditDashboard />}
             </section>
           </main>
         )}
@@ -161,28 +159,28 @@ const MainLayout: React.FC = () => {
               </h4>
               <ul className="space-y-1.5 text-stone-400">
                 <li>
+                  <button onClick={() => setActiveTab('website')} className="hover:text-amber-400 text-left">
+                    • 01. {lang === 'mr' ? 'हनीचेन मुख्य पोर्टल व QR' : (lang === 'hi' ? 'हनीचेन मुख्य पोर्टल एवं QR' : 'HoneyChain Master Home & QR')}
+                  </button>
+                </li>
+                <li>
                   <button onClick={() => setActiveTab('consumer')} className="hover:text-amber-400 text-left">
-                    • 01. {t.nav.verify}
+                    • 02. {t.nav.verify}
                   </button>
                 </li>
                 <li>
                   <button onClick={() => setActiveTab('beekeeper')} className="hover:text-amber-400 text-left">
-                    • 02. {t.nav.beekeeper}
+                    • 03. {t.nav.beekeeper}
                   </button>
                 </li>
                 <li>
                   <button onClick={() => setActiveTab('collection')} className="hover:text-amber-400 text-left">
-                    • 03. {t.nav.mandi}
+                    • 04. {t.nav.mandi}
                   </button>
                 </li>
                 <li>
                   <button onClick={() => setActiveTab('processing')} className="hover:text-amber-400 text-left">
-                    • 04. {t.nav.processing}
-                  </button>
-                </li>
-                <li>
-                  <button onClick={() => setActiveTab('admin')} className="hover:text-amber-400 text-left">
-                    • 05. {t.nav.admin}
+                    • 05. {t.nav.processing}
                   </button>
                 </li>
               </ul>
@@ -242,7 +240,7 @@ const MainLayout: React.FC = () => {
         onClose={() => setIsCustomerQrOpen(false)}
         onTestVerify={(batchCode) => {
           setIsCustomerQrOpen(false);
-          setActiveTab('consumer');
+          setActiveTab('website');
           setTimeout(() => {
             const input = document.querySelector('input[type="text"]') as HTMLInputElement;
             if (input) {
@@ -257,7 +255,13 @@ const MainLayout: React.FC = () => {
 
       {/* HoneyVaani Hands-Free Voice Assistant for Rural & Non-Typing Users */}
       <HoneyVaaniVoiceWidget
-        onNavigateTab={(tab) => setActiveTab(tab)}
+        onNavigateTab={(tab) => {
+          if (tab === 'admin' || tab === 'dashboard') {
+            setActiveTab('website');
+          } else {
+            setActiveTab(tab);
+          }
+        }}
         activeTab={activeTab}
       />
 

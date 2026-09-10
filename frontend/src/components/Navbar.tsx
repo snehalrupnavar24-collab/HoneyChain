@@ -51,14 +51,13 @@ export const Navbar: React.FC<NavbarProps> = ({
     { id: 'beekeeper', label: t.nav.beekeeper, icon: Radio },
     { id: 'collection', label: t.nav.mandi, icon: Scale },
     { id: 'processing', label: t.nav.processing, icon: FlaskConical },
-    { id: 'admin', label: t.nav.admin, icon: ShieldCheck },
   ];
 
   return (
     <header className="sticky top-0 z-50 bg-[#FDFBF7]/95 backdrop-blur-md border-b border-stone-200 shadow-2xs">
       {/* Top Institutional Ribbon */}
       <div className="bg-[#122A1C] text-amber-100 text-xs px-4 py-1.5 flex items-center justify-between border-b border-emerald-900/60">
-        <div className={`w-full mx-auto flex items-center justify-between font-medium ${activeTab === 'admin' ? 'max-w-6xl' : 'max-w-5xl'}`}>
+        <div className="w-full max-w-5xl mx-auto flex items-center justify-between font-medium">
           <div className="flex items-center space-x-3">
             <span className="flex items-center space-x-1.5">
               <span className="inline-block w-2 h-2 rounded-full bg-amber-400"></span>
@@ -86,7 +85,7 @@ export const Navbar: React.FC<NavbarProps> = ({
       </div>
 
       {/* Main Bar */}
-      <div className={`w-full mx-auto px-4 py-2.5 ${activeTab === 'admin' ? 'max-w-6xl' : 'max-w-5xl'}`}>
+      <div className="w-full max-w-5xl mx-auto px-4 py-2.5">
         <div className="flex items-center justify-between gap-4">
           {/* Brand & Identity */}
           <div 
