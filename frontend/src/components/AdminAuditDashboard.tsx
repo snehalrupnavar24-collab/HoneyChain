@@ -58,7 +58,8 @@ export const AdminAuditDashboard: React.FC = () => {
     ? window.location.hostname
     : '10.196.224.19';
   const qrTargetUrl = `http://${host}:5173/?batch=${encodeURIComponent(selectedBatchCode)}`;
-  const qrImgUrl = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(qrTargetUrl)}&color=12-42-28&bgcolor=255-255-255`;
+  const qrImgUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(qrTargetUrl)}&color=12-42-28&bgcolor=255-255-255`;
+  const qrThumbUrl = `https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=${encodeURIComponent(qrTargetUrl)}&color=12-42-28&bgcolor=255-255-255`;
 
   useEffect(() => {
     loadAuditData();
@@ -165,45 +166,131 @@ export const AdminAuditDashboard: React.FC = () => {
         </div>
       </div>
 
-      {/* 2. REAL-TIME PLATFORM KPIS (4 Clean, High-Contrast Cards) */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-        <div className="bg-white p-4 rounded-2xl border border-stone-200 shadow-xs">
-          <span className="text-[11px] text-stone-600 font-bold uppercase tracking-wider block">Apiary Clusters</span>
-          <div className="text-2xl font-black font-mono text-stone-900 mt-0.5">14 Zones</div>
-          <span className="text-[11px] text-emerald-700 font-semibold mt-0.5 block">Western Ghats, Kashmir, Sundarbans</span>
-        </div>
-
-        <div className="bg-white p-4 rounded-2xl border border-stone-200 shadow-xs">
-          <span className="text-[11px] text-stone-600 font-bold uppercase tracking-wider block">IoT Telemetry Hives</span>
-          <div className="text-2xl font-black font-mono text-stone-900 mt-0.5">412 Hives</div>
-          <span className="text-[11px] text-emerald-700 font-semibold mt-0.5 block">99.4% LoRaWAN Sensor Uptime</span>
-        </div>
-
-        <div className="bg-white p-4 rounded-2xl border border-stone-200 shadow-xs">
-          <span className="text-[11px] text-stone-600 font-bold uppercase tracking-wider block">Traceable Honey</span>
-          <div className="text-2xl font-black font-mono text-stone-900 mt-0.5">14,820 kg</div>
-          <span className="text-[11px] text-amber-800 font-semibold mt-0.5 block">100% Cryptographically Bound</span>
-        </div>
-
-        <div className="bg-white p-4 rounded-2xl border border-stone-200 shadow-xs">
-          <span className="text-[11px] text-stone-600 font-bold uppercase tracking-wider block">Adulteration Defenses</span>
-          <div className="text-2xl font-black font-mono text-emerald-700 mt-0.5">
-            0 Active Breaches
+      {/* 2. MASTER QR CODE SHOWCASE & 3D DIGITAL TWIN HUB (FRONT & CENTER - NOT HIDDEN!) */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
+        {/* LEFT 5 COLS: PROMINENT LIVE HONEY JAR QR CODE (TOTALLY VISIBLE ON SCREEN!) */}
+        <div className="lg:col-span-5 bg-white rounded-3xl border-2 border-amber-300/90 p-5 sm:p-6 shadow-sm space-y-4">
+          <div className="flex items-center justify-between border-b border-stone-200 pb-3">
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 rounded-xl bg-amber-500 text-stone-950 flex items-center justify-center font-bold text-sm shadow-2xs">
+                <QrCode className="w-5 h-5" />
+              </div>
+              <div>
+                <h3 className="text-base font-bold font-serif text-stone-900 leading-tight">
+                  {lang === 'mr' ? 'थेट मधाच्या बाटलीचा QR कोड' : (lang === 'hi' ? 'शहद के जार का लाइव QR कोड' : 'Live Honey Jar QR Code')}
+                </h3>
+                <span className="text-[11px] text-amber-900 font-semibold">
+                  {lang === 'mr' ? 'थेट कॅमेऱ्याने स्कॅन करा' : (lang === 'hi' ? 'फोन कैमरे से स्कैन करें' : 'Scan With Any Phone Camera')}
+                </span>
+              </div>
+            </div>
+            <span className="text-xs font-mono font-bold bg-emerald-100 text-emerald-950 px-2.5 py-0.5 rounded-full border border-emerald-300 shadow-2xs">
+              ✓ 100% Active
+            </span>
           </div>
-          <span className="text-[11px] text-stone-600 font-semibold mt-0.5 block">
-            {discrepancies.length} Resolved & Investigated
-          </span>
+
+          {/* Large Visible QR Code Box */}
+          <div className="bg-stone-50 rounded-2xl p-4 border border-stone-200 flex flex-col items-center text-center space-y-3">
+            {/* The Actual QR Code Image (Big, Crisp, Scannable) */}
+            <div className="w-44 h-44 bg-white p-2.5 rounded-2xl border-3 border-amber-400 shadow-md flex items-center justify-center">
+              <img 
+                src={qrImgUrl} 
+                alt="Honey Jar QR Code" 
+                className="w-full h-full object-contain"
+              />
+            </div>
+
+            <div className="space-y-1">
+              <div className="inline-block bg-white px-3 py-1 rounded-xl border border-stone-300 shadow-2xs">
+                <span className="text-xs font-mono font-bold text-stone-900">
+                  {selectedBatchCode}
+                </span>
+              </div>
+              <p className="text-xs text-stone-700 max-w-xs font-medium pt-1">
+                {lang === 'mr' 
+                  ? 'कोणत्याही स्मार्टफोनच्या कॅमेऱ्याने हा QR कोड थेट स्कॅन करा आणि शेतकरी, NABL लॅब अहवाल तपासा.' 
+                  : (lang === 'hi' 
+                    ? 'किसी भी फोन कैमरे से यह QR कोड स्कैन करें और किसान तथा लैब रिपोर्ट देखें।' 
+                    : 'Scan this QR code with your phone camera to inspect Ramesh Patil’s hive and NABL purity report.')}
+              </p>
+            </div>
+
+            {/* Direct Verification Link */}
+            <a
+              href={qrTargetUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-xs font-mono text-emerald-800 hover:text-emerald-950 underline flex items-center gap-1 font-bold bg-emerald-50 px-3 py-1 rounded-xl border border-emerald-200"
+            >
+              <span>{qrTargetUrl}</span>
+              <ExternalLink className="w-3.5 h-3.5" />
+            </a>
+          </div>
+
+          {/* Action Buttons */}
+          <div className="grid grid-cols-2 gap-2 text-xs">
+            <button
+              type="button"
+              onClick={() => setIsScannerOpen(true)}
+              className="px-3 py-2.5 bg-amber-500 hover:bg-amber-600 text-stone-950 font-bold rounded-xl flex items-center justify-center gap-1.5 transition-all shadow-xs cursor-pointer"
+            >
+              <Camera className="w-4 h-4" />
+              <span>{lang === 'mr' ? 'कॅमेऱ्याने स्कॅन' : (lang === 'hi' ? 'कैमरा स्कैन' : 'Camera Scanner')}</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setIsQrGeneratorOpen(true)}
+              className="px-3 py-2.5 bg-stone-900 hover:bg-black text-white font-bold rounded-xl flex items-center justify-center gap-1.5 transition-all shadow-xs cursor-pointer"
+            >
+              <Printer className="w-4 h-4 text-amber-400" />
+              <span>{lang === 'mr' ? 'QR लेबल प्रिंट' : (lang === 'hi' ? 'QR लेबल प्रिंट' : 'Print Jar Label')}</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setIsCertificateOpen(true)}
+              className="col-span-2 px-3 py-2 bg-emerald-100 hover:bg-emerald-200 text-emerald-950 font-bold rounded-xl flex items-center justify-center gap-1.5 transition-all border border-emerald-300 cursor-pointer shadow-2xs"
+            >
+              <ShieldCheck className="w-4 h-4 text-emerald-700" />
+              <span>{lang === 'mr' ? 'अधिकृत NABL लॅब प्रमाणपत्र उघडा' : (lang === 'hi' ? 'आधिकारिक NABL लैब प्रमाण पत्र देखें' : 'View Official NABL Lab Certificate')}</span>
+            </button>
+          </div>
+
+          {/* Farmer Attribution Box */}
+          <div className="bg-amber-50/80 rounded-2xl p-3.5 border border-amber-200 flex items-center gap-3 text-xs">
+            <div className="w-12 h-12 rounded-xl overflow-hidden shadow-2xs border-2 border-amber-300 shrink-0">
+              <img 
+                src="https://images.unsplash.com/photo-1605000797499-95a51c5269ae?auto=format&fit=crop&w=150&q=80" 
+                alt="Ramesh Patil"
+                className="w-full h-full object-cover"
+              />
+            </div>
+            <div className="min-w-0 flex-1">
+              <div className="flex items-center justify-between">
+                <h4 className="font-bold text-stone-900 truncate">Ramesh Tukaram Patil</h4>
+                <span className="text-[10px] font-mono font-bold text-emerald-900">₹480/kg DBT</span>
+              </div>
+              <p className="text-[11px] text-stone-600 truncate">Kas Forest Apiary, Western Ghats</p>
+              <span className="text-[10px] font-bold text-amber-950">Syzygium cumini (Wild Jamun)</span>
+            </div>
+          </div>
+        </div>
+
+        {/* RIGHT 7 COLS: 3D DIGITAL TWIN HONEY JAR VIEWER */}
+        <div className="lg:col-span-7">
+          <HoneyJar3DViewer />
         </div>
       </div>
 
-      {/* 3. SUPPLY CHAIN LINEAGE - FULLY RESPONSIVE, 100% VISIBLE WITH ZERO HORIZONTAL SCROLLING */}
+      {/* 3. SUPPLY CHAIN LINEAGE - FULLY RESPONSIVE, 100% VISIBLE WITH REAL QR CODE IN NODE 6 */}
       <div className="bg-white rounded-3xl border border-stone-200 p-5 sm:p-6 shadow-sm space-y-4">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-stone-200 pb-3">
           <div>
             <h2 className="text-base sm:text-lg font-bold font-serif text-stone-900 flex items-center gap-2">
               <GitFork className="w-5 h-5 text-amber-600" />
               <span>
-                {lang === 'mr' ? '६-टप्प्यांची संपूर्ण पुरवठा साखळी व QR नोंद' : (lang === 'hi' ? '6-चरणीय आपूर्ति श्रृंखला एवं QR वंशावली' : 'End-to-End Supply Chain Lineage & QR Provenance')}
+                {lang === 'mr' ? '६-टप्प्यांची पुरवठा साखळी व QR वंशावळ' : (lang === 'hi' ? '6-चरणीय आपूर्ति श्रृंखला एवं QR वंशावली' : '6-Stage Supply Chain Lineage & QR Provenance')}
               </span>
             </h2>
             <p className="text-xs text-stone-600">
@@ -219,7 +306,7 @@ export const AdminAuditDashboard: React.FC = () => {
           </div>
         </div>
 
-        {/* 6 Responsive Lineage Cards (NO HORIZONTAL SCROLL - ALWAYS VISIBLE!) */}
+        {/* 6 Responsive Lineage Cards (NODE 6 SHOWS THE REAL SCANNABLE QR CODE RIGHT IN THE CORNER!) */}
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2.5 pt-1">
           {/* Node 1: Source Hive */}
           <div className="bg-stone-50 p-3 rounded-2xl border border-stone-200 flex flex-col items-center text-center space-y-1.5 shadow-2xs hover:border-amber-400 transition-colors">
@@ -296,130 +383,57 @@ export const AdminAuditDashboard: React.FC = () => {
             </div>
           </div>
 
-          {/* Node 6: Serialized Package WITH ACTIVE QR - RIGHT HERE ON SCREEN! */}
-          <div className="bg-emerald-50 p-3 rounded-2xl border-2 border-emerald-400 flex flex-col items-center text-center space-y-1.5 shadow-xs">
-            <div className="w-10 h-10 rounded-xl bg-emerald-700 text-white flex items-center justify-center font-bold shadow-2xs">
-              <Package className="w-5 h-5" />
+          {/* Node 6: Serialized Package WITH REAL LIVE SCANNABLE QR CODE (NOT HIDDEN!) */}
+          <div className="bg-emerald-50 p-2.5 rounded-2xl border-2 border-emerald-500 flex flex-col items-center text-center space-y-1 shadow-xs hover:border-emerald-600 transition-all">
+            <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-950 block">6. Consumer Jar QR</span>
+            
+            {/* REAL SCANNABLE QR CODE IMAGE RIGHT IN THIS CORNER CARD! */}
+            <div className="w-14 h-14 bg-white p-1 rounded-xl border border-emerald-400 shadow-2xs flex items-center justify-center">
+              <img
+                src={qrThumbUrl}
+                alt="Consumer Jar QR"
+                className="w-full h-full object-contain"
+              />
             </div>
+
             <div className="space-y-0.5">
-              <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-950 block">6. Consumer Jar</span>
-              <h4 className="text-xs font-bold text-stone-900 font-mono">PKG-MAHA-042</h4>
-              <p className="text-[10px] text-stone-700 font-mono">500g Glass</p>
-              <span className="inline-block text-[9px] font-bold bg-emerald-600 text-white px-2 py-0.5 rounded-full shadow-2xs">
-                ✓ QR Active
+              <h4 className="text-[11px] font-bold text-stone-900 font-mono">PKG-MAHA-042</h4>
+              <span className="inline-flex items-center gap-1 text-[9px] font-bold bg-emerald-600 text-white px-2 py-0.5 rounded-full shadow-2xs">
+                ✓ Scannable QR
               </span>
             </div>
           </div>
         </div>
       </div>
 
-      {/* 4. MASTER INTERACTION HUB: LIVE QR CODE & VERIFICATION (LEFT) + 3D DIGITAL TWIN (RIGHT) */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
-        {/* LEFT 5 COLS: LIVE HONEY JAR QR CODE & VERIFICATION ACTIONS */}
-        <div className="lg:col-span-5 bg-white rounded-3xl border border-stone-200 p-5 sm:p-6 shadow-sm space-y-4">
-          <div className="flex items-center justify-between border-b border-stone-200 pb-3">
-            <div className="flex items-center gap-2">
-              <div className="w-7 h-7 rounded-lg bg-amber-500 text-stone-950 flex items-center justify-center font-bold text-xs">
-                <QrCode className="w-4 h-4" />
-              </div>
-              <h3 className="text-base font-bold font-serif text-stone-900">
-                {lang === 'mr' ? 'थेट जार QR व पडताळणी हब' : (lang === 'hi' ? 'लाइव जार QR एवं सत्यापन हब' : 'Live Honey Jar QR Hub')}
-              </h3>
-            </div>
-            <span className="text-[10px] font-mono font-bold bg-emerald-100 text-emerald-900 px-2 py-0.5 rounded-full border border-emerald-300">
-              Scannable
-            </span>
-          </div>
-
-          {/* QR Code & Scan Preview Box */}
-          <div className="bg-stone-50 rounded-2xl p-4 border border-stone-200 flex flex-col items-center text-center space-y-3">
-            {/* Live QR Image */}
-            <div className="w-36 h-36 bg-white p-2 rounded-2xl border-2 border-amber-300 shadow-sm flex items-center justify-center">
-              <img 
-                src={qrImgUrl} 
-                alt="Live Honey Jar QR" 
-                className="w-full h-full object-contain"
-              />
-            </div>
-
-            <div className="space-y-1">
-              <span className="text-xs font-mono font-bold text-stone-900 block">
-                {selectedBatchCode}
-              </span>
-              <p className="text-[11px] text-stone-600 max-w-xs">
-                {lang === 'mr' 
-                  ? 'तुमच्या मोबाईल कॅमेऱ्याने हा QR स्कॅन करा किंवा खालील बटणाने थेट तपासा' 
-                  : (lang === 'hi' 
-                    ? 'अपने मोबाइल कैमरे से यह QR स्कैन करें या नीचे दिए बटन से तुरंत जांचें' 
-                    : 'Point any smartphone camera at this QR or use the instant buttons below')}
-              </p>
-            </div>
-
-            {/* Direct Verification Link */}
-            <a
-              href={qrTargetUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-[11px] font-mono text-emerald-800 hover:text-emerald-950 underline flex items-center gap-1 font-semibold"
-            >
-              <span>{qrTargetUrl}</span>
-              <ExternalLink className="w-3 h-3" />
-            </a>
-          </div>
-
-          {/* Action Buttons Grid */}
-          <div className="grid grid-cols-2 gap-2 text-xs">
-            <button
-              type="button"
-              onClick={() => setIsScannerOpen(true)}
-              className="px-3 py-2.5 bg-amber-500 hover:bg-amber-600 text-stone-950 font-bold rounded-xl flex items-center justify-center gap-1.5 transition-all shadow-xs cursor-pointer"
-            >
-              <Camera className="w-4 h-4" />
-              <span>{lang === 'mr' ? 'कॅमेऱ्याने स्कॅन' : (lang === 'hi' ? 'कैमरा स्कैन' : 'Scan Camera')}</span>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => setIsQrGeneratorOpen(true)}
-              className="px-3 py-2.5 bg-stone-900 hover:bg-black text-white font-bold rounded-xl flex items-center justify-center gap-1.5 transition-all shadow-xs cursor-pointer"
-            >
-              <Printer className="w-4 h-4 text-amber-400" />
-              <span>{lang === 'mr' ? 'QR लेबल प्रिंट' : (lang === 'hi' ? 'QR लेबल प्रिंट' : 'Print Label')}</span>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => setIsCertificateOpen(true)}
-              className="col-span-2 px-3 py-2 bg-emerald-100 hover:bg-emerald-200 text-emerald-950 font-bold rounded-xl flex items-center justify-center gap-1.5 transition-all border border-emerald-300 cursor-pointer shadow-2xs"
-            >
-              <ShieldCheck className="w-4 h-4 text-emerald-700" />
-              <span>{lang === 'mr' ? 'अधिकृत NABL लॅब प्रमाणपत्र उघडा' : (lang === 'hi' ? 'आधिकारिक NABL लैब प्रमाण पत्र देखें' : 'View Official NABL Lab Certificate')}</span>
-            </button>
-          </div>
-
-          {/* Farmer Attribution Box */}
-          <div className="bg-amber-50/70 rounded-2xl p-3.5 border border-amber-200 flex items-center gap-3 text-xs">
-            <div className="w-12 h-12 rounded-xl overflow-hidden shadow-2xs border border-amber-300 shrink-0">
-              <img 
-                src="https://images.unsplash.com/photo-1605000797499-95a51c5269ae?auto=format&fit=crop&w=150&q=80" 
-                alt="Ramesh Patil"
-                className="w-full h-full object-cover"
-              />
-            </div>
-            <div className="min-w-0 flex-1">
-              <div className="flex items-center justify-between">
-                <h4 className="font-bold text-stone-900 truncate">Ramesh Tukaram Patil</h4>
-                <span className="text-[10px] font-mono font-bold text-emerald-900">₹480/kg DBT</span>
-              </div>
-              <p className="text-[11px] text-stone-600 truncate">Kas Forest Apiary, Western Ghats</p>
-              <span className="text-[10px] font-bold text-amber-900">Syzygium cumini (Wild Jamun)</span>
-            </div>
-          </div>
+      {/* 4. REAL-TIME PLATFORM KPIS (4 Clean Cards) */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+        <div className="bg-white p-4 rounded-2xl border border-stone-200 shadow-xs">
+          <span className="text-[11px] text-stone-600 font-bold uppercase tracking-wider block">Apiary Clusters</span>
+          <div className="text-2xl font-black font-mono text-stone-900 mt-0.5">14 Zones</div>
+          <span className="text-[11px] text-emerald-700 font-semibold mt-0.5 block">Western Ghats, Kashmir, Sundarbans</span>
         </div>
 
-        {/* RIGHT 7 COLS: 3D DIGITAL TWIN HONEY JAR VIEWER */}
-        <div className="lg:col-span-7">
-          <HoneyJar3DViewer />
+        <div className="bg-white p-4 rounded-2xl border border-stone-200 shadow-xs">
+          <span className="text-[11px] text-stone-600 font-bold uppercase tracking-wider block">IoT Telemetry Hives</span>
+          <div className="text-2xl font-black font-mono text-stone-900 mt-0.5">412 Hives</div>
+          <span className="text-[11px] text-emerald-700 font-semibold mt-0.5 block">99.4% LoRaWAN Sensor Uptime</span>
+        </div>
+
+        <div className="bg-white p-4 rounded-2xl border border-stone-200 shadow-xs">
+          <span className="text-[11px] text-stone-600 font-bold uppercase tracking-wider block">Traceable Honey</span>
+          <div className="text-2xl font-black font-mono text-stone-900 mt-0.5">14,820 kg</div>
+          <span className="text-[11px] text-amber-800 font-semibold mt-0.5 block">100% Cryptographically Bound</span>
+        </div>
+
+        <div className="bg-white p-4 rounded-2xl border border-stone-200 shadow-xs">
+          <span className="text-[11px] text-stone-600 font-bold uppercase tracking-wider block">Adulteration Defenses</span>
+          <div className="text-2xl font-black font-mono text-emerald-700 mt-0.5">
+            0 Active Breaches
+          </div>
+          <span className="text-[11px] text-stone-600 font-semibold mt-0.5 block">
+            {discrepancies.length} Resolved & Investigated
+          </span>
         </div>
       </div>
 
