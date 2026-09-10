@@ -7,6 +7,7 @@ import {
   Sparkles,
   Info
 } from 'lucide-react';
+import { useLanguage } from '../context/LanguageContext';
 
 interface StageHeaderProps {
   activeTab: string;
@@ -14,6 +15,8 @@ interface StageHeaderProps {
 }
 
 export const StageHeader: React.FC<StageHeaderProps> = ({ activeTab, setActiveTab }) => {
+  const { lang, t } = useLanguage();
+
   const stageMap: Record<string, {
     num: string;
     total: string;
@@ -29,62 +32,62 @@ export const StageHeader: React.FC<StageHeaderProps> = ({ activeTab, setActiveTa
     consumer: {
       num: '01',
       total: '05',
-      title: 'Consumer Verification & Botanical Provenance',
-      role: 'Public Verification Portal',
-      description: 'End-consumer authenticity portal. Scan jar QR tags, verify Ramesh Patil\'s apiary location, inspect NABL laboratory isotope certificates, and track the complete cryptographic custody chain.',
-      standard: 'Consumer Protection (E-Commerce) Rules 2020 • FSSAI Food Safety Standards',
+      title: t.stages.consumerTitle,
+      role: t.stages.consumerRole,
+      description: t.stages.consumerDesc,
+      standard: t.stages.consumerStandard,
       prevId: null,
       prevName: null,
       nextId: 'beekeeper',
-      nextName: '02. Beekeeper Field Log',
+      nextName: `02. ${t.stages.beekeeperRole}`,
     },
     beekeeper: {
       num: '02',
       total: '05',
-      title: 'Beekeeper Field Harvest Log & IoT Apiary Telemetry',
-      role: 'Grassroots Production Station',
-      description: 'Decentralized apiary console empowering rural beekeepers. Log harvests using voice commands in English, Hindi, or Marathi, monitor real-time Hive #17 IoT telemetry (temp, humidity, acoustics), and forecast yield with XGBoost.',
-      standard: 'National Honey Mission Guidelines • KVIC Smart Kisan Passbook Protocol',
+      title: t.stages.beekeeperTitle,
+      role: t.stages.beekeeperRole,
+      description: t.stages.beekeeperDesc,
+      standard: t.stages.beekeeperStandard,
       prevId: 'consumer',
-      prevName: '01. Consumer Verification',
+      prevName: `01. ${t.stages.consumerRole}`,
       nextId: 'collection',
-      nextName: '03. Mandi Weighment Scale',
+      nextName: `03. ${t.stages.mandiRole}`,
     },
     collection: {
       num: '03',
       total: '05',
-      title: 'Mandi Weighment Scale & Tare Reconciliation',
-      role: 'Aggregation & APMC Mandi Station',
-      description: 'Industrial weighment terminal at the APMC Mandi. Integrates with Avery Berkel digital scales, computes automatic tare deductions for SS canisters and drums, and flags mass discrepancies to prevent syrup adulteration.',
-      standard: 'Legal Metrology (Packaged Commodities) Rules 2011 • APMC Honey Intake Norms',
+      title: t.stages.mandiTitle,
+      role: t.stages.mandiRole,
+      description: t.stages.mandiDesc,
+      standard: t.stages.mandiStandard,
       prevId: 'beekeeper',
-      prevName: '02. Beekeeper Field Log',
+      prevName: `02. ${t.stages.beekeeperRole}`,
       nextId: 'processing',
-      nextName: '04. Processing & NABL Lab',
+      nextName: `04. ${t.stages.labRole}`,
     },
     processing: {
       num: '04',
       total: '05',
-      title: 'Agro-Processing, NABL Isotope Lab & Serialization',
-      role: 'Industrial Processing & Testing Station',
-      description: 'NABL laboratory purity testing and serialization plant. Performs EA-IRMS Carbon-13 isotope analysis to catch C4 synthetic sugars, calculates mass-balance conservation, and assigns unique cryptographically signed QR codes.',
-      standard: 'FSSAI Gazette Honey Standards (Section 2.8.2) • EA-IRMS Carbon-13 Protocol',
+      title: t.stages.labTitle,
+      role: t.stages.labRole,
+      description: t.stages.labDesc,
+      standard: t.stages.labStandard,
       prevId: 'collection',
-      prevName: '03. Mandi Scale',
+      prevName: `03. ${t.stages.mandiRole}`,
       nextId: 'admin',
-      nextName: '05. Regulatory Audit',
+      nextName: `05. ${t.stages.auditRole}`,
     },
     admin: {
       num: '05',
       total: '05',
-      title: 'Central Regulatory Surveillance & Merkle DAG Console',
-      role: 'National Governance & Audit Console',
-      description: 'Central surveillance console for FSSAI and KVIC enforcement teams. Visualizes multi-stage Merkle DAG batch genealogy, audits SHA-256 block ledger integrity, and manages discrepancy investigations with legal signoff.',
-      standard: 'FSSAI Surveillance Cell • National Digital Traceability Architecture (NDTA)',
+      title: t.stages.auditTitle,
+      role: t.stages.auditRole,
+      description: t.stages.auditDesc,
+      standard: t.stages.auditStandard,
       prevId: 'processing',
-      prevName: '04. Processing & Lab',
+      prevName: `04. ${t.stages.labRole}`,
       nextId: 'consumer',
-      nextName: '01. Consumer Verification',
+      nextName: `01. ${t.stages.consumerRole}`,
     },
   };
 
@@ -97,7 +100,7 @@ export const StageHeader: React.FC<StageHeaderProps> = ({ activeTab, setActiveTa
         <div className="space-y-1.5 max-w-3xl">
           <div className="flex flex-wrap items-center gap-2 text-[11px] font-mono">
             <span className="bg-amber-100 text-amber-950 font-bold px-2.5 py-0.5 rounded-full border border-amber-300">
-              Stage {current.num} of {current.total}
+              {t.stages.stageLabel} {current.num} {t.stages.stageOf} {current.total}
             </span>
             <span className="text-stone-400">•</span>
             <span className="text-amber-900 font-bold uppercase tracking-wider">
@@ -127,12 +130,12 @@ export const StageHeader: React.FC<StageHeaderProps> = ({ activeTab, setActiveTa
               className="px-3 py-1.5 rounded-xl border border-stone-300 bg-stone-50 hover:bg-white text-stone-700 text-xs font-semibold transition-all flex items-center gap-1.5 shadow-2xs hover:border-amber-400 cursor-pointer"
             >
               <ChevronLeft className="w-3.5 h-3.5 text-stone-500" />
-              <span className="hidden sm:inline">Previous:</span>
-              <span className="truncate max-w-[110px]">{current.prevName}</span>
+              <span className="hidden sm:inline">{t.stages.prevBtn}:</span>
+              <span className="truncate max-w-[120px]">{current.prevName}</span>
             </button>
           ) : (
             <div className="text-[11px] text-stone-400 font-mono italic">
-              First Stage
+              {lang === 'mr' ? 'पहिली पायरी' : (lang === 'hi' ? 'पहला चरण' : 'First Stage')}
             </div>
           )}
 
@@ -142,8 +145,8 @@ export const StageHeader: React.FC<StageHeaderProps> = ({ activeTab, setActiveTa
               onClick={() => setActiveTab(current.nextId!)}
               className="px-3.5 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-stone-950 text-xs font-bold transition-all flex items-center gap-1.5 shadow-xs cursor-pointer"
             >
-              <span>Next:</span>
-              <span className="truncate max-w-[130px]">{current.nextName}</span>
+              <span>{t.stages.nextBtn}:</span>
+              <span className="truncate max-w-[140px]">{current.nextName}</span>
               <ChevronRight className="w-3.5 h-3.5 text-stone-950" />
             </button>
           )}

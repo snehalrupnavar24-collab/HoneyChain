@@ -11,9 +11,11 @@ import {
   HelpCircle,
   Play
 } from 'lucide-react';
+import { useLanguage } from '../context/LanguageContext';
 
 export const HouseholdPuritySimulator: React.FC = () => {
-  const [activeTest, setActiveTest] = useState<'water' | 'flame' | 'thumb'>('water');
+  const { lang, t } = useLanguage();
+  const [activeTest, setActiveTest] = useState<'water' | 'flame'>('water');
   const [sampleType, setSampleType] = useState<'pure' | 'adulterated'>('pure');
   const [isSimulating, setIsSimulating] = useState(false);
   const [simulationComplete, setSimulationComplete] = useState(false);
@@ -39,17 +41,17 @@ export const HouseholdPuritySimulator: React.FC = () => {
         <div>
           <div className="flex items-center gap-2">
             <span className="text-xs font-bold uppercase tracking-wider text-amber-800">
-              Traditional Indian Purity Science
+              {t.puritySim.tag}
             </span>
             <span className="text-[10px] font-mono font-bold bg-amber-100 text-amber-900 px-2 py-0.5 rounded-full border border-amber-300">
-              घर-घर परख सिम्युलेटर
+              {t.puritySim.badge}
             </span>
           </div>
           <h3 className="text-xl sm:text-2xl font-serif font-bold text-stone-900 mt-1">
-            Household Purity Test Simulator (Water & Flame)
+            {t.puritySim.title}
           </h3>
           <p className="text-xs text-stone-600 mt-1">
-            Compare 100% Pure Raw Honey vs. Industrial Invert Sugar Syrup using authentic Indian kitchen science.
+            {t.puritySim.subtitle}
           </p>
         </div>
 
@@ -68,7 +70,7 @@ export const HouseholdPuritySimulator: React.FC = () => {
             }`}
           >
             <Droplets className="w-3.5 h-3.5" />
-            <span>Water Dispersion Test</span>
+            <span>{t.puritySim.waterTest}</span>
           </button>
 
           <button
@@ -84,7 +86,7 @@ export const HouseholdPuritySimulator: React.FC = () => {
             }`}
           >
             <Flame className="w-3.5 h-3.5" />
-            <span>Cotton Flame Test</span>
+            <span>{t.puritySim.flameTest}</span>
           </button>
         </div>
       </div>
@@ -95,7 +97,7 @@ export const HouseholdPuritySimulator: React.FC = () => {
         <div className="lg:col-span-5 space-y-4">
           <div className="space-y-2">
             <span className="text-xs font-bold text-stone-700 uppercase tracking-wider block">
-              1. Select Honey Sample to Test:
+              {t.puritySim.selectSamplePrompt}
             </span>
             <div className="grid grid-cols-2 gap-2">
               <button
@@ -115,10 +117,10 @@ export const HouseholdPuritySimulator: React.FC = () => {
                   <CheckCircle2 className="w-4 h-4 text-emerald-600" />
                 </div>
                 <div className="text-sm font-bold text-stone-900 font-serif mt-1">
-                  100% Raw Forest Honey
+                  {t.puritySim.pureSampleTitle}
                 </div>
                 <span className="text-[10px] font-mono text-emerald-700 mt-1 block">
-                  Moisture: 17.8% • 0% Added Sugar
+                  {t.puritySim.pureSampleStats}
                 </span>
               </button>
 
@@ -135,14 +137,14 @@ export const HouseholdPuritySimulator: React.FC = () => {
                 }`}
               >
                 <div className="flex items-center justify-between text-xs font-bold text-rose-900">
-                  <span>Commercial Market Sample</span>
+                  <span>Commercial Sample</span>
                   <AlertTriangle className="w-4 h-4 text-rose-600" />
                 </div>
                 <div className="text-sm font-bold text-stone-900 font-serif mt-1">
-                  Adulterated Sugar Syrup
+                  {t.puritySim.adulteratedSampleTitle}
                 </div>
                 <span className="text-[10px] font-mono text-rose-700 mt-1 block">
-                  C4 Cane Sugar + Corn Syrup (42%)
+                  {t.puritySim.adulteratedSampleStats}
                 </span>
               </button>
             </div>
@@ -153,13 +155,13 @@ export const HouseholdPuritySimulator: React.FC = () => {
             <h4 className="font-bold text-amber-950 font-serif flex items-center gap-1.5">
               <Sparkles className="w-3.5 h-3.5 text-amber-600" />
               {activeTest === 'water'
-                ? 'The Science of Water Density (पानी में विलेयता)'
-                : 'The Science of Flammability & Moisture (अग्नि परीक्षण)'}
+                ? t.puritySim.waterScienceTitle
+                : t.puritySim.flameScienceTitle}
             </h4>
             <p className="leading-relaxed">
               {activeTest === 'water'
-                ? 'Pure honey has high specific gravity (~1.42) and dense surface tension. In room-temperature water, it drops straight to the bottom without dispersing. High-fructose corn syrup dissolves instantly, turning water cloudy.'
-                : 'Pure honey contains less than 18% moisture. When a cotton wick is dipped in pure honey and struck with fire, it burns cleanly. Invert sugar syrup contains excess water and artificial humectants, making the wick crackle and sputter without lighting.'}
+                ? t.puritySim.waterScienceDesc
+                : t.puritySim.flameScienceDesc}
             </p>
           </div>
 
@@ -173,8 +175,8 @@ export const HouseholdPuritySimulator: React.FC = () => {
             <Play className={`w-4 h-4 ${isSimulating ? 'animate-spin' : ''}`} />
             <span>
               {isSimulating
-                ? 'Executing Chemical Simulation...'
-                : `Run ${activeTest === 'water' ? 'Water Dispersion' : 'Cotton Flame'} Test`}
+                ? t.puritySim.runningSim
+                : (activeTest === 'water' ? t.puritySim.runWaterBtn : t.puritySim.runFlameBtn)}
             </span>
           </button>
         </div>
@@ -184,7 +186,7 @@ export const HouseholdPuritySimulator: React.FC = () => {
           <div className="flex items-center justify-between text-xs border-b border-stone-800 pb-3">
             <span className="font-mono text-amber-400 font-bold flex items-center gap-1.5">
               <FlaskConical className="w-4 h-4" />
-              SIMULATION VESSEL • {activeTest.toUpperCase()} TEST
+              {activeTest === 'water' ? t.puritySim.vesselWaterTitle : t.puritySim.vesselFlameTitle}
             </span>
             <span
               className={`text-[10px] font-mono px-2 py-0.5 rounded-full font-bold ${
@@ -193,7 +195,7 @@ export const HouseholdPuritySimulator: React.FC = () => {
                   : 'bg-rose-950 text-rose-300 border border-rose-700'
               }`}
             >
-              {sampleType === 'pure' ? 'SAMPLE: 100% PURE RAW' : 'SAMPLE: C4 ADULTERATED'}
+              {sampleType === 'pure' ? t.puritySim.pureVesselBadge : t.puritySim.adulteratedVesselBadge}
             </span>
           </div>
 
@@ -218,10 +220,10 @@ export const HouseholdPuritySimulator: React.FC = () => {
                   /* Pure Honey Dropped to bottom intact */
                   <div className="w-full flex flex-col items-center animate-in zoom-in-50 duration-500">
                     <div className="w-28 h-10 rounded-2xl bg-gradient-to-r from-amber-600 via-amber-500 to-amber-600 border-2 border-amber-300 shadow-[0_0_15px_#f59e0b] flex items-center justify-center text-[10px] font-mono font-bold text-stone-950">
-                      Intact Honey Layer
+                      {t.puritySim.waterPureResult}
                     </div>
                     <span className="text-[10px] text-emerald-400 font-bold mt-1 font-mono">
-                      ✓ No Dissolution (High Gravity)
+                      ✓ 17.8% Moisture
                     </span>
                   </div>
                 )}
@@ -231,10 +233,10 @@ export const HouseholdPuritySimulator: React.FC = () => {
                   <div className="w-full h-full flex flex-col items-center justify-center animate-in fade-in duration-500 bg-amber-700/40 rounded-b-2xl">
                     <div className="text-center p-2">
                       <span className="text-xs font-bold text-rose-300 block font-mono">
-                        ✗ Clouded Solution
+                        ✗ {t.puritySim.waterAdulteratedResult}
                       </span>
                       <span className="text-[10px] text-rose-200 mt-1 block">
-                        Sugar syrup dissolved instantly into water
+                        {t.puritySim.adulteratedVerdict}
                       </span>
                     </div>
                   </div>
@@ -242,7 +244,7 @@ export const HouseholdPuritySimulator: React.FC = () => {
 
                 {!simulationComplete && !isSimulating && (
                   <div className="text-center text-xs text-stone-400 py-16">
-                    Click "Run Test" to dispense honey droplet into water
+                    {t.puritySim.clickPrompt}
                   </div>
                 )}
               </div>
@@ -255,7 +257,7 @@ export const HouseholdPuritySimulator: React.FC = () => {
                     <div className="relative flex flex-col items-center animate-in zoom-in-75 duration-300">
                       <div className="w-12 h-18 rounded-full bg-gradient-to-t from-orange-500 via-amber-400 to-yellow-200 blur-xs animate-pulse shadow-[0_0_25px_#f97316]" />
                       <span className="text-[10px] font-bold text-emerald-400 font-mono mt-2">
-                        ✓ Clean Golden Flame
+                        ✓ {t.puritySim.flamePureResult}
                       </span>
                     </div>
                   )}
@@ -265,7 +267,7 @@ export const HouseholdPuritySimulator: React.FC = () => {
                       <div className="w-4 h-4 rounded-full bg-stone-600 blur-xs animate-ping" />
                       <span className="text-lg">💨</span>
                       <span className="text-[10px] font-bold text-rose-400 font-mono mt-2">
-                        ✗ Sputtered & Extinguished
+                        ✗ {t.puritySim.flameAdulteratedResult}
                       </span>
                     </div>
                   )}
@@ -294,12 +296,12 @@ export const HouseholdPuritySimulator: React.FC = () => {
                     <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
                     <div>
                       <span className="font-bold text-emerald-300 block">
-                        VERDICT: 100% PURE BOTANICAL HONEY (PASSED)
+                        {t.puritySim.verdictPurePassed}
                       </span>
                       <p className="text-[11px] text-stone-300 mt-0.5">
                         {activeTest === 'water'
-                          ? 'The droplet remained cohesive at the bottom of the beaker without cloudy dispersion, proving natural 17.8% moisture and zero water-soluble cane syrup.'
-                          : 'The wick burned smoothly with an unhesitating golden flame, verifying moisture strictly under the FSSAI 20% regulatory threshold.'}
+                          ? t.puritySim.verdictPureWaterDesc
+                          : t.puritySim.verdictPureFlameDesc}
                       </p>
                     </div>
                   </>
@@ -308,12 +310,12 @@ export const HouseholdPuritySimulator: React.FC = () => {
                     <AlertTriangle className="w-4 h-4 text-rose-400 shrink-0 mt-0.5" />
                     <div>
                       <span className="font-bold text-rose-300 block">
-                        VERDICT: ARTIFICIAL SYRUP ADULTERATION DETECTED
+                        {t.puritySim.verdictAdulteratedFailed}
                       </span>
                       <p className="text-[11px] text-stone-300 mt-0.5">
                         {activeTest === 'water'
-                          ? 'Immediate dissolution and cloudiness occurred, a classic indicator of inverted rice syrup or high-fructose corn syrup adulteration.'
-                          : 'Excess moisture and artificial invert sugars caused sputtering and prevented sustained combustion.'}
+                          ? t.puritySim.verdictAdulteratedWaterDesc
+                          : t.puritySim.verdictAdulteratedFlameDesc}
                       </p>
                     </div>
                   </>
@@ -321,7 +323,7 @@ export const HouseholdPuritySimulator: React.FC = () => {
               </div>
             ) : (
               <div className="text-center text-stone-400 text-[11px]">
-                Ready to simulate. Select sample type and click the action button above.
+                {t.puritySim.clickPrompt}
               </div>
             )}
           </div>

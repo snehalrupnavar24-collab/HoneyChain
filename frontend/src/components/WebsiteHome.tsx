@@ -27,6 +27,7 @@ import {
 } from 'lucide-react';
 import { verifyPackageByCode } from '../services/api';
 import { ConsumerVerifyResponse } from '../types';
+import { HoneyJar3DViewer } from './HoneyJar3DViewer';
 import { HouseholdPuritySimulator } from './HouseholdPuritySimulator';
 import { RealCameraScannerModal } from './RealCameraScannerModal';
 import { useLanguage } from '../context/LanguageContext';
@@ -109,7 +110,7 @@ export const WebsiteHome: React.FC<WebsiteHomeProps> = ({
   }, []);
 
   return (
-    <div className="space-y-16">
+    <div className="space-y-14">
       {/* 1. HERO SECTION WITH REAL LIGHT HONEY DIPPER BACKGROUND */}
       <section className="relative rounded-3xl overflow-hidden border border-amber-200/90 shadow-sm">
         {/* Real photographic background of honey dripping from wooden dipper with soft light warm wash */}
@@ -120,7 +121,7 @@ export const WebsiteHome: React.FC<WebsiteHomeProps> = ({
           }}
         />
 
-        <div className="relative z-10 p-6 sm:p-12 md:p-16 max-w-4xl mx-auto text-center space-y-6">
+        <div className="relative z-10 p-6 sm:p-12 md:p-14 max-w-4xl mx-auto text-center space-y-5">
           {/* Institutional Badge */}
           <div className="inline-flex items-center gap-2 bg-white/95 text-stone-900 px-4 py-1.5 rounded-full text-xs font-semibold border border-amber-300 shadow-xs backdrop-blur-xs">
             <ShieldCheck className="w-4 h-4 text-emerald-700" />
@@ -343,7 +344,7 @@ export const WebsiteHome: React.FC<WebsiteHomeProps> = ({
                     {t.batchCard.floralSourceLabel}
                   </span>
                   <span className="text-xs font-bold bg-amber-100 text-amber-900 px-2 py-0.5 rounded-full">
-                    500g Glass Jar
+                    {lang === 'mr' ? '५०० ग्रॅम काचेची बाटली' : (lang === 'hi' ? '500 ग्राम कांच का जार' : '500g Glass Jar')}
                   </span>
                 </div>
 
@@ -358,15 +359,15 @@ export const WebsiteHome: React.FC<WebsiteHomeProps> = ({
                     <span className="font-bold text-stone-900">Western Ghats (1,353 m MSL)</span>
                   </div>
                   <div className="flex justify-between py-1 border-b border-stone-100">
-                    <span className="text-stone-500">Color Profile:</span>
+                    <span className="text-stone-500">{lang === 'mr' ? 'रंग प्रोफाइल:' : (lang === 'hi' ? 'रंग प्रोफाइल:' : 'Color Profile:')}</span>
                     <span className="font-bold text-amber-900">Deep Amber / Pfund 65mm</span>
                   </div>
                   <div className="flex justify-between py-1 border-b border-stone-100">
-                    <span className="text-stone-500">Cold Settled:</span>
+                    <span className="text-stone-500">{lang === 'mr' ? 'शीत प्रक्रिया:' : (lang === 'hi' ? 'शीत प्रक्रिया:' : 'Cold Settled:')}</span>
                     <span className="font-bold text-stone-900">&lt;45°C Unpasteurized</span>
                   </div>
                   <div className="flex justify-between py-1">
-                    <span className="text-stone-500">Enzyme Activity:</span>
+                    <span className="text-stone-500">{lang === 'mr' ? 'पाचक एन्झाईम्स:' : (lang === 'hi' ? 'पाचक एंजाइम:' : 'Enzyme Activity:')}</span>
                     <span className="font-bold text-emerald-800">14.5 DN Diastase</span>
                   </div>
                 </div>
@@ -391,14 +392,14 @@ export const WebsiteHome: React.FC<WebsiteHomeProps> = ({
             <div className="flex items-center justify-between border-b border-stone-200 pb-4">
               <div>
                 <span className="text-xs font-bold uppercase tracking-wider text-amber-800 block">
-                  {lang === 'mr' ? 'कष्टकरी मधपाळ शेतकरी' : (lang === 'hi' ? 'पंजीकृत मधमक्खी पालक' : 'Grassroots Producer Attribution')}
+                  {t.batchCard.beekeeperSectionTitle}
                 </span>
                 <h3 className="text-xl font-serif font-bold text-stone-900">
-                  {lang === 'mr' ? 'या मधामागील परिश्रमी शेतकरी' : (lang === 'hi' ? 'इस शहद के पीछे परिश्रमी किसान' : 'Meet the Beekeeper Behind This Honey')}
+                  {t.batchCard.beekeeperSectionSub}
                 </h3>
               </div>
               <span className="text-xs bg-emerald-100 text-emerald-800 font-bold px-3 py-1 rounded-full border border-emerald-300">
-                {lang === 'mr' ? 'थेट बँक खात्यात हमीभाव (DBT)' : (lang === 'hi' ? 'सीधा बैंक खाता हस्तांतरण (DBT)' : 'Direct Benefit Transfer (DBT) Verified')}
+                {t.batchCard.dbtVerified}
               </span>
             </div>
 
@@ -458,7 +459,7 @@ export const WebsiteHome: React.FC<WebsiteHomeProps> = ({
                 </h3>
               </div>
               <span className="text-xs bg-amber-100 text-amber-900 font-bold px-3 py-1 rounded-full">
-                5 Anchored Milestones
+                {t.timeline.custodyBadge}
               </span>
             </div>
 
@@ -493,9 +494,9 @@ export const WebsiteHome: React.FC<WebsiteHomeProps> = ({
                     <span className="font-mono font-bold text-stone-600">{data.collection?.collection_code}</span>
                   </div>
                   <div className="flex items-center gap-3 text-sm font-semibold">
-                    <span>Measured: <strong className="text-stone-900">{data.collection?.measured_quantity || 48.5} kg</strong></span>
+                    <span>{lang === 'mr' ? 'वजन:' : (lang === 'hi' ? 'तौल:' : 'Measured:')} <strong className="text-stone-900">{data.collection?.measured_quantity || 48.5} kg</strong></span>
                     <span className="text-xs font-bold text-emerald-800 bg-emerald-100 px-2.5 py-0.5 rounded-full border border-emerald-300">
-                      ✓ Reconciled within 2% tolerance
+                      {lang === 'mr' ? '✓ २% सहिष्णुतेत वजन प्रमाणित' : (lang === 'hi' ? '✓ 2% सहनशीलता में वजन सत्यापित' : '✓ Reconciled within 2% tolerance')}
                     </span>
                   </div>
                   <p className="text-stone-600 leading-snug">{t.timeline.step2Desc}</p>
@@ -528,7 +529,7 @@ export const WebsiteHome: React.FC<WebsiteHomeProps> = ({
                     <span className="font-mono font-bold text-emerald-800">{data.laboratory?.report_code}</span>
                   </div>
                   <div className="flex items-center gap-3 text-sm">
-                    <span className="font-bold text-emerald-950">Result: {data.laboratory?.result}</span>
+                    <span className="font-bold text-emerald-950">{lang === 'mr' ? 'निकाल:' : (lang === 'hi' ? 'परिणाम:' : 'Result:')} {data.laboratory?.result}</span>
                     <span className="text-xs bg-emerald-200 text-emerald-900 px-2 py-0.5 rounded font-bold">
                       {t.timeline.verifiedStamp}
                     </span>
@@ -556,8 +557,12 @@ export const WebsiteHome: React.FC<WebsiteHomeProps> = ({
         </section>
       )}
 
-      {/* 3. SENSORY & PHYSICAL HONEY QUALITY GALLERY (REAL FOOD PHOTOGRAPHY) */}
-      {/* CUSTOMER HONEY JAR QR GENERATOR FEATURED CALLOUT CARD */}
+      {/* 3. INTERACTIVE 3D HONEY JAR DIGITAL TWIN (HIGH VISIBILITY FEATURE) */}
+      <section className="space-y-4">
+        <HoneyJar3DViewer />
+      </section>
+
+      {/* 4. CUSTOMER HONEY JAR QR GENERATOR FEATURED CALLOUT CARD */}
       <section className="bg-gradient-to-br from-amber-500 via-amber-600 to-amber-700 text-stone-950 rounded-3xl p-6 sm:p-8 shadow-md border border-amber-400 relative overflow-hidden">
         <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-6">
           <div className="space-y-2 max-w-xl">
@@ -607,7 +612,7 @@ export const WebsiteHome: React.FC<WebsiteHomeProps> = ({
         </div>
       </section>
 
-      {/* 3. SENSORY & PHYSICAL HONEY QUALITY GALLERY (REAL FOOD PHOTOGRAPHY) */}
+      {/* 5. SENSORY & PHYSICAL HONEY QUALITY GALLERY (REAL FOOD PHOTOGRAPHY) */}
       <section className="space-y-6">
         <div className="text-center max-w-2xl mx-auto space-y-2">
           <span className="text-xs font-bold uppercase tracking-wider text-amber-800">
@@ -728,179 +733,12 @@ export const WebsiteHome: React.FC<WebsiteHomeProps> = ({
         </div>
       </section>
 
-      {/* HOUSEHOLD PURITY SIMULATOR (UNIQUE HACKATHON FEATURE) */}
+      {/* 6. HOUSEHOLD PURITY SIMULATOR (TRILINGUAL KITCHEN SCIENCE) */}
       <section className="space-y-4">
         <HouseholdPuritySimulator />
       </section>
 
-      {/* 4. "THE PURE HONEY JOURNEY" 5 PHYSICAL CUSTODY STAGES */}
-      <section className="space-y-6">
-        <div className="text-center max-w-2xl mx-auto space-y-2">
-          <span className="text-xs font-bold uppercase tracking-wider text-amber-800">
-            Physical Custody Framework
-          </span>
-          <h2 className="text-2xl sm:text-3xl font-serif font-bold text-stone-900">
-            5 Chronological Custody Stations
-          </h2>
-          <p className="text-sm text-stone-600">
-            From biodiversity apiaries in the Western Ghats to consumer tables, our multi-tier verification prevents sugar adulteration and origin falsification.
-          </p>
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
-          {/* Card 1: Apiary */}
-          <div className="bg-white rounded-2xl overflow-hidden border border-stone-200 shadow-xs flex flex-col justify-between hover:border-amber-300 transition-all">
-            <div className="h-40 overflow-hidden relative">
-              <img
-                src="https://images.unsplash.com/photo-1587049352846-4a222e784d38?auto=format&fit=crop&w=600&q=80"
-                alt="Wooden Hive in Orchard"
-                className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
-              />
-              <span className="absolute bottom-2 left-2 bg-stone-900/80 backdrop-blur-xs text-amber-400 text-[10px] font-mono font-bold px-2 py-0.5 rounded">
-                01. Apiary
-              </span>
-            </div>
-            <div className="p-3.5 space-y-2 flex-1 flex flex-col justify-between">
-              <div>
-                <h4 className="font-bold text-xs text-stone-900">IoT Monitored Hives</h4>
-                <p className="text-[11px] text-stone-600 leading-snug mt-1">
-                  Brood temperature (34.5°C) and colony acoustics monitored by LoRaWAN gateways.
-                </p>
-              </div>
-              <button
-                type="button"
-                onClick={() => onOpenPortal('beekeeper')}
-                className="text-[11px] font-bold text-amber-700 hover:text-amber-900 flex items-center gap-1 pt-1"
-              >
-                <span>View Hive Logs</span>
-                <ChevronRight className="w-3 h-3" />
-              </button>
-            </div>
-          </div>
-
-          {/* Card 2: Farmer Voice Log */}
-          <div className="bg-white rounded-2xl overflow-hidden border border-stone-200 shadow-xs flex flex-col justify-between hover:border-amber-300 transition-all">
-            <div className="h-40 overflow-hidden relative">
-              <img
-                src="https://images.unsplash.com/photo-1605000797499-95a51c5269ae?auto=format&fit=crop&w=600&q=80"
-                alt="Indian Beekeeper Ramesh Patil"
-                className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
-              />
-              <span className="absolute bottom-2 left-2 bg-stone-900/80 backdrop-blur-xs text-amber-400 text-[10px] font-mono font-bold px-2 py-0.5 rounded">
-                02. Harvest
-              </span>
-            </div>
-            <div className="p-3.5 space-y-2 flex-1 flex flex-col justify-between">
-              <div>
-                <h4 className="font-bold text-xs text-stone-900">Beekeeper Field Log</h4>
-                <p className="text-[11px] text-stone-600 leading-snug mt-1">
-                  Multilingual voice harvest logging (EN/HI/MR) and KVIC Smart Kisan Passbook.
-                </p>
-              </div>
-              <button
-                type="button"
-                onClick={() => onOpenPortal('beekeeper')}
-                className="text-[11px] font-bold text-amber-700 hover:text-amber-900 flex items-center gap-1 pt-1"
-              >
-                <span>Open Voice Log</span>
-                <ChevronRight className="w-3 h-3" />
-              </button>
-            </div>
-          </div>
-
-          {/* Card 3: Mandi Tare Scale */}
-          <div className="bg-white rounded-2xl overflow-hidden border border-stone-200 shadow-xs flex flex-col justify-between hover:border-amber-300 transition-all">
-            <div className="h-40 overflow-hidden relative">
-              <img
-                src="https://images.unsplash.com/photo-1587049352851-8d4e89133924?auto=format&fit=crop&w=600&q=80"
-                alt="Mandi Tare Weighment"
-                className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
-              />
-              <span className="absolute bottom-2 left-2 bg-stone-900/80 backdrop-blur-xs text-amber-400 text-[10px] font-mono font-bold px-2 py-0.5 rounded">
-                03. Mandi
-              </span>
-            </div>
-            <div className="p-3.5 space-y-2 flex-1 flex flex-col justify-between">
-              <div>
-                <h4 className="font-bold text-xs text-stone-900">Mandi Weighment Scale</h4>
-                <p className="text-[11px] text-stone-600 leading-snug mt-1">
-                  Avery Berkel industrial scale tare deductions and real-time anti-dilution checks.
-                </p>
-              </div>
-              <button
-                type="button"
-                onClick={() => onOpenPortal('collection')}
-                className="text-[11px] font-bold text-amber-700 hover:text-amber-900 flex items-center gap-1 pt-1"
-              >
-                <span>Launch Scale</span>
-                <ChevronRight className="w-3 h-3" />
-              </button>
-            </div>
-          </div>
-
-          {/* Card 4: NABL Laboratory */}
-          <div className="bg-white rounded-2xl overflow-hidden border border-stone-200 shadow-xs flex flex-col justify-between hover:border-amber-300 transition-all">
-            <div className="h-40 overflow-hidden relative">
-              <img
-                src="https://images.unsplash.com/photo-1589927986089-35812388d1f4?auto=format&fit=crop&w=600&q=80"
-                alt="NABL Isotope Chemical Assay"
-                className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
-              />
-              <span className="absolute bottom-2 left-2 bg-stone-900/80 backdrop-blur-xs text-amber-400 text-[10px] font-mono font-bold px-2 py-0.5 rounded">
-                04. Lab Assay
-              </span>
-            </div>
-            <div className="p-3.5 space-y-2 flex-1 flex flex-col justify-between">
-              <div>
-                <h4 className="font-bold text-xs text-stone-900">Processing & NABL Lab</h4>
-                <p className="text-[11px] text-stone-600 leading-snug mt-1">
-                  EA-IRMS Carbon-13 isotope analysis detecting C4 synthetic sugar and corn syrup.
-                </p>
-              </div>
-              <button
-                type="button"
-                onClick={() => onOpenPortal('processing')}
-                className="text-[11px] font-bold text-amber-700 hover:text-amber-900 flex items-center gap-1 pt-1"
-              >
-                <span>Open Lab Console</span>
-                <ChevronRight className="w-3 h-3" />
-              </button>
-            </div>
-          </div>
-
-          {/* Card 5: Central Merkle DAG */}
-          <div className="bg-white rounded-2xl overflow-hidden border border-stone-200 shadow-xs flex flex-col justify-between hover:border-amber-300 transition-all">
-            <div className="h-40 overflow-hidden relative">
-              <img
-                src="https://images.unsplash.com/photo-1558642452-9d2a7deb7f62?auto=format&fit=crop&w=600&q=80"
-                alt="Regulatory Merkle DAG"
-                className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
-              />
-              <span className="absolute bottom-2 left-2 bg-stone-900/80 backdrop-blur-xs text-amber-400 text-[10px] font-mono font-bold px-2 py-0.5 rounded">
-                05. Audit DAG
-              </span>
-            </div>
-            <div className="p-3.5 space-y-2 flex-1 flex flex-col justify-between">
-              <div>
-                <h4 className="font-bold text-xs text-stone-900">Regulatory Audit Console</h4>
-                <p className="text-[11px] text-stone-600 leading-snug mt-1">
-                  Central FSSAI Merkle DAG batch genealogy, discrepancy investigation, and SHA-256.
-                </p>
-              </div>
-              <button
-                type="button"
-                onClick={() => onOpenPortal('admin')}
-                className="text-[11px] font-bold text-amber-700 hover:text-amber-900 flex items-center gap-1 pt-1"
-              >
-                <span>Open Audit DAG</span>
-                <ChevronRight className="w-3 h-3" />
-              </button>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* 4. STAKEHOLDER PORTAL GATEWAY (ALLOWS JUDGES/EVALUATORS TO ACCESS OPERATIONAL TOOLS) */}
+      {/* 7. STAKEHOLDER PORTAL GATEWAY (OPERATIONAL HARDWARE SIMULATIONS) */}
       <section className="bg-gradient-to-br from-stone-900 via-stone-950 to-stone-900 text-white rounded-3xl p-6 sm:p-10 shadow-lg border border-stone-800 space-y-6">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-stone-800 pb-5">
           <div className="space-y-1">
@@ -1032,18 +870,18 @@ export const WebsiteHome: React.FC<WebsiteHomeProps> = ({
             {/* Action Bar */}
             <div className="flex items-center justify-between border-b border-stone-300 pb-3 print:hidden">
               <span className="text-xs font-bold uppercase tracking-wider text-amber-900">
-                Official Government Purity Certificate
+                {lang === 'mr' ? 'अधिकृत सरकारी शुद्धता प्रमाणपत्र' : (lang === 'hi' ? 'आधिकारिक सरकारी शुद्धता प्रमाण पत्र' : 'Official Government Purity Certificate')}
               </span>
               <div className="flex items-center gap-2">
                 <button
                   onClick={() => window.print()}
-                  className="px-3 py-1.5 bg-stone-900 hover:bg-stone-800 text-white text-xs font-bold rounded-lg flex items-center gap-1.5 transition-colors"
+                  className="px-3 py-1.5 bg-stone-900 hover:bg-stone-800 text-white text-xs font-bold rounded-lg flex items-center gap-1.5 transition-colors cursor-pointer"
                 >
-                  <Printer className="w-3.5 h-3.5" /> Print / Save PDF
+                  <Printer className="w-3.5 h-3.5" /> {lang === 'mr' ? 'प्रिंट / सेव्ह करा' : (lang === 'hi' ? 'प्रिंट / सहेजें' : 'Print / Save PDF')}
                 </button>
                 <button
                   onClick={() => setIsCertificateOpen(false)}
-                  className="text-stone-500 hover:text-stone-900 text-lg font-bold px-2"
+                  className="text-stone-500 hover:text-stone-900 text-lg font-bold px-2 cursor-pointer"
                 >
                   ✕
                 </button>
@@ -1057,10 +895,10 @@ export const WebsiteHome: React.FC<WebsiteHomeProps> = ({
                   सत्यमेव जयते • Government of India
                 </div>
                 <h2 className="text-lg font-serif font-black tracking-tight text-stone-900">
-                  NATIONAL BEE BOARD & FOOD SAFETY AND STANDARDS AUTHORITY OF INDIA
+                  {lang === 'mr' ? 'राष्ट्रीय मध मंडळ आणि अन्न सुरक्षा व मानके प्राधिकरण (FSSAI)' : (lang === 'hi' ? 'राष्ट्रीय मधुमक्खी बोर्ड एवं भारतीय खाद्य सुरक्षा मानक प्राधिकरण (FSSAI)' : 'NATIONAL BEE BOARD & FOOD SAFETY AND STANDARDS AUTHORITY OF INDIA')}
                 </h2>
                 <div className="text-[11px] font-semibold text-amber-900">
-                  National Honey Mission • Certificate of Botanical Purity & Blockchain Provenance
+                  {lang === 'mr' ? 'राष्ट्रीय मध मोहीम • वनस्पती मूळ शुद्धता आणि ब्लॉकचेन प्रमाणपत्र' : (lang === 'hi' ? 'राष्ट्रीय मधुमक्खी मिशन • वानस्पतिक शुद्धता एवं ब्लॉकचेन प्रमाण पत्र' : 'National Honey Mission • Certificate of Botanical Purity & Blockchain Provenance')}
                 </div>
                 <div className="text-[10px] font-mono text-stone-500">
                   Certificate Ref: HC/NABL/2026/MAHA-042 • Issue Date: {data.harvest?.harvest_date}
@@ -1069,7 +907,11 @@ export const WebsiteHome: React.FC<WebsiteHomeProps> = ({
 
               <div className="text-xs leading-relaxed space-y-2 text-stone-800">
                 <p>
-                  This is to certify that retail batch <strong>{data.package.package_code}</strong> (Product: <em>{data.package.product_name}</em>) harvested by registered beekeeper <strong>{data.origin?.beekeeper_name}</strong> at <strong>{data.origin?.apiary_name}, {data.origin?.apiary_location}</strong> has undergone mandatory laboratory chemical profiling and physical mass-balance verification.
+                  {lang === 'mr' 
+                    ? <>याद्वारे प्रमाणित करण्यात येते की रिटेल बॅच <strong>{data.package.package_code}</strong> (उत्पादन: <em>{data.package.product_name}</em>) ज्याची काढणी नोंदणीकृत शेतकरी <strong>{data.origin?.beekeeper_name}</strong> यांनी <strong>{data.origin?.apiary_name}, {data.origin?.apiary_location}</strong> येथे केली आहे, त्याची NABL रासायनिक चाचणी व वस्तुमान पडताळणी यशस्वीपणे पूर्ण झाली आहे.</>
+                    : (lang === 'hi'
+                      ? <>प्रमाणित किया जाता है कि रिटेल बैच <strong>{data.package.package_code}</strong> (उत्पाद: <em>{data.package.product_name}</em>) जिसे पंजीकृत किसान <strong>{data.origin?.beekeeper_name}</strong> ने <strong>{data.origin?.apiary_name}, {data.origin?.apiary_location}</strong> में निकाला है, की NABL प्रयोगशाला जांच एवं द्रव्यमान संतुलन परीक्षण सफलतापूर्वक पूर्ण हुआ है।</>
+                      : <>This is to certify that retail batch <strong>{data.package.package_code}</strong> (Product: <em>{data.package.product_name}</em>) harvested by registered beekeeper <strong>{data.origin?.beekeeper_name}</strong> at <strong>{data.origin?.apiary_name}, {data.origin?.apiary_location}</strong> has undergone mandatory laboratory chemical profiling and physical mass-balance verification.</>)}
                 </p>
               </div>
 
@@ -1077,36 +919,36 @@ export const WebsiteHome: React.FC<WebsiteHomeProps> = ({
               <table className="w-full text-xs text-left border-collapse border border-stone-300">
                 <thead>
                   <tr className="bg-stone-100 font-bold text-stone-800">
-                    <th className="p-2 border border-stone-300">Quality Parameter</th>
-                    <th className="p-2 border border-stone-300">FSSAI Standard</th>
-                    <th className="p-2 border border-stone-300">Observed Value</th>
-                    <th className="p-2 border border-stone-300">Result</th>
+                    <th className="p-2 border border-stone-300">{lang === 'mr' ? 'गुणवत्ता निकष' : (lang === 'hi' ? 'गुणवत्ता मानक' : 'Quality Parameter')}</th>
+                    <th className="p-2 border border-stone-300">{lang === 'mr' ? 'FSSAI प्रमाण' : (lang === 'hi' ? 'FSSAI मानक' : 'FSSAI Standard')}</th>
+                    <th className="p-2 border border-stone-300">{lang === 'mr' ? 'आढळलेले मूल्य' : (lang === 'hi' ? 'परीक्षित मान' : 'Observed Value')}</th>
+                    <th className="p-2 border border-stone-300">{lang === 'mr' ? 'निकाल' : (lang === 'hi' ? 'परिणाम' : 'Result')}</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-stone-300">
                   <tr>
-                    <td className="p-2 border border-stone-300">Moisture Content</td>
+                    <td className="p-2 border border-stone-300">{lang === 'mr' ? 'ओलावा (Moisture)' : (lang === 'hi' ? 'नमी की मात्रा' : 'Moisture Content')}</td>
                     <td className="p-2 border border-stone-300">Max 20.0%</td>
                     <td className="p-2 border border-stone-300 font-mono font-bold">{data.laboratory?.moisture_pct || 17.8}%</td>
-                    <td className="p-2 border border-stone-300 text-emerald-700 font-bold">COMPLIANT</td>
+                    <td className="p-2 border border-stone-300 text-emerald-700 font-bold">{lang === 'mr' ? 'उत्तीर्ण' : (lang === 'hi' ? 'उत्तीर्ण' : 'COMPLIANT')}</td>
                   </tr>
                   <tr>
-                    <td className="p-2 border border-stone-300">F/G Ratio (Fructose/Glucose)</td>
+                    <td className="p-2 border border-stone-300">{lang === 'mr' ? 'F/G गुणोत्तर (फ्रुक्टोज/ग्लुकोज)' : (lang === 'hi' ? 'F/G अनुपात (फ्रुक्टोज़/ग्लूकोज)' : 'F/G Ratio (Fructose/Glucose)')}</td>
                     <td className="p-2 border border-stone-300">Min 1.0</td>
                     <td className="p-2 border border-stone-300 font-mono font-bold">1.22</td>
-                    <td className="p-2 border border-stone-300 text-emerald-700 font-bold">COMPLIANT</td>
+                    <td className="p-2 border border-stone-300 text-emerald-700 font-bold">{lang === 'mr' ? 'उत्तीर्ण' : (lang === 'hi' ? 'उत्तीर्ण' : 'COMPLIANT')}</td>
                   </tr>
                   <tr>
                     <td className="p-2 border border-stone-300">Hydroxymethylfurfural (HMF)</td>
                     <td className="p-2 border border-stone-300">Max 40 mg/kg</td>
                     <td className="p-2 border border-stone-300 font-mono font-bold">14.2 mg/kg</td>
-                    <td className="p-2 border border-stone-300 text-emerald-700 font-bold">RAW / UNHEATED</td>
+                    <td className="p-2 border border-stone-300 text-emerald-700 font-bold">{lang === 'mr' ? 'शीत प्रक्रिया (कच्चा मध)' : (lang === 'hi' ? 'कच्चा शहद (शीत निष्कर्षित)' : 'RAW / UNHEATED')}</td>
                   </tr>
                   <tr>
                     <td className="p-2 border border-stone-300">EA-IRMS C4 Sugar Isotope</td>
                     <td className="p-2 border border-stone-300">Negative</td>
                     <td className="p-2 border border-stone-300 font-mono font-bold">&lt; -23.5‰ δ13C</td>
-                    <td className="p-2 border border-stone-300 text-emerald-700 font-bold">ZERO CORN/CANE SYRUP</td>
+                    <td className="p-2 border border-stone-300 text-emerald-700 font-bold">{lang === 'mr' ? 'शून्य साखर पाक भेसळ' : (lang === 'hi' ? 'शून्य चीनी चाशनी' : 'ZERO CORN/CANE SYRUP')}</td>
                   </tr>
                 </tbody>
               </table>
@@ -1122,8 +964,11 @@ export const WebsiteHome: React.FC<WebsiteHomeProps> = ({
                     Dr. Sunita Kulkarni
                   </div>
                   <div className="text-[10px] text-stone-600">
-                    Chief Food Analyst & Chemical Examiner<br />
-                    NABL Accredited Quality Testing Laboratory, Pune
+                    {lang === 'mr' 
+                      ? 'मुख्य अन्न विश्लेषक व रासायनिक परीक्षक, NABL मान्यताप्राप्त प्रयोगशाळा, पुणे'
+                      : (lang === 'hi'
+                        ? 'मुख्य खाद्य विश्लेषक एवं रासायनिक परीक्षक, NABL प्रमाणित प्रयोगशाला, पुणे'
+                        : 'Chief Food Analyst & Chemical Examiner, NABL Accredited Quality Testing Laboratory, Pune')}
                   </div>
                 </div>
               </div>

@@ -57,10 +57,28 @@ export interface Translations {
     directPay: string;
     hiveIdLabel: string;
     floralSourceLabel: string;
+    dbtVerified: string;
+    beekeeperSectionTitle: string;
+    beekeeperSectionSub: string;
+  };
+  viewer3d: {
+    tag: string;
+    title: string;
+    subtitle: string;
+    hint: string;
+    jamun: string;
+    acacia: string;
+    mangrove: string;
+    glassSpec: string;
+    tamperSeal: string;
+    coldSettled: string;
+    autoRotate: string;
+    diastasePurity: string;
   };
   timeline: {
     title: string;
     subtitle: string;
+    custodyBadge: string;
     step1Title: string;
     step1Desc: string;
     step2Title: string;
@@ -91,10 +109,37 @@ export interface Translations {
   puritySim: {
     title: string;
     subtitle: string;
+    tag: string;
+    badge: string;
     waterTest: string;
     flameTest: string;
-    pureSample: string;
-    adulteratedSample: string;
+    selectSamplePrompt: string;
+    pureSampleTitle: string;
+    pureSampleStats: string;
+    adulteratedSampleTitle: string;
+    adulteratedSampleStats: string;
+    waterScienceTitle: string;
+    waterScienceDesc: string;
+    flameScienceTitle: string;
+    flameScienceDesc: string;
+    runWaterBtn: string;
+    runFlameBtn: string;
+    runningSim: string;
+    vesselWaterTitle: string;
+    vesselFlameTitle: string;
+    pureVesselBadge: string;
+    adulteratedVesselBadge: string;
+    waterPureResult: string;
+    waterAdulteratedResult: string;
+    flamePureResult: string;
+    flameAdulteratedResult: string;
+    clickPrompt: string;
+    verdictPurePassed: string;
+    verdictPureWaterDesc: string;
+    verdictPureFlameDesc: string;
+    verdictAdulteratedFailed: string;
+    verdictAdulteratedWaterDesc: string;
+    verdictAdulteratedFlameDesc: string;
     pureVerdict: string;
     adulteratedVerdict: string;
   };
@@ -130,12 +175,45 @@ export interface Translations {
     auditTitle: string;
     auditDesc: string;
   };
+  stages: {
+    stageLabel: string;
+    stageOf: string;
+    consumerTitle: string;
+    consumerRole: string;
+    consumerDesc: string;
+    consumerStandard: string;
+    beekeeperTitle: string;
+    beekeeperRole: string;
+    beekeeperDesc: string;
+    beekeeperStandard: string;
+    mandiTitle: string;
+    mandiRole: string;
+    mandiDesc: string;
+    mandiStandard: string;
+    labTitle: string;
+    labRole: string;
+    labDesc: string;
+    labStandard: string;
+    auditTitle: string;
+    auditRole: string;
+    auditDesc: string;
+    auditStandard: string;
+    prevBtn: string;
+    nextBtn: string;
+  };
   footer: {
     desc: string;
     stationsTitle: string;
     complianceTitle: string;
     copyright: string;
     tagline: string;
+    standard1: string;
+    standard2: string;
+    standard3: string;
+    standard4: string;
+    hackathonTitle: string;
+    hackathonDesc: string;
+    builtFor: string;
   };
 }
 
@@ -197,10 +275,28 @@ export const translations: Record<Language, Translations> = {
       directPay: 'Direct Bank Transfer to Farmer',
       hiveIdLabel: 'Registered Hive ID',
       floralSourceLabel: 'Botanical Nectar Source',
+      dbtVerified: 'Direct Benefit Transfer (DBT) Verified',
+      beekeeperSectionTitle: 'Grassroots Producer Attribution',
+      beekeeperSectionSub: 'Meet the Beekeeper Behind This Honey',
+    },
+    viewer3d: {
+      tag: 'Interactive 3D Digital Twin',
+      title: 'Interactive 3D Honey Jar Inspection',
+      subtitle: 'Drag with mouse or swipe on touch screen to inspect 360° transparent glass, warm amber honey density, and cryptographic tamper seal.',
+      hint: '🖱️ Drag to rotate 360° • 🔄 Auto-orbit enabled',
+      jamun: 'Mahabaleshwar Jamun Honey',
+      acacia: 'Kashmir White Acacia',
+      mangrove: 'Sunderbans Mangrove',
+      glassSpec: 'Food-Grade Soda-Lime (Lead-Free)',
+      tamperSeal: 'Laser QR Tamper-Proof Seal',
+      coldSettled: 'Cold-Settled Raw Honey (<45°C)',
+      autoRotate: 'Auto-Rotate',
+      diastasePurity: 'Active Diastase Enzymes (14.5 DN)',
     },
     timeline: {
       title: 'Verified 5-Stage Physical Journey',
       subtitle: 'Immutable record from smallholder forest hives to your dining table',
+      custodyBadge: '5 Anchored Milestones',
       step1Title: '1. Beehive Harvest Declaration',
       step1Desc: 'Harvested cold by registered tribal beekeeper using hygienic food-grade extractors.',
       step2Title: '2. Mandi Weight & Tare Reconciliation',
@@ -230,11 +326,38 @@ export const translations: Record<Language, Translations> = {
     },
     puritySim: {
       title: 'Ghar-Ghar Parakh: Household Purity Simulator',
-      subtitle: 'Compare 100% pure raw honey vs. adulterated market syrup using traditional home tests',
-      waterTest: 'Water Dispersion Test (Glass of Water)',
-      flameTest: 'Cotton Flame Test (Candle Flame)',
-      pureSample: 'Batch PKG-MAHA-042 (100% Pure Raw Honey)',
-      adulteratedSample: 'Commercial Market Sample (42% Invert Syrup)',
+      subtitle: 'Compare 100% pure raw honey vs. adulterated market syrup using authentic kitchen science',
+      tag: 'Traditional Indian Purity Science',
+      badge: 'घर-घर परख सिम्युलेटर',
+      waterTest: 'Water Dispersion Test',
+      flameTest: 'Cotton Flame Test',
+      selectSamplePrompt: '1. Select Honey Sample to Test:',
+      pureSampleTitle: '100% Raw Forest Honey',
+      pureSampleStats: 'Moisture: 17.8% • 0% Added Sugar',
+      adulteratedSampleTitle: 'Adulterated Sugar Syrup',
+      adulteratedSampleStats: 'C4 Cane Sugar + Corn Syrup (42%)',
+      waterScienceTitle: 'The Science of Water Density & Specific Gravity',
+      waterScienceDesc: 'Pure honey has high specific gravity (~1.42) and dense surface tension. In water, it drops straight to the bottom without dispersing. Industrial sugar syrups dissolve instantly, clouding the water.',
+      flameScienceTitle: 'The Science of Flammability & Moisture Ratio',
+      flameScienceDesc: 'Pure honey contains less than 18% moisture. When a dipped cotton wick is struck with flame, it burns cleanly. Diluted syrups with added water cause sputtering and extinguish the wick.',
+      runWaterBtn: 'Run Water Dispersion Test',
+      runFlameBtn: 'Run Cotton Flame Test',
+      runningSim: 'Executing Physical Simulation...',
+      vesselWaterTitle: 'SIMULATION VESSEL • WATER TEST',
+      vesselFlameTitle: 'SIMULATION VESSEL • FLAME TEST',
+      pureVesselBadge: 'SAMPLE: 100% PURE RAW',
+      adulteratedVesselBadge: 'SAMPLE: C4 ADULTERATED',
+      waterPureResult: 'Intact Honey Layer (High Gravity)',
+      waterAdulteratedResult: 'Clouded Solution (Instant Syrup Dissolution)',
+      flamePureResult: 'Clean Golden Flame',
+      flameAdulteratedResult: 'Sputtered & Extinguished',
+      clickPrompt: 'Click "Run Test" to dispense honey sample',
+      verdictPurePassed: 'VERDICT: 100% PURE BOTANICAL HONEY (PASSED)',
+      verdictPureWaterDesc: 'The droplet settled cohesively at the bottom without dispersion, proving natural 17.8% moisture and zero water-soluble cane syrups.',
+      verdictPureFlameDesc: 'The wick burned smoothly with a steady golden flame, verifying moisture strictly under the FSSAI 20% regulatory limit.',
+      verdictAdulteratedFailed: 'VERDICT: ARTIFICIAL SYRUP ADULTERATION DETECTED',
+      verdictAdulteratedWaterDesc: 'Immediate dissolution and hazy cloudiness occurred, a classic indicator of inverted rice syrup or high-fructose corn syrup adulteration.',
+      verdictAdulteratedFlameDesc: 'Excess moisture and artificial invert sugars caused sputtering and prevented sustained combustion.',
       pureVerdict: 'Pure honey settles at the bottom like a golden bead without dissolving.',
       adulteratedVerdict: 'Syrup dissolves immediately, turning water cloudy and hazy.',
     },
@@ -270,12 +393,45 @@ export const translations: Record<Language, Translations> = {
       auditTitle: 'Central Regulatory Audit',
       auditDesc: 'Batch genealogy DAG explorer, discrepancy investigation modal, and SHA-256 event ledger.',
     },
+    stages: {
+      stageLabel: 'Stage',
+      stageOf: 'of',
+      consumerTitle: 'Consumer Verification & Botanical Provenance',
+      consumerRole: 'Public Verification Portal',
+      consumerDesc: 'End-consumer authenticity portal. Scan jar QR tags, verify Ramesh Patil\'s apiary location, inspect NABL laboratory isotope certificates, and track the complete cryptographic custody chain.',
+      consumerStandard: 'Consumer Protection (E-Commerce) Rules 2020 • FSSAI Food Safety Standards',
+      beekeeperTitle: 'Beekeeper Field Harvest Log & IoT Apiary Telemetry',
+      beekeeperRole: 'Grassroots Production Station',
+      beekeeperDesc: 'Decentralized apiary console empowering rural beekeepers. Log harvests using voice commands in English, Hindi, or Marathi, monitor real-time Hive #17 IoT telemetry (temp, humidity, acoustics), and forecast yield with XGBoost.',
+      beekeeperStandard: 'National Honey Mission Guidelines • KVIC Smart Kisan Passbook Protocol',
+      mandiTitle: 'Mandi Weighment Scale & Tare Reconciliation',
+      mandiRole: 'Aggregation & APMC Mandi Station',
+      mandiDesc: 'Industrial weighment terminal at the APMC Mandi. Integrates with Avery Berkel digital scales, computes automatic tare deductions for SS canisters and drums, and flags mass discrepancies to prevent syrup adulteration.',
+      mandiStandard: 'Legal Metrology (Packaged Commodities) Rules 2011 • APMC Honey Intake Norms',
+      labTitle: 'Agro-Processing, NABL Isotope Lab & Serialization',
+      labRole: 'Industrial Processing & Testing Station',
+      labDesc: 'NABL laboratory purity testing and serialization plant. Performs EA-IRMS Carbon-13 isotope analysis to catch C4 synthetic sugars, calculates mass-balance conservation, and assigns unique cryptographically signed QR codes.',
+      labStandard: 'FSSAI Gazette Honey Standards (Section 2.8.2) • EA-IRMS Carbon-13 Protocol',
+      auditTitle: 'Central Regulatory Surveillance & Merkle DAG Console',
+      auditRole: 'National Governance & Audit Console',
+      auditDesc: 'Central surveillance console for FSSAI and KVIC enforcement teams. Visualizes multi-stage Merkle DAG batch genealogy, audits SHA-256 block ledger integrity, and manages discrepancy investigations with legal signoff.',
+      auditStandard: 'FSSAI Surveillance Cell • National Digital Traceability Architecture (NDTA)',
+      prevBtn: 'Previous Stage',
+      nextBtn: 'Next Stage',
+    },
     footer: {
       desc: 'National Honey Mission Authenticity & Provenance Protocol. Empowering rural beekeepers across the Western Ghats, Sunderbans, and Kashmir through cryptographic origin tracking.',
       stationsTitle: 'Physical Journey Stations',
       complianceTitle: 'Compliance & Standards',
       copyright: '© 2026 HoneyChain National Initiative • Government of India Collaboration',
       tagline: 'Zero Synthetic Sweeteners • 100% Verifiable Botanical Origin',
+      standard1: 'FSSAI Gazette (Honey Standards 2020)',
+      standard2: 'Agmark Honey Grading Rules (Special Grade)',
+      standard3: 'National Honey Mission (KVIC, MoMSME)',
+      standard4: 'EA-IRMS Carbon-13 Sugar Isotope Testing',
+      hackathonTitle: 'National Hackathon 2026',
+      hackathonDesc: 'Smart India Hackathon Innovation Track. Built with FastAPI, PostgreSQL, XGBoost ML, React 18, and SHA-256 Ledger.',
+      builtFor: 'Built for Indian Beekeepers & Consumers',
     },
   },
 
@@ -336,10 +492,28 @@ export const translations: Record<Language, Translations> = {
       directPay: 'किसान के बैंक खाते में सीधा भुगतान',
       hiveIdLabel: 'छत्ता क्रमांक (Hive ID)',
       floralSourceLabel: 'वानस्पतिक पराग स्रोत',
+      dbtVerified: 'सीधा बैंक खाता हस्तांतरण (DBT) सत्यापित',
+      beekeeperSectionTitle: 'पंजीकृत मधुमक्खी पालक',
+      beekeeperSectionSub: 'इस शहद के पीछे परिश्रमी किसान',
+    },
+    viewer3d: {
+      tag: 'इंटरएक्टिव 3D डिजिटल मॉडल',
+      title: '3D शहद जार का 360° डिजिटल परीक्षण',
+      subtitle: 'माउस से ड्रैग करें या स्क्रीन पर स्वाइप करके पारदर्शी कांच, सुनहरे शहद के गाढ़ेपन और डिजिटल सुरक्षा सील की 360° जांच करें।',
+      hint: '🖱️ घुमाने के लिए ड्रैग करें • 🔄 360° दृश्य सक्रिय',
+      jamun: 'महाबलेश्वर जामुन शहद',
+      acacia: 'कश्मीर सफेद बबूल शहद',
+      mangrove: 'सुंदरबन मैंग्रोव शहद',
+      glassSpec: 'खाद्य-ग्रेड सुरक्षित कांच (सीसा-मुक्त)',
+      tamperSeal: 'लेजर डिजिटल मुहर (टैम्पर-प्रूफ QR)',
+      coldSettled: 'प्राकृतिक शीत निष्कर्षित शहद (<45°C)',
+      autoRotate: 'स्वचालित घुमाव',
+      diastasePurity: 'सक्रिय प्राकृतिक एंजाइम (14.5 DN)',
     },
     timeline: {
       title: 'सत्यापित 5-चरणीय भौतिक यात्रा',
       subtitle: 'जंगल के छत्तों से आपकी मेज तक पारदर्शी और सुरक्षित रिकॉर्ड',
+      custodyBadge: '५ सत्यापित मील के पत्थर',
       step1Title: '१. छत्ता शहद निष्कर्षण',
       step1Desc: 'पारंपरिक किसानों द्वारा स्वच्छ स्टील निष्पादक से कम तापमान पर निकाला गया।',
       step2Title: '२. मंडी डिजिटल तौल एवं जांच',
@@ -369,11 +543,38 @@ export const translations: Record<Language, Translations> = {
     },
     puritySim: {
       title: 'घर-घर परख: घरेलू शुद्धता सिम्युलेटर',
-      subtitle: 'असली कच्चे शहद और मिलावटी चाशनी की पारंपरिक घरेलू जांच देखें',
-      waterTest: 'पानी में विलेयता परीक्षण (कांच का गिलास)',
-      flameTest: 'सूती बत्ती अग्नि परीक्षण (दीपक की लौ)',
-      pureSample: 'बैच PKG-MAHA-042 (100% शुद्ध शहद)',
-      adulteratedSample: 'व्यावसायिक बाजार नमूना (42% चीनी चाशनी)',
+      subtitle: 'असली कच्चे शहद और मिलावटी चाशनी की पारंपरिक घरेलू रसोई जांच देखें',
+      tag: 'पारंपरिक भारतीय शुद्धता विज्ञान',
+      badge: 'घर-घर परख सिम्युलेटर',
+      waterTest: 'पानी में विलेयता परीक्षण',
+      flameTest: 'सूती बत्ती अग्नि परीक्षण',
+      selectSamplePrompt: '१. जांच हेतु शहद का नमूना चुनें:',
+      pureSampleTitle: '१००% प्राकृतिक जंगली शहद',
+      pureSampleStats: 'नमी: १७.८% • ०% कृत्रिम चीनी',
+      adulteratedSampleTitle: 'मिलावटी चाशनी का नमूना',
+      adulteratedSampleStats: 'C4 गन्ने की चीनी + कॉर्न सिरप (४२%)',
+      waterScienceTitle: 'पानी के घनत्व एवं विशिष्ट गुरुत्व का विज्ञान',
+      waterScienceDesc: 'शुद्ध शहद का विशिष्ट गुरुत्व उच्च (~१.४२) और पृष्ठ तनाव अधिक होता है। पानी में डालने पर यह बिना घुले सीधे तली में मोती की तरह बैठ जाता है। औद्योगिक चाशनी तुरंत घुलकर पानी को धुंधला कर देती है।',
+      flameScienceTitle: 'ज्वलनशीलता एवं प्राकृतिक नमी का विज्ञान',
+      flameScienceDesc: 'शुद्ध शहद में १८% से कम नमी होती है। शहद में डूबी सूती बत्ती जलाने पर वह शांत सुनहरी लौ के साथ जलती है। पानी मिली चाशनी में बत्ती तड़तड़ाकर बुझ जाती है।',
+      runWaterBtn: 'पानी में विलेयता जांच शुरू करें',
+      runFlameBtn: 'सूती बत्ती अग्नि जांच शुरू करें',
+      runningSim: 'भौतिक रासायनिक जांच जारी है...',
+      vesselWaterTitle: 'सिम्युलेशन फ्लास्क • पानी परीक्षण',
+      vesselFlameTitle: 'सिम्युलेशन फ्लास्क • अग्नि परीक्षण',
+      pureVesselBadge: 'नमूना: १००% शुद्ध कच्चा शहद',
+      adulteratedVesselBadge: 'नमूना: मिलावटी चाशनी',
+      waterPureResult: 'अखंड शहद की परत (उच्च घनत्व)',
+      waterAdulteratedResult: 'धुंधला घोल (तुरंत घुलनशील चाशनी)',
+      flamePureResult: 'स्वच्छ सुनहरी लौ',
+      flameAdulteratedResult: 'तड़तड़ाकर बुझ गई',
+      clickPrompt: 'शहद की बूंद गिराने के लिए "जांच शुरू करें" पर क्लिक करें',
+      verdictPurePassed: 'निष्कर्ष: १००% शुद्ध प्राकृतिक शहद (उत्तीर्ण)',
+      verdictPureWaterDesc: 'शहद की बूंद बिना घुले तली में सुरक्षित बैठ गई, जिससे १७.८% प्राकृतिक नमी और शून्य बाहरी चाशनी प्रमाणित होती है।',
+      verdictPureFlameDesc: 'बत्ती बिना किसी बाधा के सुनहरी लौ के साथ जली, जिससे FSSAI मानक २०% से कम नमी की पुष्टि होती है।',
+      verdictAdulteratedFailed: 'निष्कर्ष: कृत्रिम चाशनी की मिलावट पाई गई',
+      verdictAdulteratedWaterDesc: 'पानी में तुरंत घुलकर धुंधलापन उत्पन्न हुआ, जो इनवर्ट राइस सिरप या कॉर्न सिरप की मिलावट का सीधा प्रमाण है।',
+      verdictAdulteratedFlameDesc: 'अत्यधिक नमी और कृत्रिम चीनी के कारण बत्ती तड़तड़ाकर बुझ गई।',
       pureVerdict: 'शुद्ध शहद पानी में नीचे मोती की तरह बैठ जाता है, तुरंत घुलता नहीं।',
       adulteratedVerdict: 'चीनी चाशनी तुरंत घुलकर पानी को धुंधला कर देती है।',
     },
@@ -409,12 +610,45 @@ export const translations: Record<Language, Translations> = {
       auditTitle: 'केंद्रीय नियामक ऑडिट',
       auditDesc: 'बैच वंशावली DAG अन्वेषक, विसंगति जांच एवं निवारण, और SHA-256 ब्लॉकचेन लेजर।',
     },
+    stages: {
+      stageLabel: 'चरण',
+      stageOf: 'का',
+      consumerTitle: 'उपभोक्ता सत्यापन एवं वानस्पतिक उत्पत्ति',
+      consumerRole: 'सार्वजनिक सत्यापन पोर्टल',
+      consumerDesc: 'शहद जार का QR कोड स्कैन करें, रमेश पाटिल के छत्तों का स्थान देखें, NABL प्रयोगशाला का आइसोटोप प्रमाण पत्र जांचें और संपूर्ण ब्लॉकचेन सुरक्षा देखें।',
+      consumerStandard: 'उपभोक्ता संरक्षण (ई-कॉमर्स) नियम २०२० • FSSAI खाद्य सुरक्षा मानक',
+      beekeeperTitle: 'मधुमक्खी पालक फील्ड लॉग एवं IoT छत्ता टेलीमेट्री',
+      beekeeperRole: 'उत्पादक किसान केंद्र',
+      beekeeperDesc: 'ग्रामीण किसानों हेतु आवाज आधारित फसल घोषणा (हिंदी/मराठी/अंग्रेजी), लाइव छत्ता तापमान व ध्वनि सेंसर, और XGBoost AI उत्पादन पूर्वानुमान।',
+      beekeeperStandard: 'राष्ट्रीय मधुमक्खी मिशन दिशा-निर्देश • KVIC स्मार्ट किसान पासबुक',
+      mandiTitle: 'मंडी डिजिटल वजन कांटा एवं टारे कटौती',
+      mandiRole: 'कृषि उपज मंडी समिति (APMC)',
+      mandiDesc: 'डिजिटल कांटे से वजन का सीधा मिलान, खाली कनस्तर का सटीक वजन घटाव और बिचौलियों द्वारा मिलावट रोकने हेतु सख्त सत्यापन।',
+      mandiStandard: 'विधिक मापविज्ञान नियम २०११ • APMC शहद आवक मानक',
+      labTitle: 'प्रसंस्करण, NABL आइसोटोप प्रयोगशाला एवं क्रमांकन',
+      labRole: 'औद्योगिक प्रसंस्करण एवं गुणवत्ता जांच',
+      labDesc: 'C-13 कार्बन आइसोटोप विश्लेषण से चीनी सिरप की पहचान, द्रव्यमान संतुलन गणना और प्रत्येक जार पर विशिष्ट डिजिटल QR कोड आवंटन।',
+      labStandard: 'FSSAI राजपत्र शहद मानक (धारा २.८.२) • EA-IRMS कार्बन-13 प्रोटोकॉल',
+      auditTitle: 'केंद्रीय नियामक निगरानी एवं ब्लॉकचेन Merkle DAG',
+      auditRole: 'राष्ट्रीय प्रशासनिक ऑडिट कंसोल',
+      auditDesc: 'FSSAI व KVIC जांच अधिकारियों हेतु Merkle DAG वंशावली वृक्ष, SHA-256 ब्लॉकचेन लेजर और संदिग्ध बैचों की कानूनी जांच प्रणाली।',
+      auditStandard: 'FSSAI निगरानी प्रकोष्ठ • राष्ट्रीय डिजिटल ट्रेसिबिलिटी आर्किटेक्चर',
+      prevBtn: 'पिछला चरण',
+      nextBtn: 'अगला चरण',
+    },
     footer: {
       desc: 'राष्ट्रीय मधुमक्खी मिशन प्रामाणिकता एवं मूल स्रोत प्रोटोकॉल। पश्चिमी घाट, सुंदरबन और कश्मीर के ग्रामीण मधुमक्खी पालकों को सीधे पारदर्शी मूल्य दिलाने का सरकारी प्रयास।',
       stationsTitle: 'भौतिक यात्रा के पड़ाव',
       complianceTitle: 'मानक एवं प्रमाणन',
       copyright: '© २०२६ हनीचेन राष्ट्रीय पहल • भारत सरकार का सहयोग',
       tagline: 'शून्य कृत्रिम मिठास • १००% सत्यापन योग्य प्राकृतिक शहद',
+      standard1: 'FSSAI राजपत्र (शहद मानक 2020)',
+      standard2: 'एगमार्क शहद ग्रेडिंग नियम (स्पेशल ग्रेड)',
+      standard3: 'राष्ट्रीय मधुमक्खी पालन मिशन (KVIC, MoMSME)',
+      standard4: 'EA-IRMS कार्बन-13 चीनी आइसोटोप परीक्षण',
+      hackathonTitle: 'राष्ट्रीय हैकथॉन 2026',
+      hackathonDesc: 'स्मार्ट इंडिया हैकथॉन नवाचार ट्रैक। FastAPI, PostgreSQL, XGBoost AI, React 18 और SHA-256 ब्लॉकचेन से निर्मित।',
+      builtFor: 'भारतीय किसानों एवं उपभोक्ताओं के लिए समर्पित',
     },
   },
 
@@ -475,10 +709,28 @@ export const translations: Record<Language, Translations> = {
       directPay: 'शेतकऱ्याच्या बँक खात्यात थेट जमा',
       hiveIdLabel: 'पोळ्याचा क्रमांक (Hive ID)',
       floralSourceLabel: 'नैसर्गिक फुलांचा पराग स्रोत',
+      dbtVerified: 'थेट बँक खात्यात हमीभाव (DBT) पडताळणी',
+      beekeeperSectionTitle: 'कष्टकरी मधपाळ शेतकरी',
+      beekeeperSectionSub: 'या मधामागील परिश्रमी शेतकरी',
+    },
+    viewer3d: {
+      tag: 'परस्परसंवादी 3D डिजिटल मॉडेल',
+      title: '3D मध बाटलीची ३६०° डिजिटल पाहणी',
+      subtitle: 'माऊसने ड्रॅग करा किंवा स्क्रीनवर स्वाइप करून पारदर्शक काच, अस्सल मधाचा दाटपणा आणि डिजिटल सुरक्षा सील ३६० अंशात तपासा.',
+      hint: '🖱️ फिरवण्यासाठी ड्रॅग करा • 🔄 ३६०° दृश्य सुरू',
+      jamun: 'महाबळेश्वर जांभूळ मध',
+      acacia: 'काश्मीर पांढरा बाभूळ मध',
+      mangrove: 'सुंदरबन खारफुटी मध',
+      glassSpec: 'अन्न-सुरक्षित काच (शून्य शिसे)',
+      tamperSeal: 'लेझर डिजिटल शिक्का (फोडता न येणारा QR)',
+      coldSettled: 'नैसर्गिक शीत प्रक्रिया मध (<४५°C)',
+      autoRotate: 'आपोआप फिरवणे',
+      diastasePurity: 'जिवंत पाचक एन्झाईम्स (14.5 DN)',
     },
     timeline: {
       title: 'प्रमाणित ५-टप्प्यांचा प्रत्यक्ष प्रवास',
       subtitle: 'सह्याद्रीच्या रानापासून आपल्या घरापर्यंत पारदर्शक आणि सुरक्षित नोंद',
+      custodyBadge: '५ प्रमाणित टप्पे',
       step1Title: '१. पोळ्यातून मध काढणे',
       step1Desc: 'स्थानिक शेतकऱ्याने स्वच्छ स्टेनलेस स्टील यंत्राने नैसर्गिकरित्या मध काढला.',
       step2Title: '२. कृषी उत्पन्न बाजार समिती डिजिटल वजन',
@@ -508,11 +760,38 @@ export const translations: Record<Language, Translations> = {
     },
     puritySim: {
       title: 'घर-घर पारख: घरगुती शुद्धता सिम्युलेटर',
-      subtitle: 'अस्सल मध आणि भेसळयुक्त साखरेच्या पाकाची सोपी घरगुती चाचणी पहा',
-      waterTest: 'पाण्यातील विरघळण्याची चाचणी (काचेचा पेला)',
-      flameTest: 'सुती वातीची अग्नी चाचणी (दिव्याची ज्योत)',
-      pureSample: 'बॅच PKG-MAHA-042 (१००% अस्सल मध)',
-      adulteratedSample: 'बाजारातील नमुना (४२% साखरेचा पाक)',
+      subtitle: 'अस्सल मध आणि भेसळयुक्त साखरेच्या पाकाची सोपी पारंपारिक घरगुती चाचणी पहा',
+      tag: 'पारंपारिक भारतीय शुद्धता विज्ञान',
+      badge: 'घर-घर पारख सिम्युलेटर',
+      waterTest: 'पाण्यातील विरघळण्याची चाचणी',
+      flameTest: 'सुती वातीची अग्नी चाचणी',
+      selectSamplePrompt: '१. तपासणीसाठी मधाचा नमुना निवडा:',
+      pureSampleTitle: '१००% अस्सल रानमध',
+      pureSampleStats: 'ओलावा: १७.८% • ०% कृत्रिम साखर',
+      adulteratedSampleTitle: 'भेसळयुक्त साखरेचा पाक',
+      adulteratedSampleStats: 'C4 ऊसाची साखर + कॉर्न सिरप (४२%)',
+      waterScienceTitle: 'पाण्याची घनता आणि विशिष्ट गुरुत्वाचे विज्ञान',
+      waterScienceDesc: 'अस्सल मधाचे विशिष्ट गुरुत्व उच्च (~१.४२) आणि पृष्ठताण जास्त असते. पाण्यात टाकल्यास तो न विरघळता तळाशी मोत्यासारखा घट्ट बसतो. व्यावसायिक साखर पाक पाण्यात लगेच विरघळून पाणी गढूळ करतो.',
+      flameScienceTitle: 'ज्वलनशीलता आणि नैसर्गिक ओलाव्याचे विज्ञान',
+      flameScienceDesc: 'अस्सल मधात १८% पेक्षा कमी ओलावा असतो. मधात बुडवलेली सुती वात पेटवल्यास ती शांत सोन्यासारख्या ज्योतीने जळते. पाणी मिसळलेल्या साखरेच्या पाकात वात तडतडून विझून जाते.',
+      runWaterBtn: 'पाण्यातील विरघळण्याची चाचणी करा',
+      runFlameBtn: 'सुती वातीची अग्नी चाचणी करा',
+      runningSim: 'भौतिक रासायनिक चाचणी सुरू आहे...',
+      vesselWaterTitle: 'सिम्युलेशन फ्लास्क • पाणी चाचणी',
+      vesselFlameTitle: 'सिम्युलेशन फ्लास्क • अग्नी चाचणी',
+      pureVesselBadge: 'नमुना: १००% अस्सल रानमध',
+      adulteratedVesselBadge: 'नमुना: भेसळयुक्त साखर पाक',
+      waterPureResult: 'अखंड मधाचा थर (उच्च घनता)',
+      waterAdulteratedResult: 'गढूळ द्रावण (लगेच विरघळणारा पाक)',
+      flamePureResult: 'स्वच्छ सोनेरी ज्योत',
+      flameAdulteratedResult: 'तडतडून विझली',
+      clickPrompt: 'मधाचा थेंब टाकण्यासाठी "चाचणी करा" बटणावर क्लिक करा',
+      verdictPurePassed: 'निष्कर्ष: १००% अस्सल नैसर्गिक मध (उत्तीर्ण)',
+      verdictPureWaterDesc: 'मधाचा थेंब न विरघळता तळाशी घट्ट बसला, ज्यावरून १७.८% नैसर्गिक ओलावा व शून्य टक्के कृत्रिम साखर सिद्ध होते.',
+      verdictPureFlameDesc: 'वात अडथळ्याविना सोनेरी ज्योतीने जळाली, ज्यामुळे FSSAI २०% पेक्षा कमी ओलावा सिद्ध होतो.',
+      verdictAdulteratedFailed: 'निष्कर्ष: कृत्रिम साखरेच्या पाकाची भेसळ आढळली',
+      verdictAdulteratedWaterDesc: 'पाण्यात लगेच विरघळून गढूळपणा आला, जे इनव्हर्ट राइस सिरप किंवा कॉर्न सिरप भेसळीचे स्पष्ट लक्षण आहे.',
+      verdictAdulteratedFlameDesc: 'अतिरिक्त पाणी आणि कृत्रिम साखरेमुळे वात तडतडून विझून गेली.',
       pureVerdict: 'अस्सल मध पाण्यात न विरघळता तळाशी मोत्यासारखा घट्ट बसतो.',
       adulteratedVerdict: 'साखरेचा पाक पाण्यात लगेच विरघळून पाणी गढूळ करतो.',
     },
@@ -548,12 +827,45 @@ export const translations: Record<Language, Translations> = {
       auditTitle: 'केंद्रीय नियामक ऑडिट',
       auditDesc: 'बॅच प्रवास DAG आलेख, संशयास्पद नोंदींची चौकशी आणि SHA-256 ब्लॉकचेन लेजर.',
     },
+    stages: {
+      stageLabel: 'टप्पा',
+      stageOf: 'पैकी',
+      consumerTitle: 'ग्राहक पडताळणी आणि वनस्पती मूळ स्रोत',
+      consumerRole: 'सार्वजनिक पडताळणी पोर्टल',
+      consumerDesc: 'मध बाटलीचा QR कोड स्कॅन करा, रमेश पाटिल यांच्या पोळ्यांचे स्थान तपासा, NABL लॅबचे सरकारी प्रमाणपत्र पहा आणि संपूर्ण ब्लॉकचेन नोंद तपासा.',
+      consumerStandard: 'ग्राहक संरक्षण (ई-कॉमर्स) नियम २०२० • FSSAI अन्न सुरक्षा मानके',
+      beekeeperTitle: 'शेतकरी शेत नोंद आणि IoT पोळे सेन्सर',
+      beekeeperRole: 'उत्पादक शेतकरी केंद्र',
+      beekeeperDesc: 'ग्रामीण मधपाळांसाठी आवाजाद्वारे नोंदणी (मराठी/हिंदी/इंग्रजी), थेट पोळे तापमान व आवाज सेन्सर आणि XGBoost AI उत्पादन अंदाज.',
+      beekeeperStandard: 'राष्ट्रीय मध मोहीम मार्गदर्शक तत्त्वे • KVIC स्मार्ट किसान पासबुक',
+      mandiTitle: 'मंडी डिजिटल वजन काटा आणि डबा वजन वजावट',
+      mandiRole: 'कृषी उत्पन्न बाजार समिती (APMC)',
+      mandiDesc: 'डिजिटल वजन काट्याशी थेट जोडणी, डब्याचे वजन अचूक वजा करून मध भेसळ रोखणारी डिजिटल पडताळणी.',
+      mandiStandard: 'वजन व मापे नियम २०११ • APMC मध आवक मानके',
+      labTitle: 'प्रक्रिया, NABL आयसोटोप लॅब आणि बाटली अनुक्रमांक',
+      labRole: 'औद्योगिक प्रक्रिया आणि रासायनिक चाचणी',
+      labDesc: 'C-13 कार्बन चाचणीद्वारे साखर पाक ओळखणे, वस्तुमान संतुलन आणि प्रत्येक बाटलीला अद्वितीय डिजिटल QR कोड देणे.',
+      labStandard: 'FSSAI राजपत्रीय मध मानके (कलम २.८.२) • EA-IRMS कार्बन-13 प्रोटोकॉल',
+      auditTitle: 'केंद्रीय नियामक तपासणी आणि ब्लॉकचेन Merkle DAG',
+      auditRole: 'राष्ट्रीय प्रशासकीय ऑडिट केंद्र',
+      auditDesc: 'FSSAI आणि KVIC अधिकाऱ्यांसाठी Merkle DAG आलेख, SHA-256 लेजर आणि संशयास्पद नोंदींची कायदेशीर चौकशी प्रणाली.',
+      auditStandard: 'FSSAI दक्षता विभाग • राष्ट्रीय डिजिटल शोधक्षमता प्रणाली',
+      prevBtn: 'मागील टप्पा',
+      nextBtn: 'पुढील टप्पा',
+    },
     footer: {
       desc: 'राष्ट्रीय मध मोहीम सत्यता आणि मूळ स्रोत प्रणाली. सह्याद्री, सुंदरबन आणि काश्मीरमधील कष्टकरी मधपाळ शेतकऱ्यांना थेट रास्त भाव मिळवून देणारा शासकीय उपक्रम.',
       stationsTitle: 'प्रत्यक्ष प्रवासाचे टप्पे',
       complianceTitle: 'मानके आणि कायदेशीर नोंदणी',
       copyright: '© २०२६ हनीचेन राष्ट्रीय उपक्रम • भारत सरकार सहकार्य',
       tagline: 'शून्य कृत्रिम गोडवा • १००% पडताळणीयोग्य नैसर्गिक मध',
+      standard1: 'FSSAI राजपत्र (मध मानके २०२०)',
+      standard2: 'अ‍ॅगमार्क मध प्रतवारी नियम (स्पेशल ग्रेड)',
+      standard3: 'राष्ट्रीय मधमाशी पालन मोहीम (KVIC, MoMSME)',
+      standard4: 'EA-IRMS कार्बन-13 साखर आयसोटोप चाचणी',
+      hackathonTitle: 'राष्ट्रीय हॅकाथॉन २०२६',
+      hackathonDesc: 'स्मार्ट इंडिया हॅकाथॉन नाविन्यता ट्रॅक. FastAPI, PostgreSQL, XGBoost AI, React 18 आणि SHA-256 ब्लॉकचेनद्वारे निर्मित.',
+      builtFor: 'भारतीय मधपाळ शेतकरी आणि ग्राहकांसाठी समर्पित',
     },
   },
 };

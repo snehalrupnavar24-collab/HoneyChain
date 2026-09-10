@@ -174,22 +174,22 @@ const MainLayout: React.FC = () => {
                 {t.footer.complianceTitle}
               </h4>
               <ul className="space-y-1.5 text-stone-400">
-                <li>• FSSAI Gazette (Honey Standards 2020)</li>
-                <li>• Agmark Honey Grading Rules (Special Grade)</li>
-                <li>• National Honey Mission (KVIC, MoMSME)</li>
-                <li>• EA-IRMS Carbon-13 Sugar Isotope Testing</li>
+                <li>• {t.footer.standard1}</li>
+                <li>• {t.footer.standard2}</li>
+                <li>• {t.footer.standard3}</li>
+                <li>• {t.footer.standard4}</li>
               </ul>
             </div>
 
             <div>
               <h4 className="font-bold text-white uppercase tracking-wider mb-2.5 text-[11px]">
-                National Hackathon 2026
+                {t.footer.hackathonTitle}
               </h4>
               <p className="text-stone-400 leading-relaxed">
-                Smart India Hackathon Innovation Track. Built with FastAPI, PostgreSQL, XGBoost ML, React 18, and SHA-256 Ledger.
+                {t.footer.hackathonDesc}
               </p>
               <div className="mt-3 flex items-center gap-1.5 text-amber-400 font-semibold text-[11px]">
-                <span>Built for Indian Beekeepers & Consumers</span>
+                <span>{t.footer.builtFor}</span>
                 <Heart className="w-3.5 h-3.5 text-red-400 fill-red-400" />
               </div>
             </div>
