@@ -33,6 +33,7 @@ import { getDiscrepancies, resolveDiscrepancy, getAuditEvents } from '../service
 import { HoneyJar3DViewer } from './HoneyJar3DViewer';
 import { RealCameraScannerModal } from './RealCameraScannerModal';
 import { CustomerJarQRGenerator } from './CustomerJarQRGenerator';
+import { CoreFeaturesBar } from './CoreFeaturesBar';
 import { useLanguage } from '../context/LanguageContext';
 
 export const AdminAuditDashboard: React.FC = () => {
@@ -166,7 +167,15 @@ export const AdminAuditDashboard: React.FC = () => {
         </div>
       </div>
 
-      {/* 2. MASTER QR CODE SHOWCASE & 3D DIGITAL TWIN HUB (FRONT & CENTER - NOT HIDDEN!) */}
+      {/* 2. THE 4 CORE VERIFICATION & QR FEATURES (DIRECTLY VISIBLE ON THE DASHBOARD!) */}
+      <CoreFeaturesBar
+        onOpenScanner={() => setIsScannerOpen(true)}
+        onOpenGenerator={() => setIsQrGeneratorOpen(true)}
+        onOpenMobile={() => setIsQrGeneratorOpen(true)}
+        onOpenCertificate={() => setIsCertificateOpen(true)}
+      />
+
+      {/* 3. MASTER QR CODE SHOWCASE & 3D DIGITAL TWIN HUB (FRONT & CENTER - NOT HIDDEN!) */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
         {/* LEFT 5 COLS: PROMINENT LIVE HONEY JAR QR CODE (TOTALLY VISIBLE ON SCREEN!) */}
         <div className="lg:col-span-5 bg-white rounded-3xl border-2 border-amber-300/90 p-5 sm:p-6 shadow-sm space-y-4">

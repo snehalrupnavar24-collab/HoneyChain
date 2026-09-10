@@ -191,51 +191,6 @@ export const Navbar: React.FC<NavbarProps> = ({
               </button>
             )}
 
-            {/* Customer Honey Jar QR Generator */}
-            {onGenerateQrClick && (
-              <button
-                type="button"
-                onClick={onGenerateQrClick}
-                className="px-3 py-1.5 bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs rounded-xl transition-all shadow-xs flex items-center gap-1.5 cursor-pointer border border-amber-500"
-                title="Generate Printable Customer Honey Jar QR Label"
-              >
-                <QrCode className="w-3.5 h-3.5 text-amber-200" />
-                <span className="hidden sm:inline">{t.nav.generateQr}</span>
-                <span className="sm:hidden">QR</span>
-              </button>
-            )}
-
-            {onMobileClick && (
-              <button
-                type="button"
-                onClick={onMobileClick}
-                className="px-3 py-1.5 bg-emerald-800 hover:bg-emerald-900 text-amber-200 font-bold text-xs rounded-xl transition-all shadow-xs flex items-center gap-1.5 cursor-pointer border border-emerald-700 hover:border-amber-400 hidden md:flex"
-                title="Open HoneyChain on your phone and scan QR codes"
-              >
-                <Smartphone className="w-3.5 h-3.5 text-amber-300" />
-                <span>{t.nav.mobileHub}</span>
-              </button>
-            )}
-
-            <button
-              type="button"
-              onClick={onScanClick}
-              className="px-3 py-1.5 bg-amber-500 hover:bg-amber-600 text-stone-950 font-bold text-xs rounded-xl transition-all shadow-xs flex items-center gap-1.5 cursor-pointer"
-            >
-              <Camera className="w-3.5 h-3.5" />
-              <span className="hidden sm:inline">{t.nav.scanJar}</span>
-              <span className="sm:hidden">Scan</span>
-            </button>
-
-            <button
-              type="button"
-              onClick={onCertificateClick}
-              className="px-3 py-1.5 bg-stone-900 hover:bg-stone-800 text-white font-bold text-xs rounded-xl transition-all shadow-xs flex items-center gap-1.5 cursor-pointer hidden lg:flex"
-            >
-              <Printer className="w-3.5 h-3.5 text-amber-400" />
-              <span>{t.nav.printCert}</span>
-            </button>
-
             {/* Mobile Drawer Button */}
             <button
               type="button"

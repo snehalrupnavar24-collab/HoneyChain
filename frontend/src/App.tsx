@@ -18,7 +18,16 @@ import { Heart, ArrowLeft, ShieldCheck } from 'lucide-react';
 
 const MainLayout: React.FC = () => {
   const { lang, t } = useLanguage();
-  const [activeTab, setActiveTab] = useState<string>('website');
+  const [activeTab, setActiveTab] = useState<string>(() => {
+    if (typeof window !== 'undefined') {
+      const urlParams = new URLSearchParams(window.location.search);
+      const tabParam = urlParams.get('tab');
+      if (tabParam === 'dashboard' || tabParam === 'admin') return 'admin';
+      if (tabParam) return tabParam;
+      if (urlParams.get('batch')) return 'consumer';
+    }
+    return 'website';
+  });
   const [isBackendConnected, setIsBackendConnected] = useState<boolean>(true);
   const [isMobileModalOpen, setIsMobileModalOpen] = useState<boolean>(false);
   const [isCustomerQrOpen, setIsCustomerQrOpen] = useState<boolean>(false);

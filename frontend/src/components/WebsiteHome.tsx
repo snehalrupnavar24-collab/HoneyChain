@@ -23,6 +23,7 @@ import { HoneyJar3DViewer } from './HoneyJar3DViewer';
 import { HouseholdPuritySimulator } from './HouseholdPuritySimulator';
 import { RealCameraScannerModal } from './RealCameraScannerModal';
 import { CustomerLoginModal } from './CustomerLoginModal';
+import { CoreFeaturesBar } from './CoreFeaturesBar';
 import { useLanguage } from '../context/LanguageContext';
 import { useAuth } from '../context/AuthContext';
 
@@ -283,6 +284,14 @@ export const WebsiteHome: React.FC<WebsiteHomeProps> = ({
           </div>
         </div>
       </section>
+
+      {/* 2. PROMINENT 4 CORE VERIFICATION & QR FEATURES (DIRECTLY VISIBLE - NOT HIDDEN!) */}
+      <CoreFeaturesBar
+        onOpenScanner={() => setIsScannerOpen(true)}
+        onOpenGenerator={() => onOpenCustomerQrModal && onOpenCustomerQrModal()}
+        onOpenMobile={() => onOpenMobileModal && onOpenMobileModal()}
+        onOpenCertificate={() => setIsCertificateOpen(true)}
+      />
 
       {/* 2. VERIFIED AUTHENTICITY CARD (HIGH CONTRAST & CLEAN) */}
       {data && (
